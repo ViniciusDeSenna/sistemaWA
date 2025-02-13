@@ -271,25 +271,15 @@
                       <script>
                         document.write(new Date().getFullYear());
                       </script>
-                      , made with ❤️ by
-                      <a href="https://themeselection.com" target="_blank" class="footer-link fw-bolder">ThemeSelection</a>
+                      , feito com ❤️ por
+                      <a href="javascript:void(0)" class="footer-link fw-bolder">Vinícius de Senna & Fhillype Leal</a>
                     </div>
                     <div>
-                      <a href="https://themeselection.com/license/" class="footer-link me-4" target="_blank">License</a>
-                      <a href="https://themeselection.com/" target="_blank" class="footer-link me-4">More Themes</a>
-    
                       <a
-                        href="https://themeselection.com/demo/sneat-bootstrap-html-admin-template/documentation/"
+                        href="https://wa.me/{{env('SUPORT_PHONE')}}?text=Olá,%20preciso%20de%20suporte%20para%20o%20sistema%20{{env('APP_NAME')}}!" 
                         target="_blank"
                         class="footer-link me-4"
-                        >Documentation</a
-                      >
-
-                      <a
-                        href="https://github.com/themeselection/sneat-html-admin-template-free/issues"
-                        target="_blank"
-                        class="footer-link me-4"
-                        >Support</a
+                        >Suporte</a
                       >
                     </div>
                   </div>
