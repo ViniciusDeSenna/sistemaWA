@@ -1,32 +1,59 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
-.pnp.js
-
-# testing
-/coverage
-
-# next.js
-/.next/
-/out/
-
-# production
-/build
-
-# misc
+# System Files
 .DS_Store
-*.pem
+.AppleDouble
+.LSOverride
 
-# debug
+# Thumbnails
+._*
+Thumbs.db
+ehthumbs.db
+ehthumbs_vista.db
+
+# Dump file
+*.stackdump
+
+# Folder config file
+[Dd]esktop.ini
+
+# Windows shortcuts
+*.lnk
+
+# Logs
+logs
+*.log
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.pnpm-debug.log*
 
-# local env files
-.env*.local
+# Dependency directories
+node_modules
 
-# vercel
-.vercel
+# Optional npm cache directory
+.npm
+
+# Optional eslint cache
+.eslintcache
+
+# Yarn Integrity file
+.yarn-integrity
+
+# Optional sass cache
+/.sass-cache
+gulpfile.tmp.*
+
+################################################################################
+############################### DEVELOPMENT_ONLY ###############################
+
+# Excludes generated 
+/dist
+/build
+/tmp
+/temp
+
+# Assets
+# **/static/vendor
+
+# HTML files
+/html-starter
+/html-demo
+/html-starter-demo
