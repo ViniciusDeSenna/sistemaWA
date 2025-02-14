@@ -31,30 +31,27 @@
         <div class="d-flex flex-wrap" id="icons-container">
             <!-- Users -->
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
-              <a class="card-body" href="javascript:void(0)">
+              <a class="card-body" href="{{ route('users.index') }}">
                 <i class="bx bx-collection mb-2"></i>
                 <p class="icon-name text-capitalize text-truncate mb-0">Usuários</p>
               </a>
             </div>
-            <!-- Clients -->
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
                 <a class="card-body" href="javascript:void(0)">
                     <i class="bx bx-collection mb-2"></i>
-                    <p class="icon-name text-capitalize text-truncate mb-0">Clientes</p>
+                    <p class="icon-name text-capitalize text-truncate mb-0">Estabelecimentos</p>
                 </a>
             </div>
-            <!-- Colaborators -->
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
                 <a class="card-body" href="javascript:void(0)">
                     <i class="bx bx-collection mb-2"></i>
                     <p class="icon-name text-capitalize text-truncate mb-0">Colaboradores</p>
                 </a>
             </div>
-            <!-- Works -->
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
                 <a class="card-body" href="javascript:void(0)">
                     <i class="bx bx-collection mb-2"></i>
-                    <p class="icon-name text-capitalize text-truncate mb-0">Serviços</p>
+                    <p class="icon-name text-capitalize text-truncate mb-0">Diarias</p>
                 </a>
             </div>
         </div>

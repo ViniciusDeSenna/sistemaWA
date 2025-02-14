@@ -125,36 +125,29 @@
 
                 <!-- Components -->
                 <li class="menu-header small text-uppercase"><span class="menu-header-text">Administração</span></li>
-                
-                <!-- Users -->
+              
                 <li class="menu-item">
                     <a href="cards-basic.html" class="menu-link">
                       <i class="menu-icon tf-icons bx bx-collection"></i>
                       <div data-i18n="Basic">Usuários</div>
                     </a>
                   </li>
-
-                <!-- Clients -->
                 <li class="menu-item">
                   <a href="cards-basic.html" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-collection"></i>
-                    <div data-i18n="Basic">Clientes</div>
+                    <div data-i18n="Basic">Estabelecimentos</div>
                   </a>
                 </li>
-
-                <!-- Colaborators -->
                 <li class="menu-item">
                     <a href="cards-basic.html" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-collection"></i>
                         <div data-i18n="Basic">Colaboradores</div>
                     </a>
                 </li>
-
-                <!-- Works -->
                 <li class="menu-item">
                     <a href="cards-basic.html" class="menu-link">
                         <i class="menu-icon tf-icons bx bx-collection"></i>
-                        <div data-i18n="Basic">Serviços</div>
+                        <div data-i18n="Basic">Diarias</div>
                     </a>
                 </li>
                 
@@ -167,7 +160,7 @@
               <!-- Navbar -->
     
               <nav
-                class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme"
+                class="layout-navbar container-xxl navbar navbar-expand-xl navbar-detached align-items-center bg-navbar-theme mb-3"
                 id="layout-navbar"
               >
                 <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
