@@ -2,7 +2,7 @@
     <div class="container">
 
         <div class="mb-3">
-            <button type="button" class="btn btn-outline-primary w-100">Cadastrar Usuário</button>
+            <a href="{{ route('users.create') }}" class="btn btn-outline-primary w-100">Cadastrar Usuário</a>
         </div>
 
         <!-- Basic Bootstrap Table -->
