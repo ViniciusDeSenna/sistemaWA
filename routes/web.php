@@ -15,7 +15,7 @@ Route::get('/dashboard', function () {
 Route::middleware('auth')->group(function () {
 
     Route::prefix('users')->group(function () {
-        Route::get('/', [UsersController::class, 'index'])->name('users.index'); // Listar usuários
+        Route::get('/', [UsersController::class, 'index'])->name('users.index')->middleware('permission:index users'); // Listar usuários
         Route::get('/create', [UsersController::class, 'create'])->name('users.create'); // Formulário de criação
         Route::post('/', [UsersController::class, 'store'])->name('users.store'); // Salvar novo usuário
         Route::get('/{id}/edit', [UsersController::class, 'edit'])->name('users.edit'); // Formulário de edição
