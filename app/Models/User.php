@@ -45,4 +45,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public static function getActive()
+    {
+        return self::query()->where('active', '=', true)->get();
+    }
 }

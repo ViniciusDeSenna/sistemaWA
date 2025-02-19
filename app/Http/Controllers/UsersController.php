@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Hash;
 class UsersController extends Controller
 {
     public function index(){
-        return View('app.users.index');
+        return View('app.users.index', ['users' => User::getActive()]);
     }
 
     public function create(){
