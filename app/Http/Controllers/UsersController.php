@@ -8,8 +8,10 @@ use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
 use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 
 class UsersController extends Controller
 {
@@ -18,13 +20,15 @@ class UsersController extends Controller
     }
 
     public function create(){
-        return View('app.users.edit');
+        return View('app.users.edit', ['permissions' => Permission::all()]);
     }
 
     
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
@@ -45,17 +49,25 @@ class UsersController extends Controller
 
             event(new Registered($user));
         
+            // Seta as pemissoes no usuário
+            $user->givePermissionTo(array_keys($request->permissions));
+
+            DB::commit();
+
             return response()->json([
                 'message' => 'Usuário cadastrado com sucesso!',
                 'data' => $user
             ], 201);
 
         } catch(Exception $exception) {
+
+            DB::rollBack();
+
             return response()->json([
                 'title' => 'Erro na validação',
                 'message' => $exception->getMessage(),
                 'type' => 'error'
-            ], $exception->getCode());
+            ], 500);
         }
     }
     

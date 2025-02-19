@@ -14,9 +14,12 @@ class PermissionsSeeder extends Seeder
      */
     public function run(): void
     {
-        Permission::findOrCreate('index users');
-        Permission::findOrCreate('store users');
-        Permission::findOrCreate('edit users');
+        Permission::findOrCreate('Lista de usuários');
+        Permission::findOrCreate('Formulário de criação dos usuários');
+        Permission::findOrCreate('Salvar usuários');
+        Permission::findOrCreate('Formulário de edição dos usuários');
+        Permission::findOrCreate('Atualizar usuários');
+        Permission::findOrCreate('Deletar usuários');
 
         $user = User::where('id', '=', env('DEV_USER_ID'))->first();
         $user->givePermissionTo(Permission::all());
