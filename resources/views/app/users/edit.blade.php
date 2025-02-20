@@ -3,17 +3,16 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h5 class="mb-0">Cadastrando usuário</h5>
-                {{-- <small class="text-muted float-end">Default label</small> --}}
             </div>
             <div class="card-body">
                 <form id="form-edit-user">
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Nome</label>
-                        <input type="text" class="form-control" id="basic-default-fullname" name="name" placeholder="João Doe" />
+                        <input type="text" class="form-control" id="basic-default-fullname" name="name" placeholder="João Doe" value="{{ $user?->name ?? ''}}" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-company">Email</label>
-                        <input type="email" class="form-control" id="basic-default-company" name="email" placeholder="exemplo@exemplo.com" />
+                        <input type="email" class="form-control" id="basic-default-company" name="email" placeholder="exemplo@exemplo.com" value="{{ $user?->email ?? ''}}" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-company">Senha</label>
@@ -31,16 +30,22 @@
                 <form id="form-permissions-user">
                     @foreach ($permissions as $permission)
                         <div class="form-check form-switch mb-2">
-                            <input class="form-check-input" type="checkbox" id="permission-{{ $permission->id }}" name="permissions[{{ $permission->id }}]">
+                            <input class="form-check-input" type="checkbox" id="permission-{{ $permission->id }}" name="permissions[{{ $permission->id }}]" @checked($user?->can($permission->name) ?? false) >
                             <label class="form-check-label" for="flexSwitchCheckDefault">{{ $permission->name }}</label>
                         </div>
                     @endforeach
                 </form>
             </div>
             <div class="card-footer">
-                <div class="d-flex justify-content-end">
-                    <button type="button" class="btn btn-primary right" onclick="post()">Salvar</button>
-                </div>
+                @if ($user?->id ?? false)
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary right" onclick="update({{ $user?->id ?? null }})">Salvar</button>
+                    </div>
+                @else
+                    <div class="d-flex justify-content-end">
+                        <button type="button" class="btn btn-primary right" onclick="post()">Salvar</button>
+                    </div>
+                @endif
             </div>
         </div>
     </div>
@@ -60,18 +65,49 @@
                     title: response?.title ?? 'Sucesso!',
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
+                }).then((result) => {
+                    $('#form-edit-user')[0].reset();
+                    $('#form-permissions-user')[0].reset();
+
+                    window.location.reload();
                 });
-
-                console.log(response.data);
-
-                $('#form-edit-user')[0].reset();
-                $('#form-permissions-user')[0].reset();
             },
             error: function(response) {
                 response = JSON.parse(response.responseText);
                 Swal.fire({
                     title: response?.title ?? 'Oops!',
-                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!', // Substitui as quebras de linha por <br>
+                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
+                    icon: response?.type ?? 'error'
+                });
+            }
+        });
+    }
+
+    function update(id) {
+        $.ajax({
+            url: "{{ route('users.update', '') }}" + '/' + id,
+            type: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: $('#form-edit-user').serialize() + '&' + $('#form-permissions-user').serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: response?.title ?? 'Sucesso!',
+                    text: response?.message ?? 'Sucesso na ação!',
+                    icon: response?.type ?? 'success'
+                }).then((result) => {
+                    $('#form-edit-user')[0].reset();
+                    $('#form-permissions-user')[0].reset();
+
+                    window.location.reload();
+                });
+            },
+            error: function(response) {
+                response = JSON.parse(response.responseText);
+                Swal.fire({
+                    title: response?.title ?? 'Oops!',
+                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
                     icon: response?.type ?? 'error'
                 });
             }

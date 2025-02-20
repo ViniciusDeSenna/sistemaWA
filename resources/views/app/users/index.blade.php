@@ -28,11 +28,11 @@
                                     <i class="bx bx-dots-vertical-rounded"></i>
                                     </button>
                                     <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="javascript:void(0);"
+                                    <a class="dropdown-item" href="{{ route('users.edit', [$user->id]) }}"
                                         ><i class="bx bx-edit-alt me-1"></i> Edit</a
                                     >
-                                    <a class="dropdown-item" href="javascript:void(0);"
-                                        ><i class="bx bx-trash me-1"></i> Delete</a
+                                    <button class="dropdown-item" href="javascript:void(0);" type="button" onclick="remove({{ $user->id }})"
+                                        ><i class="bx bx-trash me-1"></i> Delete</button
                                     >
                                     </div>
                                 </div>
@@ -47,3 +47,46 @@
         
     </div>
 </x-app-layout>
+
+<script>
+    function remove(id) {
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Esta ação não pode ser desfeita!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, remover!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: "{{ route('users.destroy', '') }}" + '/' + id,
+                    type: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            title: response?.title ?? 'Sucesso!',
+                            text: response?.message ?? 'Sucesso na ação!',
+                            icon: response?.type ?? 'success'
+                        }).then((result) => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function(response) {
+                        response = JSON.parse(response.responseText);
+                        Swal.fire({
+                            title: response?.title ?? 'Oops!',
+                            html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!', // Substitui as quebras de linha por <br>
+                            icon: response?.type ?? 'error'
+                        });
+                    }
+                });
+            }
+        });
+    }
+</script>

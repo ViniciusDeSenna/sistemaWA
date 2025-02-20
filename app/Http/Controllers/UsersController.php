@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -31,7 +32,14 @@ class UsersController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-                'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+                'email' => [
+                    'required', 
+                    'string', 
+                    'lowercase', 
+                    'email', 
+                    'max:255', 
+                    Rule::unique(User::class)->where('active', true),
+                ],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
             ]);            
         
@@ -55,8 +63,9 @@ class UsersController extends Controller
             DB::commit();
 
             return response()->json([
+                'title' => 'Sucesso!',
                 'message' => 'Usuário cadastrado com sucesso!',
-                'data' => $user
+                'type' => 'success'
             ], 201);
 
         } catch(Exception $exception) {
@@ -72,15 +81,88 @@ class UsersController extends Controller
     }
     
 
-    public function edit(){
-        return View('app.users.edit');
+    public function edit($id){
+        return View('app.users.edit', ['user' => User::find($id), 'permissions' => Permission::all()]);
     }
 
-    public function update(){
-        return View('app.users.edit');
+    public function update(Request $request, $id){
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+                'email' => [
+                    'required', 
+                    'string', 
+                    'lowercase', 
+                    'email', 
+                    'max:255', 
+                    Rule::unique(User::class)->where('active', '=', true)->where('id', '!=', $id),
+                ],
+                'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
+            ]);            
+        
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => implode("\n", $validator->errors()->all()),
+                ], 422);
+            }
+        
+            $user = User::findOrFail($id);
+            $user->update([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => $request->password ? Hash::make($request->password) : $user->password,
+            ]);
+        
+            // Seta as pemissoes no usuário
+            $user->syncPermissions(array_keys($request->permissions));
+
+            DB::commit();
+
+            return response()->json([
+                'title' => 'Sucesso!',
+                'message' => 'Usuário atualizado com sucesso!',
+                'type' => 'success'
+            ], 201);
+
+        } catch(Exception $exception) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'title' => 'Erro na validação',
+                'message' => $exception->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }  
     }
 
-    public function destroy(){
-        return View('app.users.edit');
+    public function destroy($id){
+        try {
+
+            DB::beginTransaction();
+
+            $user = User::find($id);
+            $user->active = false;
+            $user->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Usuário removido com sucesso!',
+                'data' => $user
+            ], 201);
+
+        } catch(Exception $exception) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'title' => 'Erro na validação',
+                'message' => $exception->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
     }
 }
