@@ -21,6 +21,13 @@ class PermissionsSeeder extends Seeder
         Permission::findOrCreate('Atualizar usuários');
         Permission::findOrCreate('Deletar usuários');
 
+        Permission::findOrCreate('Lista de colaboradores');
+        Permission::findOrCreate('Formulário de criação dos colaboradores');
+        Permission::findOrCreate('Salvar colaboradores');
+        Permission::findOrCreate('Formulário de edição dos colaboradores');
+        Permission::findOrCreate('Atualizar colaboradores');
+        Permission::findOrCreate('Deletar colaboradores');
+
         $user = User::where('id', '=', env('DEV_USER_ID'))->first();
         $user->givePermissionTo(Permission::all());
     }
