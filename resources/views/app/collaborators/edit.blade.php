@@ -21,6 +21,9 @@
                 </form>
             </div>
             <div class="card-footer">
+                <div class="d-flex justify-content-start">
+                    <button type="button" class="btn btn-primary right" onclick="window.history.back();">Voltar</button>
+                </div>
                 @if ($collaborator?->id ?? false)
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-primary right" onclick="update({{ $collaborator?->id ?? null }})">Salvar</button>

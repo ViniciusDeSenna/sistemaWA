@@ -170,6 +170,12 @@
               </a>
             </div>
 
+            <div class="navbar-nav align-items-center">
+              <div class="nav-item d-flex align-items-center">
+                <i class='bx bx-arrow-back fs-4 lh-0' onclick="window.history.back();"></i>
+              </div>
+            </div>
+
             <div class="navbar-nav-right d-flex align-items-center" id="navbar-collapse">
               {{-- <!-- Search -->
               <div class="navbar-nav align-items-center">
