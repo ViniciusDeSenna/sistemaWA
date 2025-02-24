@@ -3,6 +3,7 @@
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CollaboratorsController;
+use App\Http\Controllers\EstablishmentsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -33,6 +34,14 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [CollaboratorsController::class, 'destroy'])->name('collaborators.destroy')->middleware('permission:Deletar colaboradores');
     });
 
+    Route::prefix('establishments')->group(function () {
+        Route::get('/', [EstablishmentsController::class, 'index'])->name('establishments.index')->middleware('permission:Lista de estabelecimentos');
+        Route::get('/create', [EstablishmentsController::class, 'create'])->name('establishments.create')->middleware('permission:Formulário de criação dos estabelecimentos');
+        Route::post('/', [EstablishmentsController::class, 'store'])->name('establishments.store')->middleware('permission:Salvar estabelecimentos');
+        Route::get('/{id}/edit', [EstablishmentsController::class, 'edit'])->name('establishments.edit')->middleware('permission:Formulário de edição dos estabelecimentos');
+        Route::put('/{id}', [EstablishmentsController::class, 'update'])->name('establishments.update')->middleware('permission:Atualizar estabelecimentos');
+        Route::delete('/{id}', [EstablishmentsController::class, 'destroy'])->name('establishments.destroy')->middleware('permission:Deletar estabelecimentos');
+    });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

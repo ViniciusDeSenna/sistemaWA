@@ -28,6 +28,13 @@ class PermissionsSeeder extends Seeder
         Permission::findOrCreate('Atualizar colaboradores');
         Permission::findOrCreate('Deletar colaboradores');
 
+        Permission::findOrCreate('Lista de estabelecimentos');
+        Permission::findOrCreate('Formulário de criação dos estabelecimentos');
+        Permission::findOrCreate('Salvar estabelecimentos');
+        Permission::findOrCreate('Formulário de edição dos estabelecimentos');
+        Permission::findOrCreate('Atualizar estabelecimentos');
+        Permission::findOrCreate('Deletar estabelecimentos');
+
         $user = User::where('id', '=', env('DEV_USER_ID'))->first();
         $user->givePermissionTo(Permission::all());
     }
