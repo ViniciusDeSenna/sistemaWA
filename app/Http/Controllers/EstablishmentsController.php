@@ -1,11 +1,20 @@
 <?php
-
 namespace App\Http\Controllers;
 
+use App\Models\Company;
+use App\Models\Establishment;
+use App\Models\User;
 use App\Http\Controllers\Controller;
-use Illuminate\Contracts\View\View;
+use Exception;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
-
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rules\Email;
+use Spatie\Permission\Models\Permission;
+use Illuminate\Validation\Rule;
 class EstablishmentsController extends Controller
 {
     /**
@@ -13,7 +22,7 @@ class EstablishmentsController extends Controller
      */
     public function index()
     {
-        return View('app.establishments.index');
+        return View('app.establishments.index', ['establishments'=>\App\Models\Company::getAll()]);
     }
 
     /**
@@ -21,7 +30,7 @@ class EstablishmentsController extends Controller
      */
     public function create()
     {
-        //
+        return View('app.establishments.edit');
     }
 
     /**
@@ -29,7 +38,40 @@ class EstablishmentsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        try {
+            DB:: beginTransaction();
+
+            $validator = Validator:: make ($request->all(),[
+                'name' =>['required', 'string', 'max:255'],]);
+            if ($validator->fails()) {
+                return response()->json([
+                'message' => implode("\n", $validator->errors()->all()),
+                ], 422);
+            }
+            Company::create([
+                'name' => $request->name,
+                'document' => $request->document,
+                'time_value' => $request->value,
+                'observation' => $request->observation,
+                'chain_of_stores' => $request->category ?? "indefinido",
+            ]);
+            dd($request->all());
+
+            DB::commit();
+
+            return response()->json([
+                'title' => 'Sucesso!',
+                'message' => 'Estabelecimento cadastrado com sucesso!',
+                'type' => 'success'
+            ], 201);
+
+        } catch(Exception $exception){
+            DB::rollBack();
+            return response()->json([
+                'title'=>'Erro na validação',
+                'message'=>$exception->getMessage(),
+                'type' => 'error'],status: 500);
+        }
     }
 
     /**
@@ -45,7 +87,8 @@ class EstablishmentsController extends Controller
      */
     public function edit(string $id)
     {
-        //
+       // return View('app.establishments.edit', ['establishments' => Company::getActive());
+
     }
 
     /**
@@ -53,7 +96,45 @@ class EstablishmentsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        try {
+            DB::beginTransaction();
+
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+            ]);            
+        
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => implode("\n", $validator->errors()->all()),
+                ], 422);
+            }
+
+            $establishment = Company::findOrFail($id);
+            $establishment->update([
+                'name' => $request->name,
+                'document' => $request->document,
+                'time_value' => $request->time_value,
+                'observation' => $request->observation,
+            ]);
+
+            DB::commit();
+
+            return response()->json([
+                'title' => 'Sucesso!',
+                'message' => 'Colaborador cadastrado com sucesso!',
+                'type' => 'success'
+            ], 201);
+
+        } catch(Exception $exception) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'title' => 'Erro na validação',
+                'message' => $exception->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
     }
 
     /**
