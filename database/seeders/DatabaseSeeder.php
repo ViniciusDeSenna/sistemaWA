@@ -13,12 +13,14 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-         //User::factory(10)->create();
+        // User::factory(10)->create();
 
-        // User::factory()->create([
-        //     'name' => 'Developer',
-        //     'email' => 'dev@dev.com',
-        // ]);
+        if (!User::findByEmail('dev@dev.com')->exists()) {
+            User::factory()->create([
+                'name' => 'Developer',
+                'email' => 'dev@dev.com',
+            ]);
+        }
 
         $this->call([
             PermissionsSeeder::class,

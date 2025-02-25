@@ -51,4 +51,9 @@ class User extends Authenticatable
     {
         return self::query()->where('active', '=', true)->get();
     }
+
+    public static function findByEmail($email)
+    {
+        return self::query()->where('email', '=', $email);
+    }
 }
