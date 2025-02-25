@@ -22,7 +22,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('collaborators', function (Blueprint $table) {
-            $table->boolean('active')->after('observation')->default(true);
+            $table->dropColumn('active');
         });
     }
 };
