@@ -53,7 +53,8 @@ class EstablishmentsController extends Controller
                 'document' => $request->document,
                 'time_value' => $request->value,
                 'observation' => $request->observation,
-                'chain_of_stores' => $request->category ?? "indefinido",
+                'chain_of_stores' => $request->observation,
+                'category' => $request->observation,
             ]);
 
             DB::commit();

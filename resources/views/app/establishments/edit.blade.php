@@ -20,7 +20,7 @@
                 </div>
                 <div class="mb-3">
                         <label class="form-label" for="basic-default-text">Rede Pertencente</label>
-                        <textarea id="basic-default-text" class="form-control" placeholder="Nome da Rede" name="category">{!! $establishment?->chain_of_stores ?? '' !!}</textarea>
+                        <textarea id="basic-default-message" class="form-control" placeholder="Nome da Rede" name="category">{!! $establishment?->chain_of_stores ?? '' !!}</textarea>
                 </div>
                 <div class="mb-3">
                     <label class="form-label" for="basic-default-message">Observação</label>
