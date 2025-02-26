@@ -40,6 +40,7 @@
 
 <script>
     function post() {
+
         $.ajax({
             url: '{{ route('collaborators.store') }}',
             type: 'POST',

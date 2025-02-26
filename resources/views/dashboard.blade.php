@@ -7,7 +7,7 @@
                 <div class="col-sm-7">
                     <div class="card-body">
                       <h5 class="card-title text-primary">
-                        Seja bem-vindo {{ Auth::user()?->name ?? 'Desconhecido' }}! 🎉
+                        Seja bem-vindo {{ Auth::user()?->name ?? 'Visitante' }}! 🎉
                       </h5>
                     </div>
                   </div>
@@ -37,7 +37,7 @@
               </a>
             </div>
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
-              <a class="card-body" href="javascript:void(0)">
+              <a class="card-body" href="{{ route('establishments.index') }}">
                 <i class="bx bx-collection mb-2"></i>
                 <p class="icon-name text-capitalize text-truncate mb-0">Estabelecimentos</p>
               </a>

@@ -11,14 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('Companies', function($table){
+        Schema::create('establishment', function($table){
             $table->id();
             $table->string('name');
             $table->string('document');
             $table->float('time_value');
-            $table->string('category')->default('indefinido');
-            $table->string('chain_of_stores')->default('indefinido');
-            $table->string('observation');
+            $table->string('category');
+            $table->string('chain_of_stores');
             $table->timestamps();
         });
     }
@@ -28,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('Companies');
+        Schema::dropIfExists('establishment');
     }
 };
