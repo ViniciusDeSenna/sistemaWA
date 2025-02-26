@@ -55,7 +55,6 @@ class EstablishmentsController extends Controller
                 'observation' => $request->observation,
                 'chain_of_stores' => $request->category ?? "indefinido",
             ]);
-            dd($request->all());
 
             DB::commit();
 
