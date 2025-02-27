@@ -43,6 +43,15 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [EstablishmentsController::class, 'destroy'])->name('establishments.destroy')->middleware('permission:Deletar estabelecimentos');
     });
 
+    Route::prefix('jobs')->group(function () {
+        Route::get('/', [EstablishmentsController::class, 'index'])->name('jobs.index')->middleware('permission:Lista de estabelecimentos');
+        Route::get('/create', [EstablishmentsController::class, 'create'])->name('jobs.create')->middleware('permission:Formulário de criação dos estabelecimentos');
+        Route::post('/', [EstablishmentsController::class, 'store'])->name('jobs.store')->middleware('permission:Salvar estabelecimentos');
+        Route::get('/{id}/edit', [EstablishmentsController::class, 'edit'])->name('jobs.edit')->middleware('permission:Formulário de edição dos estabelecimentos');
+        Route::put('/{id}', [EstablishmentsController::class, 'update'])->name('jobs.update')->middleware('permission:Atualizar estabelecimentos');
+        Route::delete('/{id}', [EstablishmentsController::class, 'destroy'])->name('jobs.destroy')->middleware('permission:Deletar estabelecimentos');
+    });
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

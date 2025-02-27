@@ -12,6 +12,8 @@ class Company extends Model
         'document',
         'observation',
         'time_value',
+        'category',
+        'chain_of_stores',
     ];
     public static function getAll()
     {

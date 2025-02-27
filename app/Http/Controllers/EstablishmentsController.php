@@ -53,8 +53,7 @@ class EstablishmentsController extends Controller
                 'document' => $request->document,
                 'time_value' => $request->value,
                 'observation' => $request->observation,
-                'chain_of_stores' => $request->observation,
-                'category' => $request->observation,
+                'chain_of_stores' => $request->category,
             ]);
 
             DB::commit();
@@ -87,7 +86,7 @@ class EstablishmentsController extends Controller
      */
     public function edit(string $id)
     {
-       // return View('app.establishments.edit', ['establishments' => Company::getActive());
+       return View('app.establishments.edit', ['establishment' => Company::find($id)]);
 
     }
 
@@ -113,7 +112,8 @@ class EstablishmentsController extends Controller
             $establishment->update([
                 'name' => $request->name,
                 'document' => $request->document,
-                'time_value' => $request->time_value,
+                'time_value' => $request->value,
+                'chain_of_stores' => $request->category,
                 'observation' => $request->observation,
             ]);
 
@@ -142,6 +142,32 @@ class EstablishmentsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        
+        try {
+
+            DB::beginTransaction();
+
+            $establishment = Company::find($id);
+            $establishment->active = false;
+            $establishment->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Estabelecimento removido com sucesso!',
+                'data' => $establishment
+            ], 201);
+
+        } catch(Exception $exception) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'title' => 'Erro na ação',
+                'message' => $exception->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
+
     }
 }
