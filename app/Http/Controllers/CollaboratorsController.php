@@ -8,6 +8,7 @@ use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Yajra\DataTables\Facades\DataTables;
 
 class CollaboratorsController extends Controller
 {
@@ -25,6 +26,31 @@ class CollaboratorsController extends Controller
     public function create()
     {
         return View('app.collaborators.edit');
+    }
+
+    public function table(Request $request){
+        $collaborators = Collaborator::query()
+            ->where('active', '=', true)
+            ->orderBy('name');
+        
+        return DataTables::of($collaborators)
+            ->addColumn('name', function ($collaborator) {
+                return $collaborator->name;
+            })
+            ->addColumn('actions', function ($collaborator) {
+                return '
+                    <div class="demo-inline-spacing">
+                        <a type="button" class="btn btn-icon btn-primary" href="'. route('collaborators.edit', [$collaborator->id]) . '">
+                            <span class="tf-icons bx bx-pencil"></span>
+                        </a>
+                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $collaborator->id . ')">
+                            <span class="tf-icons bx bx-trash"></span>
+                        </a>
+                    </div>
+                ';
+            })
+            ->rawColumns(['actions']) // Permite renderizar HTML no DataTables
+            ->make(true);
     }
 
     /**

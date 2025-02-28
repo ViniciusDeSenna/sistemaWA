@@ -6,41 +6,16 @@
         </div>
 
         <!-- Basic Bootstrap Table -->
-        <div class="card">
+        <div class="card pb-3">
             <h5 class="card-header">Colaboradores</h5>
             <div class="table-responsive text-nowrap">
-                <table class="table">
-                <thead>
-                    <tr>
-                    <th>Colaboradores</th>
-                    <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="table-border-bottom-0">
-                    @foreach($collaborators as $collaborator)
+                <table id="table-collaborators" class="table">
+                    <thead>
                         <tr>
-                            <td>
-                                <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ $collaborator->name }}</strong>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-
-                                    <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('collaborators.edit', [$collaborator->id]) }}"
-                                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                                    >
-                                    <button class="dropdown-item" href="javascript:void(0);" type="button" onclick="remove({{ $collaborator->id }})"
-                                        ><i class="bx bx-trash me-1"></i> Delete</button
-                                    >
-                                    </div>
-                                </div>
-                            </td>
+                            <th>Nome</th>
+                            <th>Ações</th>
                         </tr>
-                    @endforeach
-                </tbody>
+                    </thead>
                 </table>
             </div>
         </div>
@@ -50,6 +25,27 @@
 </x-app-layout>
 
 <script>
+    $(document).ready(function() {
+        $('#table-collaborators').DataTable({
+            processing: true,
+            serverSide: false,
+            pagingType: 'simple',
+            responsive: true,
+            rowReorder: {
+                selector: 'td:nth-child(2)',
+                update: true
+            },
+            ajax: '{{ route('collaborators.table') }}',
+            columns: [
+                { data: 'name', name: 'name' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            ],
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/pt-BR.json',
+            },
+        });
+    });
+
     function remove(id) {
         Swal.fire({
             title: 'Você tem certeza?',
