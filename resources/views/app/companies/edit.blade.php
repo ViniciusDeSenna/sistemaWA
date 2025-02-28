@@ -49,7 +49,7 @@
     function post() {
 
         $.ajax({
-            url: '{{ route('establishments.store') }}',
+            url: '{{ route('companies.store') }}',
             type: 'POST',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
@@ -79,7 +79,7 @@
 
     function update(id) {
         $.ajax({
-            url: "{{ route('establishments.update', '') }}" + '/' + id,
+            url: "{{ route('companies.update', '') }}" + '/' + id,
             type: 'PUT',
             headers: {
                 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')

@@ -1,7 +1,7 @@
 <x-app-layout>
     
     <div class="mb-3">
-        <a href="{{ route('establishments.create') }}" class="btn btn-outline-primary w-100">Cadastrar Estabelecimento</a>
+        <a href="{{ route('companies.create') }}" class="btn btn-outline-primary w-100">Cadastrar Estabelecimento</a>
     </div>
 
     <div class="card">
@@ -15,7 +15,7 @@
                     </tr>
                 </thead>
                 <tbody class="table-border-bottom-0">
-                    @foreach ($establishments as $establishment)
+                    @foreach ($companies as $establishment)
                         <tr>
                             <td>
                                 <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ $establishment->name }}</strong>
@@ -27,7 +27,7 @@
                                     </button>
                                     
                                     <div class="dropdown-menu">
-                                        <a class="dropdown-item" href="{{ route('establishments.edit', [$establishment->id]) }}">
+                                        <a class="dropdown-item" href="{{ route('companies.edit', [$establishment->id]) }}">
                                             <i class="bx bx-edit-alt me-1"></i> Edit</a>
                                     
                                     <button class="dropdown-item" href="javascript:void(0);" type="button" onclick="remove({{ $establishment->id }})">
@@ -59,7 +59,7 @@
         }).then((result) => { 
             if (result.isConfirmed){
                 $.ajax({
-                    url: "{{ route("establishments.destroy", '') }}" + '/' + id,
+                    url: "{{ route("companies.destroy", '') }}" + '/' + id,
                     type: "DELETE",
                     headers: {
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
