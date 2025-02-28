@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
+use Yajra\DataTables\Facades\DataTables;
 
 class CompanyController extends Controller
 {
@@ -16,7 +17,35 @@ class CompanyController extends Controller
      */
     public function index()
     {
-        return View('app.companies.index', ['companies'=>\App\Models\Company::getAll()]);
+        return View('app.companies.index');
+    }
+
+    public function table(Request $request){
+        $companies = Company::query()
+            ->where('active', '=', true)
+            ->orderBy('name');
+        
+        return DataTables::of($companies)
+            ->addColumn('name', function ($company) {
+                return $company->name;
+            })
+            ->addColumn('document', function ($company) {
+                return $company->document;
+            })
+            ->addColumn('actions', function ($company) {
+                return '
+                    <div class="demo-inline-spacing">
+                        <a type="button" class="btn btn-icon btn-primary" href="'. route('companies.edit', [$company->id]) . '">
+                            <span class="tf-icons bx bx-pencil"></span>
+                        </a>
+                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $company->id . ')">
+                            <span class="tf-icons bx bx-trash"></span>
+                        </a>
+                    </div>
+                ';
+            })
+            ->rawColumns(['actions']) // Permite renderizar HTML no DataTables
+            ->make(true);
     }
 
     /**
