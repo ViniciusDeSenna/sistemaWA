@@ -5,50 +5,47 @@
             <a href="{{ route('users.create') }}" class="btn btn-outline-primary w-100">Cadastrar Usuário</a>
         </div>
 
-        <!-- Basic Bootstrap Table -->
-        <div class="card">
+        <div class="card pb-3">
             <h5 class="card-header">Usuários</h5>
             <div class="table-responsive text-nowrap">
-                <table class="table">
-                <thead>
-                    <tr>
-                    <th>Usuários</th>
-                    <th>Ações</th>
-                    </tr>
-                </thead>
-                <tbody class="table-border-bottom-0">
-                    @foreach($users as $user)
+                <table id="table-users" class="table" style="width:100%">
+                    <thead>
                         <tr>
-                            <td>
-                                <i class="fab fa-angular fa-lg text-danger me-3"></i> <strong>{{ $user->name }}</strong>
-                            </td>
-                            <td>
-                                <div class="dropdown">
-                                    <button type="button" class="btn p-0 dropdown-toggle hide-arrow" data-bs-toggle="dropdown">
-                                    <i class="bx bx-dots-vertical-rounded"></i>
-                                    </button>
-                                    <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ route('users.edit', [$user->id]) }}"
-                                        ><i class="bx bx-edit-alt me-1"></i> Edit</a
-                                    >
-                                    <button class="dropdown-item" href="javascript:void(0);" type="button" onclick="remove({{ $user->id }})"
-                                        ><i class="bx bx-trash me-1"></i> Delete</button
-                                    >
-                                    </div>
-                                </div>
-                            </td>
+                            <th>Nome</th>
+                            <th>E-mail</th>
+                            <th>Ações</th>
                         </tr>
-                    @endforeach
-                </tbody>
+                    </thead>
                 </table>
             </div>
         </div>
-        <!--/ Basic Bootstrap Table -->
         
     </div>
 </x-app-layout>
 
 <script>
+    $(document).ready(function() {
+        $('#table-users').DataTable({
+            processing: true,
+            serverSide: false,
+            pagingType: 'simple',
+            responsive: true,
+            rowReorder: {
+                selector: 'td:nth-child(2)',
+                update: true
+            },
+            ajax: '{{ route('users.table') }}',
+            columns: [
+                { data: 'name', name: 'name' },
+                { data: 'email', name: 'email' },
+                { data: 'actions', name: 'actions', orderable: false, searchable: false }
+            ],
+            language: {
+                url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/pt-BR.json',
+            },
+        });
+    });
+
     function remove(id) {
         Swal.fire({
             title: 'Você tem certeza?',

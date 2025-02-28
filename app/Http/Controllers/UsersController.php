@@ -13,11 +13,37 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Validation\Rule;
+use Yajra\DataTables\Facades\DataTables;
 
 class UsersController extends Controller
 {
     public function index(){
-        return View('app.users.index', ['users' => User::getActive()]);
+        return View('app.users.index');
+    }
+
+    public function table(Request $request){
+        $users = User::query()
+            ->where('active', '=', true)
+            ->orderBy('name');
+        
+        return DataTables::of($users)
+            ->addColumn('name', function ($user) {
+                return $user->name;
+            })
+            ->addColumn('actions', function ($user) {
+                return '
+                    <div class="demo-inline-spacing">
+                        <a type="button" class="btn btn-icon btn-primary" href="'. route('users.edit', [$user->id]) . '">
+                            <span class="tf-icons bx bx-pencil"></span>
+                        </a>
+                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $user->id . ')">
+                            <span class="tf-icons bx bx-trash"></span>
+                        </a>
+                    </div>
+                ';
+            })
+            ->rawColumns(['actions']) // Permite renderizar HTML no DataTables
+            ->make(true);
     }
 
     public function create(){

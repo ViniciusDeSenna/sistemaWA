@@ -8,7 +8,7 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="{{asset('thema/assets/img/favicon/favicon.ico')}}" />
+    <link rel="icon" type="image/x-icon" href="{{asset('img/favicon.ico')}}" />
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -50,8 +50,8 @@
           <div class="card">
             <div class="card-body">
 
-              <h4 class="mb-2">Welcome to Sneat! 👋</h4>
-              <p class="mb-4">Please sign-in to your account and start the adventure</p>
+              <h4 class="mb-2">Bem-vindo ao sistema WA! 👋</h4>
+              <p class="mb-4">Acesse o sistema para iniciar.</p>
 
               <form method="POST" action="{{ route('login') }}">
                 @csrf
