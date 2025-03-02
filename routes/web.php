@@ -4,6 +4,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CollaboratorsController;
 use App\Http\Controllers\CompanyController;
+use App\Http\Controllers\JobsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -49,6 +50,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/edit', [CompanyController::class, 'edit'])->name('jobs.edit')->middleware('permission:Formulário de edição dos estabelecimentos');
         Route::put('/{id}', [CompanyController::class, 'update'])->name('jobs.update')->middleware('permission:Atualizar estabelecimentos');
         Route::delete('/{id}', [CompanyController::class, 'destroy'])->name('jobs.destroy')->middleware('permission:Deletar estabelecimentos');
+        Route::get('/relatorio', [JobsController::class, 'makePDF'])->name('jobs.makePDF');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
