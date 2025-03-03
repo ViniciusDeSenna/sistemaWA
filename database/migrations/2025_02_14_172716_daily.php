@@ -11,19 +11,24 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('diarias', function($table){
+        Schema::create('daily_rate', function($table){
             $table->id();
             $table->foreignId('collaborator_id');
             $table->foreign('collaborator_id')->references('id')->on('collaborators');
             $table->foreignId('company_id');
             $table->foreign('company_id')->references('id')->on('companies');
-
             $table->string('category');
             $table->date('date');
             $table->timestamp('start');
             $table->timestamp('end');
             $table->time('total_time');
-            $table->float('classification');
+            $table->float('hourly_rate');
+            $table->float('costs');
+            $table->text('costs_description');
+            $table->float('addition');
+            $table->text('addition_description');
+            $table->float('total');
+            $table->string('pix-key');
             $table->text('observation');
             $table->timestamps();
         });
@@ -34,6 +39,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('daily');
+        Schema::dropIfExists('daily_rate');
     }
 };

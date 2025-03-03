@@ -5,20 +5,18 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use App\Models\Company;
-use App\Models\Diaria;
-use App\Models\Establishment;
+use App\Models\DailyRate;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
-use View;
 
-class JobsController extends Controller
+class DailyRateController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return View::make('app.jobs.index', ['diarias'=>Diaria::getActive()]);
+        return View('app.daily-rate.index');
     }
 
     /**
@@ -26,7 +24,10 @@ class JobsController extends Controller
      */
     public function create()
     {
-        return View::make('app.jobs.edit', ['establishments'=>Company::getActive(),'colaborators'=>Collaborator::getActive()]);
+        return View('app.daily-rate.edit', [
+            'collaborators' => Collaborator::getActive(),
+            'companies' => Company::getActive()
+        ]);
     }
 
     /**

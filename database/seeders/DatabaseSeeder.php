@@ -23,7 +23,7 @@ class DatabaseSeeder extends Seeder
             ]);
         }
         
-        User::factory(count: 1)->create();
+        // User::factory(count: 1)->create();
         
         $this->call([
             PermissionsSeeder::class,

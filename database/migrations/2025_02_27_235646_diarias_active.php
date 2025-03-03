@@ -8,7 +8,7 @@ return new class extends Migration
 {
     public function up(): void
     {
-        Schema::table('diarias', function (Blueprint $table) {
+        Schema::table('daily_rate', function (Blueprint $table) {
             $table->boolean('active')->after('observation')->default(true);
         });
     }
@@ -18,7 +18,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('diarias', function (Blueprint $table) {
+        Schema::table('daily_rate', function (Blueprint $table) {
             $table->boolean('active');
         });
     }

@@ -49,7 +49,7 @@
               </a>
             </div>
             <div class="card icon-card cursor-pointer text-center mb-4 mx-2">
-              <a class="card-body" href="{{ route('jobs.index') }}">
+              <a class="card-body" href="{{ route('daily-rate.index') }}">
                 <i class="bx bx-collection mb-2"></i>
                 <p class="icon-name text-capitalize text-truncate mb-0">Diarias</p>
               </a>

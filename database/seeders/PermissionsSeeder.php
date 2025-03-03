@@ -35,12 +35,12 @@ class PermissionsSeeder extends Seeder
         Permission::findOrCreate('Atualizar estabelecimentos');
         Permission::findOrCreate('Deletar estabelecimentos');
 
-        Permission::findOrCreate('Lista de diarias');
-        Permission::findOrCreate('Formulário de criação dos diarias');
-        Permission::findOrCreate('Salvar diarias');
-        Permission::findOrCreate('Formulário de edição dos diarias');
-        Permission::findOrCreate('Atualizar diarias');
-        Permission::findOrCreate('Deletar diarias');
+        Permission::findOrCreate('Lista de diárias');
+        Permission::findOrCreate('Formulário de criação dos diárias');
+        Permission::findOrCreate('Salvar diárias');
+        Permission::findOrCreate('Formulário de edição dos diárias');
+        Permission::findOrCreate('Atualizar diárias');
+        Permission::findOrCreate('Deletar diárias');
 
         $user = User::where('id', '=', env('DEV_USER_ID'))->first();
         $user->givePermissionTo(Permission::all());

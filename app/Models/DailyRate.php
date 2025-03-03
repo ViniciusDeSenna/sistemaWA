@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Diaria extends Model
+class DailyRate extends Model
 {
     protected $fillable = [
         'colaborator_id',

@@ -73,25 +73,25 @@
             <li class="menu-header small text-uppercase"><span class="menu-header-text">Administração</span></li>
           
             <li class="menu-item">
-                <a href="cards-basic.html" class="menu-link">
+                <a href="{{ route('users.index') }}" class="menu-link">
                   <i class="menu-icon tf-icons bx bx-collection"></i>
                   <div data-i18n="Basic">Usuários</div>
                 </a>
               </li>
             <li class="menu-item">
-              <a href="cards-basic.html" class="menu-link">
+              <a href="{{ route('companies.index') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-collection"></i>
                 <div data-i18n="Basic">Estabelecimentos</div>
               </a>
             </li>
             <li class="menu-item">
-                <a href="cards-basic.html" class="menu-link">
+                <a href="{{ route('collaborators.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-collection"></i>
                     <div data-i18n="Basic">Colaboradores</div>
                 </a>
             </li>
             <li class="menu-item">
-                <a href="cards-basic.html" class="menu-link">
+                <a href="{{ route('daily-rate.index') }}" class="menu-link">
                     <i class="menu-icon tf-icons bx bx-collection"></i>
                     <div data-i18n="Basic">Diarias</div>
                 </a>

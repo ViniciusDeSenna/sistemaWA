@@ -190,4 +190,14 @@ class CompanyController extends Controller
             ], 500);
         }
     }
+
+    public function getHourlyRate($id) 
+    {
+        try {
+            $company = Company::query()->where('id', '=', $id)->first();
+            return $company->time_value;
+        } catch (Exception $exception) {
+            return 0;
+        }
+    }
 }
