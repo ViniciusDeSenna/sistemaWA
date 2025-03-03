@@ -15,4 +15,10 @@ class Diaria extends Model
         'total_time',
         'classification',
     ];
+
+    public static function getActive()
+    {
+        return self::query()->where('active', '=', true)->get();
+    }
+
 }

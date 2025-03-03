@@ -21,7 +21,7 @@ class Company extends Model
     }
     public static function getActive()
     {
-        //eturn self::all();
+        return self::query()->where('active', '=', true)->get();
 
     }
 }

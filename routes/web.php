@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\JobsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CollaboratorsController;
@@ -44,13 +45,12 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::prefix('jobs')->group(function () {
-        Route::get('/', [CompanyController::class, 'index'])->name('jobs.index')->middleware('permission:Lista de estabelecimentos');
-        Route::get('/create', [CompanyController::class, 'create'])->name('jobs.create')->middleware('permission:Formulário de criação dos estabelecimentos');
-        Route::post('/', [CompanyController::class, 'store'])->name('jobs.store')->middleware('permission:Salvar estabelecimentos');
-        Route::get('/{id}/edit', [CompanyController::class, 'edit'])->name('jobs.edit')->middleware('permission:Formulário de edição dos estabelecimentos');
-        Route::put('/{id}', [CompanyController::class, 'update'])->name('jobs.update')->middleware('permission:Atualizar estabelecimentos');
-        Route::delete('/{id}', [CompanyController::class, 'destroy'])->name('jobs.destroy')->middleware('permission:Deletar estabelecimentos');
-        Route::get('/relatorio', [JobsController::class, 'makePDF'])->name('jobs.makePDF');
+        Route::get('/', [JobsController::class, 'index'])->name('jobs.index')->middleware('permission:Lista de estabelecimentos');
+        Route::get('/create', [JobsController::class, 'create'])->name('jobs.create')->middleware('permission:Formulário de criação dos estabelecimentos');
+        Route::post('/', [JobsController::class, 'store'])->name('jobs.store')->middleware('permission:Salvar estabelecimentos');
+        Route::get('/{id}/edit', [JobsController::class, 'edit'])->name('jobs.edit')->middleware('permission:Formulário de edição dos estabelecimentos');
+        Route::put('/{id}', [JobsController::class, 'update'])->name('jobs.update')->middleware('permission:Atualizar estabelecimentos');
+        Route::delete('/{id}', [JobsController::class, 'destroy'])->name('jobs.destroy')->middleware('permission:Deletar estabelecimentos');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

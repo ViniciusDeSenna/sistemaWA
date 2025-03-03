@@ -11,13 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('daily', function($table){
+        Schema::create('diarias', function($table){
             $table->id();
             $table->foreignId('collaborator_id');
             $table->foreign('collaborator_id')->references('id')->on('collaborators');
             $table->foreignId('company_id');
-            $table->foreign('company_id')->references('id')->on('collaborators');
+            $table->foreign('company_id')->references('id')->on('companies');
+
             $table->string('category');
+            $table->date('date');
             $table->timestamp('start');
             $table->timestamp('end');
             $table->time('total_time');
@@ -32,6 +34,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('daily');
     }
 };

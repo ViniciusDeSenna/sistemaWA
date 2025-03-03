@@ -3,8 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Collaborator;
+use App\Models\Company;
+use App\Models\Diaria;
+use App\Models\Establishment;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
+use View;
 
 class JobsController extends Controller
 {
@@ -13,7 +18,7 @@ class JobsController extends Controller
      */
     public function index()
     {
-        //
+        return View::make('app.jobs.index', ['diarias'=>Diaria::getActive()]);
     }
 
     /**
@@ -21,7 +26,7 @@ class JobsController extends Controller
      */
     public function create()
     {
-        //
+        return View::make('app.jobs.edit', ['establishments'=>Company::getActive(),'colaborators'=>Collaborator::getActive()]);
     }
 
     /**
