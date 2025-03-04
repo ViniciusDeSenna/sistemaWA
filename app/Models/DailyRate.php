@@ -6,6 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class DailyRate extends Model
 {
+    protected $table = 'daily-rate';
+    
     protected $fillable = [
         'colaborator_id',
         'company_id',

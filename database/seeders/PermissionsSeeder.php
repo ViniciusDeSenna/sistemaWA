@@ -42,6 +42,8 @@ class PermissionsSeeder extends Seeder
         Permission::findOrCreate('Atualizar diárias');
         Permission::findOrCreate('Deletar diárias');
 
+        Permission::findOrCreate('Visualizar e inserir informações financeiras nas diárias');
+
         $user = User::where('id', '=', env('DEV_USER_ID'))->first();
         $user->givePermissionTo(Permission::all());
     }

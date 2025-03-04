@@ -45,38 +45,42 @@
                 
                     <div class="mb-3">
                         <label class="form-label" for="worked-hours">Quantidade de Horas Trabalhadas</label>
-                        <input type="text" class="form-control" id="worked-hours" name="total_time" data-mask="00:00" readonly required>
+                        <input type="text" class="form-control money" id="worked-hours" name="total_time" data-mask="00:00" readonly required>
                     </div>
                 
-                    <div class="mb-3">
-                        <label class="form-label" for="hourly-rate">Valor por Hora</label>
-                        <input type="number" class="form-control" id="hourly-rate" name="hourly_rate" required>
-                    </div>
+                    @can('Visualizar e inserir informações financeiras nas diárias')
+                        <div class="mb-3">
+                            <label class="form-label" for="hourly-rate">Valor por Hora</label>
+                            <input type="number" class="form-control money" id="hourly-rate" name="hourly_rate" required>
+                        </div>
+                    @endcan
 
-                    <div class="mb-3">
-                        <label class="form-label" for="hourly-rate">Gastos</label>
-                        <input type="number" class="form-control" id="costs" name="costs" required>
-                    </div>
+                    @can('Visualizar e inserir informações financeiras nas diárias')
+                        <div class="mb-3">
+                            <label class="form-label" for="hourly-rate">Gastos</label>
+                            <input type="number" class="form-control money" id="costs" name="costs" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="costs-description">Descrição dos Gastos</label>
-                        <textarea class="form-control" id="costs-description" name="costs-description" rows="4"></textarea>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="costs-description">Descrição dos Gastos</label>
+                            <textarea class="form-control" id="costs-description" name="costs-description" rows="4"></textarea>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="hourly-rate">Acréscimos</label>
-                        <input type="number" class="form-control" id="addition" name="addition" required>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="hourly-rate">Acréscimos</label>
+                            <input type="number" class="form-control money" id="addition" name="addition" required>
+                        </div>
 
-                    <div class="mb-3">
-                        <label class="form-label" for="addition-description">Descrição dos Acréscimos</label>
-                        <textarea class="form-control" id="addition-description" name="addition-description" rows="4"></textarea>
-                    </div>
-                
-                    <div class="mb-3">
-                        <label class="form-label" for="total-value">Valor Total</label>
-                        <input type="number" class="form-control" id="total-value" name="total_value" readonly required>
-                    </div>
+                        <div class="mb-3">
+                            <label class="form-label" for="addition-description">Descrição dos Acréscimos</label>
+                            <textarea class="form-control" id="addition-description" name="addition-description" rows="4"></textarea>
+                        </div>
+                    
+                        <div class="mb-3">
+                            <label class="form-label" for="total-value">Valor Total</label>
+                            <input type="number" class="form-control money" id="total-value" name="total_value" readonly required>
+                        </div>
+                    @endcan
                 
                     <div class="mb-3">
                         <label class="form-label" for="pix-key">Chave Pix para pagamento</label>
@@ -102,7 +106,7 @@
 
 <script>
     function getHourlyRate() {
-        let value = Number($('#hourly-rate').val());
+        let value = Number($('#hourly-rate').val().replace('.', '').replace(',', '.'));
 
         if (value === 0) {
 
@@ -172,7 +176,7 @@
         // soma o resto com acrescimos - gastos para descobrir quanto que a impresa vai receber
         let addition = Number($('#form-hourly-rate input[name="addition"]').val());
         let costs = Number($('#form-hourly-rate input[name="costs"]').val());
-
+        
         let total = ((hourlyRate * workedHourly) + addition) - costs;
 
         //informa o valor no total
