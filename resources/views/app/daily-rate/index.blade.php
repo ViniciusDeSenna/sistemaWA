@@ -4,6 +4,70 @@
             <a href="{{ route('daily-rate.create') }}" class="btn btn-outline-primary w-100">Registrar Diária</a>
         </div>
 
+        <div class="card accordion-item mb-3">
+            <h2 class="accordion-header" id="headingTwo">
+              <button
+                type="button"
+                class="accordion-button collapsed"
+                data-bs-toggle="collapse"
+                data-bs-target="#accordion-hourly-rate"
+                aria-expanded="false"
+                aria-controls="accordion-hourly-rate"
+              >
+                Filtro
+              </button>
+            </h2>
+            <div
+              id="accordion-hourly-rate"
+              class="accordion-collapse collapse"
+              aria-labelledby="headingTwo"
+              data-bs-parent="#accordionExample"
+            >
+              <div class="accordion-body">
+                <form id="form-hourly-rate-filter">
+
+                    <div class="mb-3">
+                        <label class="form-label" for="collaborator_id">Colaborador</label>
+                        <select class="form-control" id="collaborator_id" name="collaborator_id">
+                            <option value="" disabled selected>Selecione um colaborador</option>
+                            <option value="">Todos</option>
+                            @foreach ($collaborators as $colaborator)
+                                <option value="{{ $colaborator->id }}">{{ $colaborator->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                
+                    <div class="mb-3">
+                        <label class="form-label" for="company_id">Empresa</label>
+                        <select class="form-control" id="company_id" name="company_id">
+                            <option value="" disabled selected>Selecione uma empresa</option>
+                            <option value="">Todos</option>
+                            @foreach ($companies as $company)
+                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                
+                    <div class="mb-3">
+                        <label class="form-label" for="start">Inicio</label>
+                        <input type="datetime-local" class="form-control" id="start" name="start" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="end">Fim</label>
+                        <input type="datetime-local" class="form-control" id="end" name="end" required>
+                    </div>
+
+                    <div class="card-footer d-flex justify-content-end align-items-center">
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="reloadDataTable()">Salvar</button>
+                        </div>
+                    </div> 
+                </form>
+              </div>
+            </div>
+          </div>
+
         <div class="card pb-3">
             <h5 class="card-header">Diárias</h5>
             <div class="table-responsive text-nowrap">
@@ -40,7 +104,15 @@
                 selector: 'td:nth-child(2)',
                 update: true
             },
-            ajax: '{{ route('daily-rate.table') }}',
+            ajax: {
+                url: '{{ route('daily-rate.table') }}',
+                data: function(d) {
+                    d.collaborator_id = $('#collaborator_id').val();
+                    d.company_id = $('#company_id').val();
+                    d.start = $('#start').val();
+                    d.end = $('#end').val();
+                }
+            },
             columns: [
                 { data: 'collaborators_name', name: 'collaborators_name' },
                 { data: 'companies_name', name: 'companies_name' },
@@ -57,5 +129,58 @@
                 url: 'https://cdn.datatables.net/plug-ins/2.2.2/i18n/pt-BR.json',
             },
         });
+
+        $('#collaborator_id').select2({
+            theme: 'bootstrap-5'
+        });
+
+        $('#company_id').select2({
+            theme: 'bootstrap-5'
+        });
     });
+
+    function reloadDataTable() {
+        $('#table-daily-rate').DataTable().ajax.reload();
+    }
+
+    function remove(id){
+        Swal.fire({
+            title: 'Você tem certeza?',
+            text: "Esta ação não pode ser desfeita!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sim, remover!',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+        }).then((result) => { 
+            if (result.isConfirmed){
+                $.ajax({
+                    url: "{{ route("daily-rate.destroy", '') }}" + '/' + id,
+                    type: "DELETE",
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response){
+                        Swal.fire({
+                            title: response?.title ?? 'Sucesso!',
+                            text: response?.message ?? 'Sucesso na ação!',
+                            icon: response?.type ?? 'success'
+                        }).then((result) => {
+                            window.location.reload();
+                        });
+                    },
+                    error: function(response){
+                        response = JSON.parse(response.responseText);
+                        Swal.fire({
+                            title: response?.title ?? 'Oops!',
+                            html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!', // Substitui as quebras de linha por <br>
+                            icon: response?.type ?? 'error'    
+                        });
+                    }
+                });
+            }
+        });
+    }
 </script>

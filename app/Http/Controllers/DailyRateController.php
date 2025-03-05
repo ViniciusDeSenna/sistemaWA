@@ -12,6 +12,8 @@ use Exception;
 use Illuminate\Http\Request;
 use Mpdf\Mpdf;
 use Yajra\DataTables\Facades\DataTables;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class DailyRateController extends Controller
 {
@@ -20,10 +22,14 @@ class DailyRateController extends Controller
      */
     public function index()
     {
-        return View('app.daily-rate.index');
+        return View('app.daily-rate.index', [
+            'collaborators' => Collaborator::getActive(),
+            'companies' => Company::getActive()
+        ]);
     }
 
     public function table(Request $request) {
+        $user = Auth::user();
         $dailyRate = DailyRate::query()
             ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')
             ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
@@ -31,6 +37,8 @@ class DailyRateController extends Controller
             ->orderBy('daily_rate.created_at')
             ->select([
                 'daily_rate.id as daily_rate_id',
+                'daily_rate.collaborator_id as daily_rate_collaborator_id',
+                'daily_rate.company_id as daily_rate_company_id',
                 'collaborators.name as collaborators_name',
                 'companies.name as companies_name',
                 'daily_rate.start as daily_rate_start',
@@ -41,6 +49,24 @@ class DailyRateController extends Controller
                 'daily_rate.costs as daily_rate_costs',
                 'daily_rate.total as daily_rate_total',
             ]);
+
+            if ($request->collaborator_id) {
+                $dailyRate->where('daily_rate.collaborator_id', '=', $request->collaborator_id);
+            }
+            
+            if ($request->company_id) {
+                $dailyRate->where('daily_rate.company_id', '=', $request->company_id);
+            }
+            
+            if ($request->start) {
+                $dailyRate->where('daily_rate.start', '>=', $request->start)
+                          ->orWhere('daily_rate.end', '>=', $request->start);
+            }
+            
+            if ($request->end) {
+                $dailyRate->where('daily_rate.end', '<=', $request->end)
+                          ->orWhere('daily_rate.start', '<=', $request->end);
+            }
         
         return DataTables::of($dailyRate)
             ->addColumn('collaborators_name', function ($daily) {
@@ -66,17 +92,33 @@ class DailyRateController extends Controller
             ->addColumn('daily_rate_daily_total_time', function ($daily) {
                 return str_replace('.', ':', $daily->daily_rate_daily_total_time);
             })
-            ->addColumn('daily_rate_hourly_rate', function ($daily) {
-                return Money::format($daily->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.');
+            ->addColumn('daily_rate_hourly_rate', function ($daily) use ($user) {
+                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+                    return Money::format($daily->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.');
+                } else {
+                    return 'R$ --,--';
+                }
             })
-            ->addColumn('daily_rate_addition', function ($daily) {
-                return Money::format($daily->daily_rate_addition ?? '0', 'R$ ', 2, ',', '.');
+            ->addColumn('daily_rate_addition', function ($daily) use ($user) {
+                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+                    return Money::format($daily->daily_rate_addition ?? '0', 'R$ ', 2, ',', '.');
+                } else {
+                    return 'R$ --,--';
+                }
             })
-            ->addColumn('daily_rate_costs', function ($daily) {
-                return Money::format($daily->daily_rate_costs ?? '0', 'R$ ', 2, ',', '.');
+            ->addColumn('daily_rate_costs', function ($daily) use ($user) {
+                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+                    return Money::format($daily->daily_rate_costs ?? '0', 'R$ ', 2, ',', '.');
+                } else {
+                    return 'R$ --,--';
+                }
             })
-            ->addColumn('daily_rate_total', function ($daily) {
-                return Money::format($daily->daily_rate_total ?? '0', 'R$ ', 2, ',', '.');
+            ->addColumn('daily_rate_total', function ($daily) use ($user) {
+                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+                    return Money::format($daily->daily_rate_total ?? '0', 'R$ ', 2, ',', '.');
+                } else {
+                    return 'R$ --,--';
+                }
             })
             ->addColumn('actions', function ($daily) {
                 return '
@@ -112,6 +154,8 @@ class DailyRateController extends Controller
     {
         try {
 
+            DB::beginTransaction();
+
             $dailyRate = new DailyRate();
             $dailyRate->collaborator_id = $request->collaborator_id;
             $dailyRate->company_id = $request->company_id;
@@ -130,8 +174,13 @@ class DailyRateController extends Controller
             $dailyRate->observation = $request->observation;
             $dailyRate->save();
 
+            DB::commit();
+
             return response()->json(['type' => 'success', 'message' => 'Cadastro realizado com sucesso!'], 201);
         } catch (Exception $e) {
+
+            DB::rollBack();
+
             return response()->json(['type' => 'false', 'message' => $e->getMessage()], 500);
         }
     }
@@ -165,7 +214,30 @@ class DailyRateController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        try {
+
+            DB::beginTransaction();
+
+            $dailyRate = DailyRate::find($id);
+            $dailyRate->active = false;
+            $dailyRate->save();
+
+            DB::commit();
+
+            return response()->json([
+                'message' => 'Estabelecimento removido com sucesso!',
+            ], 201);
+
+        } catch(Exception $exception) {
+
+            DB::rollBack();
+
+            return response()->json([
+                'title' => 'Erro na ação',
+                'message' => $exception->getMessage(),
+                'type' => 'error'
+            ], 500);
+        }
     }
 
     public function makePDF() {
