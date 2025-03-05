@@ -1,6 +1,6 @@
 <x-app-layout>
     <div class="container">
-        <div class="md-3">
+        <div class="md-3 mb-3">
             <a href="{{ route('daily-rate.create') }}" class="btn btn-outline-primary w-100">Registrar Diária</a>
         </div>
 
@@ -12,9 +12,7 @@
                         <tr>
                             <th>Colaborador</th>
                             <th>Estabelecimento</th>
-                            <th>Data</th>
                             <th>Hora Início</th>
-                            <th>Hora Fim</th>
                             <th>Hora Fim</th>
                             <th>Horas Totais</th>
                             <th>Valor Hora</th>
@@ -46,10 +44,9 @@
             columns: [
                 { data: 'collaborators_name', name: 'collaborators_name' },
                 { data: 'companies_name', name: 'companies_name' },
-                { data: 'daily_rate_date', name: 'daily_rate_date' },
                 { data: 'daily_rate_start', name: 'daily_rate_start' },
                 { data: 'daily_rate_end', name: 'daily_rate_end' },
-                { data: 'daily_rate_total_time', name: 'daily_rate_total_time' },
+                { data: 'daily_rate_daily_total_time', name: 'daily_rate_daily_total_time' },
                 { data: 'daily_rate_hourly_rate', name: 'daily_rate_hourly_rate' },
                 { data: 'daily_rate_addition', name: 'daily_rate_addition' },
                 { data: 'daily_rate_costs', name: 'daily_rate_costs' },

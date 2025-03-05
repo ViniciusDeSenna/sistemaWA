@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('collaborators', function($table){
             $table->id();
             $table->string('name');
-            $table->string('document');
-            $table->text('observation');
+            $table->string('document')->nullable();
+            $table->text('observation')->nullable()     ;
             $table->timestamps();
         });
     }

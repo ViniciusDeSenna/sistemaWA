@@ -6,16 +6,26 @@ use Illuminate\Database\Eloquent\Model;
 
 class DailyRate extends Model
 {
-    protected $table = 'daily-rate';
+    protected $table = 'daily_rate';
     
     protected $fillable = [
-        'colaborator_id',
+        'id',
+        'collaborator_id',
         'company_id',
-        'category',
         'start',
+        'start_interval',
+        'end_interval',
         'end',
-        'total_time',
-        'classification',
+        'daily_total_time',
+        'hourly_rate',
+        'costs',
+        'costs_description',
+        'addition',
+        'addition_description',
+        'total',
+        'pix_key',
+        'observation',
+        'active',
     ];
 
     public static function getActive()

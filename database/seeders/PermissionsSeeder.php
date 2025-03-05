@@ -44,7 +44,7 @@ class PermissionsSeeder extends Seeder
 
         Permission::findOrCreate('Visualizar e inserir informações financeiras nas diárias');
 
-        $user = User::where('id', '=', env('DEV_USER_ID'))->first();
+        $user = User::where('id', '=', 1)->first();
         $user->givePermissionTo(Permission::all());
     }
 }

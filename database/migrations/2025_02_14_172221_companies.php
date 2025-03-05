@@ -14,11 +14,11 @@ return new class extends Migration
         Schema::create('companies', function($table){
             $table->id();
             $table->string('name');
-            $table->string('document');
-            $table->float('time_value');
-            $table->string('category')->default('indefinido');
-            $table->string('chain_of_stores')->default('indefinido');
-            $table->string('observation');
+            $table->string('document')->nullable();
+            $table->float('time_value')->nullable();
+            $table->string('category')->default('indefinido')->nullable();
+            $table->string('chain_of_stores')->default('indefinido')->nullable();
+            $table->string('observation')->nullable();
             $table->timestamps();
         });
     }

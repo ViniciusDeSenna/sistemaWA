@@ -19,7 +19,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('daily_rate', function (Blueprint $table) {
-            $table->boolean('active');
+            $table->dropColumn('active');
         });
     }
 };
