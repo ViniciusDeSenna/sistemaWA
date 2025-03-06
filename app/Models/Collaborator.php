@@ -14,6 +14,7 @@ class Collaborator extends Model
     protected $fillable = [
         'name',
         'document',
+        'pix_key',
         'observation',
     ];
 

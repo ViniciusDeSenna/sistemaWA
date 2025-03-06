@@ -36,9 +36,9 @@ class UsersController extends Controller
                         <a type="button" class="btn btn-icon btn-primary" href="'. route('users.edit', [$user->id]) . '">
                             <span class="tf-icons bx bx-pencil"></span>
                         </a>
-                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $user->id . ')">
+                        <button type="button" class="btn btn-icon btn-danger" onclick="remove(' . $user->id . ')">
                             <span class="tf-icons bx bx-trash"></span>
-                        </a>
+                        </button>
                     </div>
                 ';
             })
@@ -67,8 +67,22 @@ class UsersController extends Controller
                     Rule::unique(User::class)->where('active', true),
                 ],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            ]);            
-        
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+                
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.string' => 'O e-mail deve ser um texto válido.',
+                'email.lowercase' => 'O e-mail deve estar em letras minúsculas.',
+                'email.email' => 'O e-mail informado não é válido.',
+                'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
+                'email.unique' => 'Este e-mail já está em uso.',
+            
+                'password.required' => 'O campo senha é obrigatório.',
+                'password.confirmed' => 'A confirmação da senha não confere.',
+            ]);
+            
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
@@ -123,10 +137,25 @@ class UsersController extends Controller
                     'lowercase', 
                     'email', 
                     'max:255', 
-                    Rule::unique(User::class)->where('active', '=', true)->where('id', '!=', $id),
+                    Rule::unique(User::class)
+                        ->where('active', true)
+                        ->whereNot('id', $id),
                 ],
                 'password' => ['nullable', 'confirmed', Rules\Password::defaults()],
-            ]);            
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+                
+                'email.required' => 'O campo e-mail é obrigatório.',
+                'email.string' => 'O e-mail deve ser um texto válido.',
+                'email.lowercase' => 'O e-mail deve estar em letras minúsculas.',
+                'email.email' => 'O e-mail informado não é válido.',
+                'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
+                'email.unique' => 'Este e-mail já está em uso por outro usuário.',
+            
+                'password.confirmed' => 'A confirmação da senha não confere.',
+            ]);          
         
             if ($validator->fails()) {
                 return response()->json([

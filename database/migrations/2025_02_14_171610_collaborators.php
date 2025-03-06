@@ -16,7 +16,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('document')->nullable();
             $table->text('observation')->nullable();
-            $table->boolean('active')->after('remember_token')->default(true);
+            $table->string('pix_key')->nullable();
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

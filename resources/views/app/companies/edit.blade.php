@@ -1,38 +1,36 @@
 <x-app-layout>
     <div class="container">
-        <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Cadastrando Estabelecimento</h5>
-        </div> 
-        <div class="card-body">
-            <form id="form-edit-establishment">
-                <div class="mb-3">
-                    <label class="form-label" for="basic-default-fullname">Nome</label>
-                    <input type="text" class="form-control" id="basic-default-fullname" name="name" placeholder="WA Merchandising e Terceirização" value="{{ $establishment?->name ?? ''}}" />
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="basic-default-fullname">CNPJ</label>
-                    <input type="text" class="form-control" id="basic-default-fullname" name="document" placeholder="XX.XXX.XXX/0001-XX" value="{{ $establishment?->document ?? ''}}" />
-                </div>
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Cadastrando Estabelecimento</h5>
+            </div> 
+            <div class="card-body">
+                <form id="form-edit-establishment">
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Nome</label>
+                        <input type="text" class="form-control" id="basic-default-fullname" name="name" placeholder="WA Merchandising e Terceirização" value="{{ $establishment?->name ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">CNPJ</label>
+                        <input type="text" class="form-control cnpj" id="basic-default-fullname" name="document" placeholder="XX.XXX.XXX/XXXX-XX" value="{{ $establishment?->document ?? ''}}" />
+                    </div>
 
-                <div class="mb-3">
-                    <label class="form-label" for="basic-default-fullname">Valor da Diária/Hora</label>
-                    <input type="number" class="form-control" id="basic-default-fullname" name="value" step="0.01" placeholder="R$00,00" value="{{ $establishment?->time_value ?? ''}}" />
-                </div>
-                <div class="mb-3">
-                        <label class="form-label" for="basic-default-text">Rede Pertencente</label>
-                        <textarea id="basic-default-message" class="form-control" placeholder="Nome da Rede" name="category">{!! $establishment?->chain_of_stores ?? '' !!}</textarea>
-                </div>
-                <div class="mb-3">
-                    <label class="form-label" for="basic-default-message">Observação</label>
-                    <textarea id="basic-default-message" class="form-control" placeholder="Alguma observação?" name="observation">{!! $establishment?->observation ?? '' !!}</textarea>
-                </div>
-            </form>
-         </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Valor da Diária/Hora</label>
+                        <input type="text" class="form-control money" id="basic-default-fullname" name="value" placeholder="R$0,00" value="{{ $establishment?->time_value ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                            <label class="form-label" for="basic-default-text">Rede Pertencente</label>
+                            <input type="text" class="form-control" id="category" name="category" placeholder="Rede" value="{{ $establishment?->chain_of_stores ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-message">Observação</label>
+                        <textarea id="basic-default-message" class="form-control" placeholder="Alguma observação?" name="observation">{!! $establishment?->observation ?? '' !!}</textarea>
+                    </div>
+                </form>
+            </div>
     
-        <div class="card-footer">
-                <div class="d-flex justify-content-start">
-                    <button type="button" class="btn btn-primary right" onclick="window.history.back();">Voltar</button>
-                </div>
+            <div class="card-footer">
                 @if ($establishment?->id ?? false)
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-primary right" onclick="update({{ $establishment?->id ?? null }})">Salvar</button>
@@ -42,10 +40,12 @@
                         <button type="button" class="btn btn-primary right" onclick="post()">Salvar</button>
                     </div>
                 @endif
+            </div>
         </div>
     </div>
+</x-app-layout>
 
-    <script>
+<script>
     function post() {
 
         $.ajax({
@@ -106,6 +106,19 @@
             }
         });
     }
-</script>
 
-</x-app-layout>
+    $(document).ready(function () {
+        // Money mask
+        $('.cnpj').mask('00.000.000/0000-00', {reverse: true});
+        $('.money').mask('#.###.###.##0,00', {
+            reverse: true,
+            translation: {
+                '#': {
+                pattern: /-?\d/,
+                optional: true
+                }
+            },
+            placeholder: "R$ 0,00"
+        });
+    });
+</script>

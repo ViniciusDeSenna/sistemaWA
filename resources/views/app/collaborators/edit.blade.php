@@ -2,7 +2,7 @@
     <div class="container">
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
-                <h5 class="mb-0">Cadastrando usuário</h5>
+                <h5 class="mb-0">Cadastrando Colaboradores</h5>
             </div>
             <div class="card-body">
                 <form id="form-edit-collaborator">
@@ -12,7 +12,11 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Documento</label>
-                        <input type="text" class="form-control" id="basic-default-fullname" name="document" placeholder="000.000.000-00" value="{{ $collaborator?->document ?? ''}}" />
+                        <input type="text" class="form-control cpf" id="basic-default-fullname" name="document" placeholder="000.000.000-00" value="{{ $collaborator?->document ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Chave Pix</label>
+                        <input type="text" class="form-control" id="pix_key" name="pix_key" value="{{ $collaborator?->pix_key ?? ''}}" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-message">Observação</label>
@@ -21,9 +25,6 @@
                 </form>
             </div>
             <div class="card-footer">
-                <div class="d-flex justify-content-start">
-                    <button type="button" class="btn btn-primary right" onclick="window.history.back();">Voltar</button>
-                </div>
                 @if ($collaborator?->id ?? false)
                     <div class="d-flex justify-content-end">
                         <button type="button" class="btn btn-primary right" onclick="update({{ $collaborator?->id ?? null }})">Salvar</button>
@@ -99,4 +100,8 @@
             }
         });
     }
+
+    $(document).ready(function () {
+        $('.cpf').mask('000.000.000-00', {reverse: true});
+    });
 </script>

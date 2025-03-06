@@ -13,7 +13,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::W1nXUIYCXMdzkiyb',
+            '_route' => 'generated::Fie8tz5PCmKfyehk',
           ),
           1 => NULL,
           2 => 
@@ -446,7 +446,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::QvyhvN5DjAePpuVR',
+            '_route' => 'generated::8Mrqrd3hc572omJr',
           ),
           1 => NULL,
           2 => 
@@ -482,7 +482,7 @@ app('router')->setCompiledRoutes(
     ),
     2 => 
     array (
-      0 => '{^(?|/users/([^/]++)(?|/edit(*:30)|(*:37))|/co(?|llaborators/([^/]++)(?|/edit(*:79)|(*:86))|mpanies/(?|([^/]++)(?|/edit(*:121)|(*:129))|hourly\\-rate/([^/]++)(*:159)))|/daily\\-rate/([^/]++)(?|/edit(*:198)|(*:206))|/storage/(.*)(*:228))/?$}sDu',
+      0 => '{^(?|/users/([^/]++)(?|/edit(*:30)|(*:37))|/co(?|llaborators/(?|([^/]++)(?|/edit(*:82)|(*:89))|pix\\-key/([^/]++)(*:114))|mpanies/(?|([^/]++)(?|/edit(*:150)|(*:158))|hourly\\-rate/([^/]++)(*:188)))|/daily\\-rate/([^/]++)(?|/edit(*:227)|(*:235))|/storage/(.*)(*:257))/?$}sDu',
     ),
     3 => 
     array (
@@ -550,7 +550,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      79 => 
+      82 => 
       array (
         0 => 
         array (
@@ -573,7 +573,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      86 => 
+      89 => 
       array (
         0 => 
         array (
@@ -614,7 +614,30 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      121 => 
+      114 => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'collaborators.pix-key',
+          ),
+          1 => 
+          array (
+            0 => 'id',
+          ),
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => true,
+          6 => NULL,
+        ),
+      ),
+      150 => 
       array (
         0 => 
         array (
@@ -637,7 +660,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      129 => 
+      158 => 
       array (
         0 => 
         array (
@@ -678,7 +701,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      159 => 
+      188 => 
       array (
         0 => 
         array (
@@ -701,7 +724,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      198 => 
+      227 => 
       array (
         0 => 
         array (
@@ -724,7 +747,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      206 => 
+      235 => 
       array (
         0 => 
         array (
@@ -765,7 +788,7 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      228 => 
+      257 => 
       array (
         0 => 
         array (
@@ -803,7 +826,7 @@ app('router')->setCompiledRoutes(
   ),
   'attributes' => 
   array (
-    'generated::W1nXUIYCXMdzkiyb' => 
+    'generated::Fie8tz5PCmKfyehk' => 
     array (
       'methods' => 
       array (
@@ -832,7 +855,7 @@ app('router')->setCompiledRoutes(
                         \'exception\' => $exception,
                     ]), status: $exception ? 500 : 200);
                 }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000003550000000000000000";}}',
-        'as' => 'generated::W1nXUIYCXMdzkiyb',
+        'as' => 'generated::Fie8tz5PCmKfyehk',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1413,6 +1436,44 @@ app('router')->setCompiledRoutes(
         array (
         ),
         'as' => 'collaborators.destroy',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'collaborators.pix-key' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'collaborators/pix-key/{id}',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\CollaboratorsController@getPixKey',
+        'controller' => 'App\\Http\\Controllers\\CollaboratorsController@getPixKey',
+        'namespace' => NULL,
+        'prefix' => '/collaborators',
+        'where' => 
+        array (
+        ),
+        'as' => 'collaborators.pix-key',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2195,7 +2256,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::QvyhvN5DjAePpuVR' => 
+    'generated::8Mrqrd3hc572omJr' => 
     array (
       'methods' => 
       array (
@@ -2216,7 +2277,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::QvyhvN5DjAePpuVR',
+        'as' => 'generated::8Mrqrd3hc572omJr',
       ),
       'fallback' => false,
       'defaults' => 

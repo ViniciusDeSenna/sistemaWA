@@ -120,7 +120,7 @@
               </a>
             </div>
 
-            <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+            <div class="nav-item d-flex align-items-center">
               <a class="nav-item nav-link px-0 me-xl-4" href="javascript:void(0)">
                 <i class='bx bx-arrow-back fs-4 lh-0' onclick="window.history.back();"></i>
               </a>
@@ -142,7 +142,7 @@
               <!-- /Search --> --}}
 
               <ul class="navbar-nav flex-row align-items-center ms-auto">
-                <div class="layout-menu-toggle navbar-nav align-items-xl-center me-3 me-xl-0 d-xl-none">
+                <div class="nav-item d-flex align-items-center">
                   <a class="nav-item nav-link px-0 me-xl-4" href="{{ route('logout') }}">
                     <i class='bx bx-log-out fs-4 lh-0'></i>
                   </a>

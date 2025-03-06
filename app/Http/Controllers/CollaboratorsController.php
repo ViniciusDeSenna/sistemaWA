@@ -43,9 +43,9 @@ class CollaboratorsController extends Controller
                         <a type="button" class="btn btn-icon btn-primary" href="'. route('collaborators.edit', [$collaborator->id]) . '">
                             <span class="tf-icons bx bx-pencil"></span>
                         </a>
-                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $collaborator->id . ')">
+                        <button type="button" class="btn btn-icon btn-danger" onclick="remove(' . $collaborator->id . ')">
                             <span class="tf-icons bx bx-trash"></span>
-                        </a>
+                        </button>
                     </div>
                 ';
             })
@@ -64,8 +64,12 @@ class CollaboratorsController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-            ]);            
-        
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+            ]);
+            
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
@@ -75,6 +79,7 @@ class CollaboratorsController extends Controller
             Collaborator::create([
                 'name' => $request->name,
                 'document' => $request->document,
+                'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
             ]);
 
@@ -124,8 +129,12 @@ class CollaboratorsController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-            ]);            
-        
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+            ]);
+            
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
@@ -189,5 +198,10 @@ class CollaboratorsController extends Controller
                 'type' => 'error'
             ], 500);
         }
+    }
+
+    public function getPixKey($id) {
+        $collaborator = Collaborator::query()->where('id', '=', $id)->first();
+        return $collaborator?->pix_key ?? 0;
     }
 }

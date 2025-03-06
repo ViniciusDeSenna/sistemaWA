@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/{id}/edit', [CollaboratorsController::class, 'edit'])->name('collaborators.edit')->middleware('permission:Formulário de edição dos colaboradores');
         Route::put('/{id}', [CollaboratorsController::class, 'update'])->name('collaborators.update')->middleware('permission:Atualizar colaboradores');
         Route::delete('/{id}', [CollaboratorsController::class, 'destroy'])->name('collaborators.destroy')->middleware('permission:Deletar colaboradores');
+
+        Route::get('/pix-key/{id}', [CollaboratorsController::class, 'getPixKey'])->name('collaborators.pix-key');
     });
 
     Route::prefix('companies')->group(function () {

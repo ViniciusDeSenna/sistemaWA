@@ -38,9 +38,9 @@ class CompanyController extends Controller
                         <a type="button" class="btn btn-icon btn-primary" href="'. route('companies.edit', [$company->id]) . '">
                             <span class="tf-icons bx bx-pencil"></span>
                         </a>
-                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $company->id . ')">
+                        <button type="button" class="btn btn-icon btn-danger" onclick="remove(' . $company->id . ')">
                             <span class="tf-icons bx bx-trash"></span>
-                        </a>
+                        </button>
                     </div>
                 ';
             })
@@ -64,17 +64,24 @@ class CompanyController extends Controller
         try {
             DB:: beginTransaction();
 
-            $validator = Validator:: make ($request->all(),[
-                'name' =>['required', 'string', 'max:255'],]);
+            $validator = Validator::make($request->all(), [
+                'name' => ['required', 'string', 'max:255'],
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+            ]);
+            
             if ($validator->fails()) {
                 return response()->json([
-                'message' => implode("\n", $validator->errors()->all()),
+                    'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
+
             Company::create([
                 'name' => $request->name,
                 'document' => $request->document,
-                'time_value' => $request->value,
+                'time_value' => str_replace(['.', ','], ['', '.'], $request->value),
                 'observation' => $request->observation,
                 'chain_of_stores' => $request->category,
             ]);
@@ -122,8 +129,12 @@ class CompanyController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
-            ]);            
-        
+            ], [
+                'name.required' => 'O campo nome é obrigatório.',
+                'name.string' => 'O nome deve ser um texto válido.',
+                'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+            ]);
+            
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),

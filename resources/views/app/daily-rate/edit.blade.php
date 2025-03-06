@@ -215,6 +215,25 @@
         }
     }
 
+    function getPixKey() {
+        let value = $('#pix_key').val();
+
+        if (value === "") {
+            let collaborator = $('#collaborator_id').val();
+
+            $.ajax({
+                url: "{{ route('collaborators.pix-key', '') }}" + '/' + collaborator,
+                type: 'GET',
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                },
+                success: function(response) {
+                    $('#pix_key').val(response)
+                },
+            });
+        }
+    }
+
     function difHourly(start, end) {
         try {
 
@@ -292,7 +311,6 @@
             theme: 'bootstrap-5'
         });
 
-        // Money mask
         $('.money').mask('#.###.###.##0,00', {
             reverse: true,
             translation: {
@@ -303,6 +321,8 @@
             },
             placeholder: "R$ 0,00"
         });
+
+        getPixKey();
     });
 
 </script>
