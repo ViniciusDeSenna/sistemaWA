@@ -70,7 +70,6 @@
     @foreach($dailyRate as $collaboratorId => $rates)
 
         @php($collaboratorName = $rates[0]['collaborators_name'])
-        @php($collaboratorPixKey = $rates[0]['collaborators_pix_key'])
         @php($totalCollaborator = 0)
     
         <div class="info">
@@ -83,25 +82,33 @@
                     <tr>
                         <th>Estabelecimento</th>
                         <th>Início</th>
+                        {{-- <th>Início Intervalo</th>
+                        <th>Fim Intervalo</th> --}}
                         <th>Fim</th>
                         <th>Tempo Total</th>
                         <th>Valor da Diária</th>
+                        <th>Custo</th>
+                        <th>Acréscimos</th>
                         <th>Valor Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($rates as $rate)
 
-                        @php($totalCollaborator += $rate->daily_rate_total_value)
-                        @php($total += $rate->daily_rate_total_value)
+                        @php($totalCollaborator += $rate->daily_rate_total)
+                        @php($total += $rate->daily_rate_total)
 
                         <tr>
                             <td>{{ mb_strimwidth($rate->companies_name ?? '', 0, 20, '...') }}</td>
                             <td>{{ isset($rate->daily_rate_start) ? Carbon\Carbon::parse($rate->daily_rate_start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
+                            {{-- <td>{{ isset($rate->daily_rate_start_interval) ? Carbon\Carbon::parse($rate->daily_rate_start_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
+                            <td>{{ isset($rate->daily_rate_end_interval) ? Carbon\Carbon::parse($rate->daily_rate_end_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td> --}}
                             <td>{{ isset($rate->daily_rate_end) ? Carbon\Carbon::parse($rate->daily_rate_end)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
                             <td>{{ $rate->daily_rate_daily_total_time }}</td>
                             <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_total_value ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
+                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_addition ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
+                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_costs ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
+                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
@@ -109,7 +116,7 @@
         </div>
 
         <div class="footer">
-            <p>Total ({{ $collaboratorName }}) {{ App\BlueUtils\Money::format($totalCollaborator ?? '0', 'R$ ', 2, ',', '.') }} | Pix: {{ $collaboratorPixKey }}</p>
+            <p>Total ({{ $collaboratorName }}) {{ App\BlueUtils\Money::format($totalCollaborator ?? '0', 'R$ ', 2, ',', '.') }}</p>
         </div>
 
     @endforeach

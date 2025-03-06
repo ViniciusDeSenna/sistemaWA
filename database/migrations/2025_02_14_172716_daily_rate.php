@@ -23,6 +23,7 @@ return new class extends Migration
             $table->timestamp('end')->nullable();
             $table->time('daily_total_time')->nullable();
             $table->float('hourly_rate')->nullable();
+            $table->float('total_value')->nullable();
             $table->float('costs')->nullable();
             $table->text('costs_description')->nullable();
             $table->float('addition')->nullable();

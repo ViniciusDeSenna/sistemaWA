@@ -13,7 +13,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::Fie8tz5PCmKfyehk',
+            '_route' => 'generated::UBjf47W6ArsvsGKE',
           ),
           1 => NULL,
           2 => 
@@ -331,13 +331,13 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      '/daily-rate/makepdf' => 
+      '/daily-rate/create' => 
       array (
         0 => 
         array (
           0 => 
           array (
-            '_route' => 'daily-rate.makepdf',
+            '_route' => 'daily-rate.create',
           ),
           1 => NULL,
           2 => 
@@ -351,13 +351,33 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
-      '/daily-rate/create' => 
+      '/report/dailyrates' => 
       array (
         0 => 
         array (
           0 => 
           array (
-            '_route' => 'daily-rate.create',
+            '_route' => 'report.daily-rates',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
+      '/report/financial' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'report.financial',
           ),
           1 => NULL,
           2 => 
@@ -446,7 +466,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::8Mrqrd3hc572omJr',
+            '_route' => 'generated::vcSHk4AVs2zLyHm2',
           ),
           1 => NULL,
           2 => 
@@ -826,7 +846,7 @@ app('router')->setCompiledRoutes(
   ),
   'attributes' => 
   array (
-    'generated::Fie8tz5PCmKfyehk' => 
+    'generated::UBjf47W6ArsvsGKE' => 
     array (
       'methods' => 
       array (
@@ -855,7 +875,7 @@ app('router')->setCompiledRoutes(
                         \'exception\' => $exception,
                     ]), status: $exception ? 500 : 200);
                 }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000003550000000000000000";}}',
-        'as' => 'generated::Fie8tz5PCmKfyehk',
+        'as' => 'generated::UBjf47W6ArsvsGKE',
       ),
       'fallback' => false,
       'defaults' => 
@@ -1875,45 +1895,6 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'daily-rate.makepdf' => 
-    array (
-      'methods' => 
-      array (
-        0 => 'GET',
-        1 => 'HEAD',
-      ),
-      'uri' => 'daily-rate/makepdf',
-      'action' => 
-      array (
-        'middleware' => 
-        array (
-          0 => 'web',
-          1 => 'auth',
-          2 => 'permission:Lista de diárias',
-        ),
-        'uses' => 'App\\Http\\Controllers\\DailyRateController@makePDF',
-        'controller' => 'App\\Http\\Controllers\\DailyRateController@makePDF',
-        'namespace' => NULL,
-        'prefix' => '/daily-rate',
-        'where' => 
-        array (
-        ),
-        'as' => 'daily-rate.makepdf',
-      ),
-      'fallback' => false,
-      'defaults' => 
-      array (
-      ),
-      'wheres' => 
-      array (
-      ),
-      'bindingFields' => 
-      array (
-      ),
-      'lockSeconds' => NULL,
-      'waitSeconds' => NULL,
-      'withTrashed' => false,
-    ),
     'daily-rate.create' => 
     array (
       'methods' => 
@@ -2106,6 +2087,82 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
+    'report.daily-rates' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'report/dailyrates',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\ReportsController@dailyRates',
+        'controller' => 'App\\Http\\Controllers\\ReportsController@dailyRates',
+        'namespace' => NULL,
+        'prefix' => '/report',
+        'where' => 
+        array (
+        ),
+        'as' => 'report.daily-rates',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
+    'report.financial' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'report/financial',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+        ),
+        'uses' => 'App\\Http\\Controllers\\ReportsController@financial',
+        'controller' => 'App\\Http\\Controllers\\ReportsController@financial',
+        'namespace' => NULL,
+        'prefix' => '/report',
+        'where' => 
+        array (
+        ),
+        'as' => 'report.financial',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
     'profile.edit' => 
     array (
       'methods' => 
@@ -2256,7 +2313,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::8Mrqrd3hc572omJr' => 
+    'generated::vcSHk4AVs2zLyHm2' => 
     array (
       'methods' => 
       array (
@@ -2277,7 +2334,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::8Mrqrd3hc572omJr',
+        'as' => 'generated::vcSHk4AVs2zLyHm2',
       ),
       'fallback' => false,
       'defaults' => 

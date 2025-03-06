@@ -56,7 +56,8 @@
 
                     <div class="card-footer d-flex justify-content-end align-items-center">
                         <div class="d-flex justify-content-end gap-3">
-                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="gerarPDF()">Relatório em PDF</button>
+                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="reportDailyRate()">Relatório Diárias</button>
+                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="reportFinancial()">Relatório Financeiro</button>
                             <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="reloadDataTable()">Salvar</button>
                         </div>
                     </div> 
@@ -136,10 +137,13 @@
         });
     });
 
-    function gerarPDF() {
-        window.location.href = "{{ route('daily-rate.makepdf') }}?" + $('#form-hourly-rate-filter').serialize();
+    function reportDailyRate() {
+        window.location.href = "{{ route('report.daily-rates') }}?" + $('#form-hourly-rate-filter').serialize();
     }
 
+    function reportFinancial() {
+        window.location.href = "{{ route('report.financial') }}?" + $('#form-hourly-rate-filter').serialize();
+    }
 
     function reloadDataTable() {
         $('#table-daily-rate').DataTable().ajax.reload();

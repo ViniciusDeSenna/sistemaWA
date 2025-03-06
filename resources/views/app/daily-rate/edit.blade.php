@@ -91,10 +91,10 @@
                         </div>
                     @endcan
                 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label class="form-label" for="pix_key">Chave Pix para pagamento</label>
                         <input type="text" class="form-control" id="pix_key" name="pix_key" value="{{ $dailyRate?->pix_key ?? '' }}">
-                    </div>
+                    </div> --}}
 
                     <div class="mb-3">
                         <label class="form-label" for="observation">Observação</label>
@@ -303,10 +303,10 @@
             calcular();
         });
 
-        $('#collaborator_id').on('change', function () { 
-            console.log('Colaborador selecionado:', $(this).val());
-            getPixKey();
-        });
+        // $('#collaborator_id').on('change', function () { 
+        //     console.log('Colaborador selecionado:', $(this).val());
+        //     getPixKey();
+        // });
 
 
         $('#collaborator_id').select2({
@@ -327,7 +327,7 @@
             placeholder: "R$ 0,00"
         });
 
-        getPixKey();
+        // getPixKey();
     });
 
 </script>

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\BlueUtils\Money;
+use App\BlueUtils\Time;
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use App\Models\Company;
@@ -153,6 +154,7 @@ class DailyRateController extends Controller
     {
         try {
 
+
             DB::beginTransaction();
 
             $dailyRate = new DailyRate();
@@ -164,6 +166,7 @@ class DailyRateController extends Controller
             $dailyRate->end = $request->end;
             $dailyRate->daily_total_time = $request->daily_total_time;
             $dailyRate->hourly_rate = $request->hourly_rate;
+            $dailyRate->total_value = Time::convertTimeToDecimal($request->daily_total_time) * $request->hourly_rate;
             $dailyRate->costs = $request->costs;
             $dailyRate->costs_description = $request->costs_description;
             $dailyRate->addition = $request->addition;
@@ -271,59 +274,5 @@ class DailyRateController extends Controller
                 'type' => 'error'
             ], 500);
         }
-    }
-
-    public function makePDF(Request $request) {
-
-        $user = Auth::user();
-
-        $dailyRate = DailyRate::query()
-            ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')
-            ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
-            ->where('daily_rate.active', '=', true)
-            ->orderBy('daily_rate.collaborator_id')
-            ->select([
-                'daily_rate.id as daily_rate_id',
-                'daily_rate.collaborator_id as daily_rate_collaborator_id',
-                'daily_rate.company_id as daily_rate_company_id',
-                'collaborators.name as collaborators_name',
-                'companies.name as companies_name',
-                'daily_rate.start as daily_rate_start',
-                'daily_rate.start_interval as daily_rate_start_interval',
-                'daily_rate.end_interval as daily_rate_end_interval',
-                'daily_rate.end as daily_rate_end',
-                'daily_rate.daily_total_time as daily_rate_daily_total_time',
-                'daily_rate.hourly_rate as daily_rate_hourly_rate',
-                'daily_rate.addition as daily_rate_addition',
-                'daily_rate.costs as daily_rate_costs',
-                'daily_rate.total as daily_rate_total',
-            ]);
-
-            if ($request->collaborator_id) {
-                $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
-            }
-            
-            if ($request->company_id) {
-                $dailyRate->whereIn('daily_rate.company_id', $request->company_id);
-            }
-            
-            if ($request->start) {
-                $dailyRate->where('daily_rate.start', '>=', $request->start);
-            }
-            
-            if ($request->end) {
-                $dailyRate->where('daily_rate.end', '<=', $request->end);
-            }
-
-
-        $dailyRate = $dailyRate->get();
-
-        $groupedDailyRates = $dailyRate->groupBy('daily_rate_collaborator_id');
-
-        $html = View::make('reports.daily-rate-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
-    
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
     }
 }
