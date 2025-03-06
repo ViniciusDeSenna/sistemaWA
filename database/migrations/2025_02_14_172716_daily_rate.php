@@ -30,6 +30,7 @@ return new class extends Migration
             $table->float('total')->nullable();
             $table->string('pix_key')->nullable();
             $table->text('observation')->nullable();
+            $table->boolean('active')->after('remember_token')->default(true);
             $table->timestamps();
         });
     }

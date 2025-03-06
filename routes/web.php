@@ -48,6 +48,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('daily-rate')->group(function () {
         Route::get('/', [DailyRateController::class, 'index'])->name('daily-rate.index')->middleware('permission:Lista de diárias');
         Route::get('/table', [DailyRateController::class, 'table'])->name('daily-rate.table')->middleware('permission:Lista de diárias');
+        Route::get('/makepdf', [DailyRateController::class, 'makePDF'])->name('daily-rate.makepdf')->middleware('permission:Lista de diárias');
         Route::get('/create', [DailyRateController::class, 'create'])->name('daily-rate.create')->middleware('permission:Formulário de criação dos diárias');
         Route::post('/', [DailyRateController::class, 'store'])->name('daily-rate.store')->middleware('permission:Salvar diárias');
         Route::get('/{id}/edit', [DailyRateController::class, 'edit'])->name('daily-rate.edit')->middleware('permission:Formulário de edição dos diárias');

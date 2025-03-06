@@ -13,7 +13,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::CycGvmPbQ5H5D1vA',
+            '_route' => 'generated::W1nXUIYCXMdzkiyb',
           ),
           1 => NULL,
           2 => 
@@ -331,6 +331,26 @@ app('router')->setCompiledRoutes(
           6 => NULL,
         ),
       ),
+      '/daily-rate/makepdf' => 
+      array (
+        0 => 
+        array (
+          0 => 
+          array (
+            '_route' => 'daily-rate.makepdf',
+          ),
+          1 => NULL,
+          2 => 
+          array (
+            'GET' => 0,
+            'HEAD' => 1,
+          ),
+          3 => NULL,
+          4 => false,
+          5 => false,
+          6 => NULL,
+        ),
+      ),
       '/daily-rate/create' => 
       array (
         0 => 
@@ -426,7 +446,7 @@ app('router')->setCompiledRoutes(
         array (
           0 => 
           array (
-            '_route' => 'generated::mNRVByGJSJyaqQty',
+            '_route' => 'generated::QvyhvN5DjAePpuVR',
           ),
           1 => NULL,
           2 => 
@@ -783,7 +803,7 @@ app('router')->setCompiledRoutes(
   ),
   'attributes' => 
   array (
-    'generated::CycGvmPbQ5H5D1vA' => 
+    'generated::W1nXUIYCXMdzkiyb' => 
     array (
       'methods' => 
       array (
@@ -811,8 +831,8 @@ app('router')->setCompiledRoutes(
                     return response(\\Illuminate\\Support\\Facades\\View::file(\'C:\\\\Users\\\\Vinicius\\\\Documents\\\\GitHub\\\\sistemaWA\\\\vendor\\\\laravel\\\\framework\\\\src\\\\Illuminate\\\\Foundation\\\\Configuration\'.\'/../resources/health-up.blade.php\', [
                         \'exception\' => $exception,
                     ]), status: $exception ? 500 : 200);
-                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"000000000000037f0000000000000000";}}',
-        'as' => 'generated::CycGvmPbQ5H5D1vA',
+                }";s:5:"scope";s:54:"Illuminate\\Foundation\\Configuration\\ApplicationBuilder";s:4:"this";N;s:4:"self";s:32:"00000000000003550000000000000000";}}',
+        'as' => 'generated::W1nXUIYCXMdzkiyb',
       ),
       'fallback' => false,
       'defaults' => 
@@ -846,7 +866,7 @@ app('router')->setCompiledRoutes(
         ),
         'uses' => 'O:55:"Laravel\\SerializableClosure\\UnsignedSerializableClosure":1:{s:12:"serializable";O:46:"Laravel\\SerializableClosure\\Serializers\\Native":5:{s:3:"use";a:0:{}s:8:"function";s:46:"function () {
     return \\view(\'dashboard\');
-}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000003830000000000000000";}}',
+}";s:5:"scope";s:37:"Illuminate\\Routing\\RouteFileRegistrar";s:4:"this";N;s:4:"self";s:32:"00000000000003590000000000000000";}}',
         'namespace' => NULL,
         'prefix' => '',
         'where' => 
@@ -1794,6 +1814,45 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
+    'daily-rate.makepdf' => 
+    array (
+      'methods' => 
+      array (
+        0 => 'GET',
+        1 => 'HEAD',
+      ),
+      'uri' => 'daily-rate/makepdf',
+      'action' => 
+      array (
+        'middleware' => 
+        array (
+          0 => 'web',
+          1 => 'auth',
+          2 => 'permission:Lista de diárias',
+        ),
+        'uses' => 'App\\Http\\Controllers\\DailyRateController@makePDF',
+        'controller' => 'App\\Http\\Controllers\\DailyRateController@makePDF',
+        'namespace' => NULL,
+        'prefix' => '/daily-rate',
+        'where' => 
+        array (
+        ),
+        'as' => 'daily-rate.makepdf',
+      ),
+      'fallback' => false,
+      'defaults' => 
+      array (
+      ),
+      'wheres' => 
+      array (
+      ),
+      'bindingFields' => 
+      array (
+      ),
+      'lockSeconds' => NULL,
+      'waitSeconds' => NULL,
+      'withTrashed' => false,
+    ),
     'daily-rate.create' => 
     array (
       'methods' => 
@@ -2136,7 +2195,7 @@ app('router')->setCompiledRoutes(
       'waitSeconds' => NULL,
       'withTrashed' => false,
     ),
-    'generated::mNRVByGJSJyaqQty' => 
+    'generated::QvyhvN5DjAePpuVR' => 
     array (
       'methods' => 
       array (
@@ -2157,7 +2216,7 @@ app('router')->setCompiledRoutes(
         'where' => 
         array (
         ),
-        'as' => 'generated::mNRVByGJSJyaqQty',
+        'as' => 'generated::QvyhvN5DjAePpuVR',
       ),
       'fallback' => false,
       'defaults' => 
@@ -2227,7 +2286,7 @@ app('router')->setCompiledRoutes(
                         $config,
                         $isProduction
                     ))($request, $path);
-                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"00000000000003850000000000000000";}}',
+                }";s:5:"scope";s:47:"Illuminate\\Filesystem\\FilesystemServiceProvider";s:4:"this";N;s:4:"self";s:32:"000000000000035b0000000000000000";}}',
         'as' => 'storage.local',
       ),
       'fallback' => false,

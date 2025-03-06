@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('category')->default('indefinido')->nullable();
             $table->string('chain_of_stores')->default('indefinido')->nullable();
             $table->string('observation')->nullable();
+            $table->boolean('active')->after('remember_token')->default(true);
             $table->timestamps();
         });
     }

@@ -13,7 +13,9 @@
                         <select class="form-control" id="collaborator_id" name="collaborator_id">
                             <option value="" disabled selected>Selecione um colaborador</option>
                             @foreach ($collaborators as $colaborator)
-                                <option value="{{ $colaborator->id }}">{{ $colaborator->name }}</option>
+                                <option value="{{ $colaborator->id }}" {{ ($dailyRate?->collaborator_id ?? 0) == $colaborator->id ? 'selected' : '' }}>
+                                    {{ $colaborator->name }}
+                                </option>                            
                             @endforeach
                         </select>
                     </div>
@@ -23,85 +25,87 @@
                         <select class="form-control" id="company_id" name="company_id">
                             <option value="" disabled selected>Selecione uma empresa</option>
                             @foreach ($companies as $company)
-                                <option value="{{ $company->id }}">{{ $company->name }}</option>
+                                <option value="{{ $company->id }}" {{ ($dailyRate?->collaborator_id ?? 0) == $company->id ? 'selected' : '' }}>
+                                    {{ $company->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
                 
                     <div class="mb-3">
                         <label class="form-label" for="start">Chegada</label>
-                        <input type="datetime-local" class="form-control" id="start" name="start" required>
+                        <input type="datetime-local" class="form-control" id="start" name="start" value="{{ $dailyRate?->start ?? '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="start_interval">Chegada Intervalo</label>
-                        <input type="datetime-local" class="form-control" id="start_interval" name="start_interval" required>
+                        <input type="datetime-local" class="form-control" id="start_interval" name="start_interval" value="{{ $dailyRate?->start_interval ?? '' }}">
                     </div>
                     
                     <div class="mb-3">
                         <label class="form-label" for="end_interval">Saida Intervalo</label>
-                        <input type="datetime-local" class="form-control" id="end_interval" name="end_interval" required>
+                        <input type="datetime-local" class="form-control" id="end_interval" name="end_interval" value="{{ $dailyRate?->end_interval ?? '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="end">Saída</label>
-                        <input type="datetime-local" class="form-control" id="end" name="end" required>
+                        <input type="datetime-local" class="form-control" id="end" name="end" value="{{ $dailyRate?->end ?? '' }}">
                     </div>
                 
                     <div class="mb-3">
                         <label class="form-label" for="daily_total_time">Quantidade de Horas Trabalhadas</label>
-                        <input type="text" class="form-control" id="daily_total_time" name="daily_total_time" data-mask="00:00" readonly required>
+                        <input type="text" class="form-control" id="daily_total_time" name="daily_total_time" data-mask="00:00" readonly value="{{ $dailyRate?->daily_total_time ?? '' }}">
                     </div>
                 
                     @can('Visualizar e inserir informações financeiras nas diárias')
                         <div class="mb-3">
                             <label class="form-label" for="hourly_rate">Valor por Hora</label>
-                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" required>
+                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{ $dailyRate?->hourly_rate ?? '' }}">
                         </div>
                     @endcan
 
                     @can('Visualizar e inserir informações financeiras nas diárias')
                         <div class="mb-3">
                             <label class="form-label" for="costs">Gastos</label>
-                            <input type="text" class="form-control money" id="costs" name="costs" required>
+                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '' }}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="costs_description">Descrição dos Gastos</label>
-                            <textarea class="form-control" id="costs_description" name="costs_description" rows="4"></textarea>
+                            <textarea class="form-control" id="costs_description" name="costs_description" rows="4">{!! $dailyRate?->costs_description ?? '' !!}</textarea>
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
-                            <input type="text" class="form-control money" id="addition" name="addition" required>
+                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="addition_description">Descrição dos Acréscimos</label>
-                            <textarea class="form-control" id="addition_description" name="addition_description" rows="4"></textarea>
+                            <textarea class="form-control" id="addition_description" name="addition_description" rows="4">{!! $dailyRate?->addition_description ?? '' !!}</textarea>
                         </div>
                     
                         <div class="mb-3">
                             <label class="form-label" for="total">Valor Total</label>
-                            <input type="text" class="form-control money" id="total" name="total" readonly required>
+                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '' }}">
                         </div>
                     @endcan
                 
                     <div class="mb-3">
                         <label class="form-label" for="pix_key">Chave Pix para pagamento</label>
-                        <input type="text" class="form-control" id="pix_key" name="pix_key" required>
+                        <input type="text" class="form-control" id="pix_key" name="pix_key" value="{{ $dailyRate?->pix_key ?? '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="observation">Observação</label>
-                        <textarea class="form-control" id="observation" name="observation" rows="4"></textarea>
+                        <textarea class="form-control" id="observation" name="observation" rows="4">{!! $dailyRate?->observation ?? '' !!}</textarea>
                     </div>
                 </form>
             </div>
             <div class="card-footer d-flex justify-content-end align-items-center">
-                @if ($establishment?->id ?? false)
+                @if ($dailyRate?->id ?? false)
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="update({{ $establishment?->id ?? null }})">Salvar</button>
+                        <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="update({{ $dailyRate?->id ?? null }})">Salvar</button>
                     </div>
                 @else
                     <div class="d-flex justify-content-end">
@@ -147,42 +151,75 @@
         });
     }
 
-    function update() {
+    function update(id) {
+        $.ajax({
+            url: "{{ route('daily-rate.update', '') }}" + '/' + id,
+            type: 'PUT',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            data: $('#form-hourly-rate').serialize(),
+            success: function(response) {
+                Swal.fire({
+                    title: response?.title ?? 'Sucesso!',
+                    text: response?.message ?? 'Sucesso na ação!',
+                    icon: response?.type ?? 'success'
+                }).then((result) => {
+                    $('#form-hourly-rate')[0].reset();
 
+                    window.location.reload();
+                });
+            },
+            error: function(response) {
+                response = JSON.parse(response.responseText);
+                Swal.fire({
+                    title: response?.title ?? 'Oops!',
+                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
+                    icon: response?.type ?? 'error'
+                });
+            }
+        });
     }
 
-    function getHourlyRate() {
-        let value = Number($('#hourly_rate').val().replace('.', '').replace(',', '.'));
+    function getHourlyRate(callback) {
+        try {
+            let value = Number($('#hourly_rate').val().replace('.', '').replace(',', '.'));
 
-        if (value === 0) {
+            if (value === 0) {
+                let company = $('#company_id').val();
 
-            let company = $('#company_id').val();
-
-            if (company === null) {
-                return 0;
-            }
-
-            $.ajax({
-                url: "{{ route('companies.hourly-rate', '') }}" + '/' + company,
-                type: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    return Number(response);
-                },
-                error: function(response) {
-                    return 0;
+                if (company === null) {
+                    callback(0);
+                    return;
                 }
-            });
 
-        } else {
-            return value;
+                $.ajax({
+                    url: "{{ route('companies.hourly-rate', '') }}" + '/' + company,
+                    type: 'GET',
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    },
+                    success: function(response) {
+                        callback(Number(response));
+                    },
+                    error: function() {
+                        callback(0);
+                    }
+                });
+
+            } else {
+                callback(value);
+            }
+        } catch {
+            callback(0);
         }
     }
 
     function difHourly(start, end) {
         try {
+
+            if (start == "") return 0;
+            if (end == "") return 0;
             
             let startDate = new Date(start); // Example start datetime
             let endDate = new Date(end);   // Example end datetime
@@ -210,32 +247,38 @@
     }
 
     function calcular() {
-        // Pega o valor por hora, se nao existir pega o valor da empresa, insere no calculo e calcula com ela. Se não existir valor é 0
-        let hourlyRate = getHourlyRate()
+        // Chama getHourlyRate com um callback para lidar com o valor retornado
+        getHourlyRate(function(hourlyRate) {
 
-        // pega o horario de inicio até fim e calcula quantas horas deu, faz x valor por hora se nao existir inicio ou fim valor é = 0
-        let startDate = $('#form-hourly-rate input[name="start"]').val();
-        let endDate = $('#form-hourly-rate input[name="end"]').val();
-        let workedHourly = difHourly(startDate, endDate);
+            // Pega o horário de início até fim e calcula quantas horas deu, faz x valor por hora se não existir início ou fim valor é = 0
+            let startDate = $('#form-hourly-rate input[name="start"]').val();
+            let endDate = $('#form-hourly-rate input[name="end"]').val();
+            let workedHourly = difHourly(startDate, endDate);
 
-        let startIntervalDate = $('#form-hourly-rate input[name="start_interval"]').val();
-        let endIntervalDate = $('#form-hourly-rate input[name="end_interval"]').val();
-        let intervaledHourly = difHourly(startIntervalDate, endIntervalDate)
+            $('#form-hourly-rate input[name="daily_total_time"]').val(formatTime(workedHourly));
 
-        $('#form-hourly-rate input[name="daily_total_time"]').val(formatTime(workedHourly));
+            let startIntervalDate = $('#form-hourly-rate input[name="start_interval"]').val();
+            let endIntervalDate = $('#form-hourly-rate input[name="end_interval"]').val();
+            let intervaledHourly = difHourly(startIntervalDate, endIntervalDate);
 
-        // soma o resto com acrescimos - gastos para descobrir quanto que a impresa vai receber
-        let addition = Number($('#form-hourly-rate input[name="addition"]').val().replace('.', '').replace(',', '.'));
-        let costs = Number($('#form-hourly-rate input[name="costs"]').val().replace('.', '').replace(',', '.'));
+            // Soma o resto com acréscimos - gastos para descobrir quanto a empresa vai receber
+            let addition = Number($('#form-hourly-rate input[name="addition"]').val().replace('.', '').replace(',', '.'));
+            let costs = Number($('#form-hourly-rate input[name="costs"]').val().replace('.', '').replace(',', '.'));
 
-        let total = ((hourlyRate * (workedHourly - intervaledHourly)) + addition) - costs;
 
-        //informa o valor no total
-        if (total < 0) {
-            return 0;
-        }
-        $('#form-hourly-rate input[name="total"]').val(total);
+            // Calcula o total
+            let total = ((hourlyRate * (workedHourly - intervaledHourly)) + addition) - costs;
+
+            // Informa o valor no total
+            if (total < 0) {
+                return 0;
+            }
+
+            // Aqui você pode adicionar o valor no campo de total, se necessário
+            $('#form-hourly-rate input[name="total"]').val(total);
+        });
     }
+
 
     $(document).ready(function () {
         $('#form-hourly-rate').on('input change', function () {

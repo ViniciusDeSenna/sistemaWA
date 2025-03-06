@@ -28,9 +28,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="collaborator_id">Colaborador</label>
-                        <select class="form-control" id="collaborator_id" name="collaborator_id">
-                            <option value="" disabled selected>Selecione um colaborador</option>
-                            <option value="">Todos</option>
+                        <select class="form-control" id="collaborator_id" name="collaborator_id[]" multiple="multiple">
                             @foreach ($collaborators as $colaborator)
                                 <option value="{{ $colaborator->id }}">{{ $colaborator->name }}</option>
                             @endforeach
@@ -39,9 +37,7 @@
                 
                     <div class="mb-3">
                         <label class="form-label" for="company_id">Empresa</label>
-                        <select class="form-control" id="company_id" name="company_id">
-                            <option value="" disabled selected>Selecione uma empresa</option>
-                            <option value="">Todos</option>
+                        <select class="form-control" id="company_id" name="company_id[]" multiple="multiple">
                             @foreach ($companies as $company)
                                 <option value="{{ $company->id }}">{{ $company->name }}</option>
                             @endforeach
@@ -59,7 +55,8 @@
                     </div>
 
                     <div class="card-footer d-flex justify-content-end align-items-center">
-                        <div class="d-flex justify-content-end">
+                        <div class="d-flex justify-content-end gap-3">
+                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="gerarPDF()">Relatório em PDF</button>
                             <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="reloadDataTable()">Salvar</button>
                         </div>
                     </div> 
@@ -138,6 +135,11 @@
             theme: 'bootstrap-5'
         });
     });
+
+    function gerarPDF() {
+        window.location.href = "{{ route('daily-rate.makepdf') }}?" + $('#form-hourly-rate-filter').serialize();
+    }
+
 
     function reloadDataTable() {
         $('#table-daily-rate').DataTable().ajax.reload();

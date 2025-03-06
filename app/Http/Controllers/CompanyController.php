@@ -195,7 +195,7 @@ class CompanyController extends Controller
     {
         try {
             $company = Company::query()->where('id', '=', $id)->first();
-            return $company->time_value;
+            return $company?->time_value ?? 0;
         } catch (Exception $exception) {
             return 0;
         }
