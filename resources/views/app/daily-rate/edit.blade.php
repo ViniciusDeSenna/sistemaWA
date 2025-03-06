@@ -37,7 +37,7 @@
                         <input type="datetime-local" class="form-control" id="start" name="start" value="{{ $dailyRate?->start ?? '' }}">
                     </div>
 
-                    <div class="mb-3">
+                    {{-- <div class="mb-3">
                         <label class="form-label" for="start_interval">Chegada Intervalo</label>
                         <input type="datetime-local" class="form-control" id="start_interval" name="start_interval" value="{{ $dailyRate?->start_interval ?? '' }}">
                     </div>
@@ -45,7 +45,7 @@
                     <div class="mb-3">
                         <label class="form-label" for="end_interval">Saida Intervalo</label>
                         <input type="datetime-local" class="form-control" id="end_interval" name="end_interval" value="{{ $dailyRate?->end_interval ?? '' }}">
-                    </div>
+                    </div> --}}
 
                     <div class="mb-3">
                         <label class="form-label" for="end">Saída</label>
@@ -217,7 +217,6 @@
 
     function getPixKey() {
         let value = $('#pix_key').val();
-
         if (value === "") {
             let collaborator = $('#collaborator_id').val();
 
@@ -276,9 +275,9 @@
 
             $('#form-hourly-rate input[name="daily_total_time"]').val(formatTime(workedHourly));
 
-            let startIntervalDate = $('#form-hourly-rate input[name="start_interval"]').val();
-            let endIntervalDate = $('#form-hourly-rate input[name="end_interval"]').val();
-            let intervaledHourly = difHourly(startIntervalDate, endIntervalDate);
+            // let startIntervalDate = $('#form-hourly-rate input[name="start_interval"]').val();
+            // let endIntervalDate = $('#form-hourly-rate input[name="end_interval"]').val();
+            // let intervaledHourly = difHourly(startIntervalDate, endIntervalDate);
 
             // Soma o resto com acréscimos - gastos para descobrir quanto a empresa vai receber
             let addition = Number($('#form-hourly-rate input[name="addition"]').val().replace('.', '').replace(',', '.'));
@@ -286,7 +285,7 @@
 
 
             // Calcula o total
-            let total = ((hourlyRate * (workedHourly - intervaledHourly)) + addition) - costs;
+            let total = ((hourlyRate * workedHourly) + addition) - costs;
 
             // Informa o valor no total
             if (total < 0) {
@@ -303,6 +302,12 @@
         $('#form-hourly-rate').on('input change', function () {
             calcular();
         });
+
+        $('#collaborator_id').on('change', function () { 
+            console.log('Colaborador selecionado:', $(this).val());
+            getPixKey();
+        });
+
 
         $('#collaborator_id').select2({
             theme: 'bootstrap-5'

@@ -202,6 +202,6 @@ class CollaboratorsController extends Controller
 
     public function getPixKey($id) {
         $collaborator = Collaborator::query()->where('id', '=', $id)->first();
-        return $collaborator?->pix_key ?? 0;
+        return $collaborator?->pix_key ?? "";
     }
 }

@@ -82,8 +82,8 @@
                     <tr>
                         <th>Estabelecimento</th>
                         <th>Início</th>
-                        <th>Início Intervalo</th>
-                        <th>Fim Intervalo</th>
+                        {{-- <th>Início Intervalo</th>
+                        <th>Fim Intervalo</th> --}}
                         <th>Fim</th>
                         <th>Tempo Total</th>
                         <th>Valor da Diária</th>
@@ -101,8 +101,8 @@
                         <tr>
                             <td>{{ mb_strimwidth($rate->companies_name ?? '', 0, 20, '...') }}</td>
                             <td>{{ isset($rate->daily_rate_start) ? Carbon\Carbon::parse($rate->daily_rate_start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            <td>{{ isset($rate->daily_rate_start_interval) ? Carbon\Carbon::parse($rate->daily_rate_start_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            <td>{{ isset($rate->daily_rate_end_interval) ? Carbon\Carbon::parse($rate->daily_rate_end_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
+                            {{-- <td>{{ isset($rate->daily_rate_start_interval) ? Carbon\Carbon::parse($rate->daily_rate_start_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
+                            <td>{{ isset($rate->daily_rate_end_interval) ? Carbon\Carbon::parse($rate->daily_rate_end_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td> --}}
                             <td>{{ isset($rate->daily_rate_end) ? Carbon\Carbon::parse($rate->daily_rate_end)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
                             <td>{{ $rate->daily_rate_daily_total_time }}</td>
                             <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
