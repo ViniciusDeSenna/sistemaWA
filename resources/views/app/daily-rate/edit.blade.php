@@ -55,7 +55,7 @@
                  
                         <div class="mb-3">
                             <label class="form-label" for="costs">Gastos</label>
-                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ number_format($dailyRate?->costs ?? '0', 2, ".", ",") }}">
+                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '' }}">
                         </div>
 
                         <div class="mb-3">
@@ -65,7 +65,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
-                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ number_format($dailyRate?->addition ?? '0', 2, ".", ",") }}">
+                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
                         </div>
 
                         <div class="mb-3">
@@ -75,12 +75,12 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Participação do Colaborador</label>
-                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ number_format($dailyRate?->collaborator_participation ?? '0', 2, ".", ",") }}">
+                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ $dailyRate?->collaborator_participation ?? '' }}">
                         </div>
                     
                         <div class="mb-3">
                             <label class="form-label" for="total">Valor Total</label>
-                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ number_format($dailyRate?->total ?? '0', 2, ".", ",") }}">
+                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '' }}">
                         </div>
                     @endcan
 
@@ -109,6 +109,37 @@
 
 
 <script>
+    $(document).ready(function () {
+        $('#form-hourly-rate input:not([name="company_id"])').on('input change', function () {
+            calcular();
+        });
+
+        $('#company_id').on('input change', function () {
+            getHourlyRate();
+        });
+
+
+        $('#collaborator_id').select2({
+            theme: 'bootstrap-5'
+        });
+
+        $('#company_id').select2({
+            theme: 'bootstrap-5'
+        });
+
+        let moneyMask = new Inputmask("R$ 999,99", {
+            numericInput: true,
+            rightAlign: false,
+            prefix: "R$ ",
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+            unmaskAsNumber: true,
+            allowMinus: true
+        });
+        moneyMask.mask('.money');
+    });
+
     function post() {
         $.ajax({
             url: '{{ route('daily-rate.store') }}',
@@ -170,111 +201,28 @@
     }
 
     function getHourlyRate(callback) {
-        try {
-            let value = $('#hourly_rate').val();
-
-            // Se o valor não for fornecido
-            if (value === "") {
-                let company = $('#company_id').val();
-
-                // Se não houver empresa selecionada, retornamos 0
-                if (company === null) {
-                    callback(0);
-                    return;
-                }
-
-                $.ajax({
-                    url: "{{ route('companies.hourly-rate', '') }}" + '/' + company,
-                    type: 'GET',
-                    headers: {
-                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                    },
-                    success: function(response) {
-                        // Converte a resposta para o formato correto de moeda e insere no campo
-                        let rate = response.replace('.', '').replace(',', '.'); // Garantindo que a vírgula seja convertida para ponto
-                        $('#hourly_rate').val(rate.replace('.', ',')); // Exibe o valor com a vírgula de volta
-
-                        // Converte para número e verifica se o valor é válido
-                        let hourlyRate = parseFloat(rate);
-                        if (isNaN(hourlyRate)) {
-                            callback(0);
-                        } else {
-                            callback(hourlyRate);
-                        }
-                    },
-                    error: function() {
-                        // Se a requisição falhar, retornamos 0
-                        callback(0);
-                    }
-                });
-
-            } else {
-                // Caso já tenha valor no campo, converte para número
-                let numericValue = value.replace(',', '.');
-                let hourlyRate = parseFloat(numericValue);
-
-                // Se o valor não for válido, chamamos o callback com 0
-                if (isNaN(hourlyRate)) {
-                    callback(0);
-                } else {
-                    callback(hourlyRate);
-                }
-            }
-        } catch (error) {
-            // Registra o erro para facilitar o diagnóstico
-            console.error('Erro ao obter o valor da taxa horária:', error);
-            callback(0);
-        }
+        let company = $('#company_id').val();
+        $.ajax({
+            url: "{{ route('companies.hourly-rate', '') }}" + '/' + company,
+            type: 'GET',
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            },
+            success: function(response) {
+                $('#hourly_rate').val(response);
+                calcular();
+                return;
+            },
+        });
     }
-
-
-    function getPixKey() {
-        let value = $('#pix_key').val();
-        if (value === "") {
-            let collaborator = $('#collaborator_id').val();
-
-            $.ajax({
-                url: "{{ route('collaborators.pix-key', '') }}" + '/' + collaborator,
-                type: 'GET',
-                headers: {
-                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-                },
-                success: function(response) {
-                    $('#pix_key').val(response)
-                },
-            });
-        }
-    }
-
-    $(document).ready(function () {
-        $('#form-hourly-rate').on('input change', function () {
-            calcular();
-        });
-
-        // Inicializando o select2 para os campos de colaborador e empresa
-        $('#collaborator_id').select2({
-            theme: 'bootstrap-5'
-        });
-        $('#company_id').select2({
-            theme: 'bootstrap-5'
-        });
-
-        // Máscara para campos de moeda (R$ 0,00)
-        $('.money').mask('000.000.000.000.000,00', {
-            reverse: true,
-            placeholder: "R$ 0,00"
-        });
-
-        // Máscara para o campo de horas (00:00)
-        $('#total_time').mask('00:00');
-    });
 
     function calcular() {
         // Obtendo os valores dos campos com a máscara aplicada
-        let hourlyRate = $('#hourly_rate').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
-        let costs = $('#costs').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
-        let addition = $('#addition').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
-        let collaboratorParticipation = $('#collaborator_participation').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
+        let hourlyRate = Number((parseFloat(document.getElementById('hourly_rate').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
+        let costs = Number((parseFloat(document.getElementById('costs').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
+        let addition = Number((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
+        let collaboratorParticipation = Number((parseFloat(document.getElementById('collaborator_participation').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
+
 
         // Obtendo o horário de início e fim para calcular as horas trabalhadas
         let startDate = $('#form-hourly-rate input[name="start"]').val();
@@ -287,16 +235,10 @@
         $('#total_time').val(formatTime(workedHourly));
 
         // Calculando o total (considerando valores numéricos)
-        let total = (((parseFloat(hourlyRate) * workedHourly) + parseFloat(addition)) - parseFloat(costs)) - parseFloat(collaboratorParticipation);
-
+        let total = (((hourlyRate * workedHourly) + addition) - costs) - collaboratorParticipation;
+        console.log(total);
         // Atualizando o campo de total com o valor calculado
-        $('#total').val(formatCurrency(total));
-    }
-
-    
-    // Função para formatar o valor como moeda
-    function formatCurrency(value) {
-        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        $('#total').val(parseFloat(total).toFixed(2));
     }
 
     function difHourly(start, end) {
@@ -304,20 +246,27 @@
             if (start == "" || end == "") return 0;
             
             let startDate = new Date(start);
-            let endDate = new Date(end);
-            let diffInMilliseconds = endDate - startDate;
-            let diffInHours = diffInMilliseconds / (1000 * 60 * 60);
-            
-            return diffInHours;
+            let endDate = new Date(end);  
+
+            let diffInMilliseconds = endDate - startDate; 
+
+            let diffInSeconds = diffInMilliseconds / 1000;
+            let diffInMinutes = diffInSeconds / 60;
+            let diffInHours = diffInMinutes / 60;
+
+            return diffInHours ?? 0;
         } catch {
             return 0;
         }
     }
 
     function formatTime(value) {
-        let hours = Math.floor(value);
-        let minutes = Math.round((value % 1) * 60);
+        let hours = Math.floor(value); // Obtém a parte inteira como horas
+        let minutes = Math.round((value % 1) * 60); // Converte a parte decimal para minutos
+
+        // Garante que o formato seja sempre HH:MM
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
 
+    
 </script>

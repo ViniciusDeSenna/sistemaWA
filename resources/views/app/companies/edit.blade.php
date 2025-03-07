@@ -108,13 +108,13 @@
     }
 
     $(document).ready(function () {
-        var cnpjMask = new Inputmask('99.999.999/9999-99', { 
+        let cnpjMask = new Inputmask('99.999.999/9999-99', { 
             placeholder: ' ', 
             clearIncomplete: true 
         });
         cnpjMask.mask('.cnpj');
 
-        var moneyMask = new Inputmask("R$ 999,99", {
+        let moneyMask = new Inputmask("R$ 999,99", {
             numericInput: true,
             rightAlign: false,
             prefix: "R$ ",
