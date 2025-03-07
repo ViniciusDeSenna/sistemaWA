@@ -4,9 +4,9 @@ namespace App\BlueUtils;
 
 class Number
 {
-    public static function onlyNumber(string $num): int 
+    public static function onlyNumber(string $num): string 
     { 
-        return intval(preg_replace('/\D/', '', $num));
+        return preg_replace('/\D/', '', $num);
     }
 }
 

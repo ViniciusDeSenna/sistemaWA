@@ -218,11 +218,15 @@
 
     function calcular() {
         // Obtendo os valores dos campos com a máscara aplicada
-        let hourlyRate = Number((parseFloat(document.getElementById('hourly_rate').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
-        let costs = Number((parseFloat(document.getElementById('costs').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
-        let addition = Number((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
-        let collaboratorParticipation = Number((parseFloat(document.getElementById('collaborator_participation').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2);
+        let hourlyRate = Number(((parseFloat(document.getElementById('hourly_rate').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let costs = Number(((parseFloat(document.getElementById('costs').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let addition = Number(((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let collaboratorParticipation = Number(((parseFloat(document.getElementById('collaborator_participation').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
 
+        console.log(hourlyRate);
+        console.log(costs);
+        console.log(addition);
+        console.log(collaboratorParticipation);
 
         // Obtendo o horário de início e fim para calcular as horas trabalhadas
         let startDate = $('#form-hourly-rate input[name="start"]').val();
