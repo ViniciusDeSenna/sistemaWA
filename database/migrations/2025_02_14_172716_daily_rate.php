@@ -36,8 +36,6 @@ return new class extends Migration
 
             $table->decimal('total', 8, 2)->default(0)->nullable();
 
-            $table->string('pix_key')->nullable();
-
             $table->text('observation')->nullable();
 
             $table->boolean('active')->default(true);

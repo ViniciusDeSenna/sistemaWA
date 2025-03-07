@@ -102,6 +102,10 @@
     }
 
     $(document).ready(function () {
-        $('.cpf').mask('000.000.000-00', {reverse: true});
+        let cpfMask = new Inputmask('999.999.999-99', { 
+            placeholder: ' ', 
+            clearIncomplete: true 
+        });
+        cpfMask.mask('.cpf');
     });
 </script>

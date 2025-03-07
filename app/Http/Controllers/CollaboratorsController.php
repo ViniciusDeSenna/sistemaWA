@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\BlueUtils\Number;
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use Exception;
@@ -78,7 +79,7 @@ class CollaboratorsController extends Controller
         
             Collaborator::create([
                 'name' => $request->name,
-                'document' => $request->document,
+                'document' => Number::onlyNumber($request->document),
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
             ]);
@@ -144,7 +145,7 @@ class CollaboratorsController extends Controller
             $collaborator = Collaborator::findOrFail($id);
             $collaborator->update([
                 'name' => $request->name,
-                'document' => $request->document,
+                'document' => Number::onlyNumber($request->document),
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
             ]);

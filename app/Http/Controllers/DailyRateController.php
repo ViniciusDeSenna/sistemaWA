@@ -170,19 +170,17 @@ class DailyRateController extends Controller
             $dailyRate->end = $request->end;
             $dailyRate->total_time = $request->total_time;
 
-            $dailyRate->hourly_rate = floatval(str_replace(['.', ','], ['', '.'], $request->hourly_rate));
+            $dailyRate->hourly_rate = Money::unformat($request->hourly_rate);
 
-            $dailyRate->costs = floatval(str_replace(['.', ','], ['', '.'], $request->costs));
+            $dailyRate->costs = Money::unformat($request->costs);
             $dailyRate->costs_description = $request->costs_description;
 
-            $dailyRate->addition = floatval(str_replace(['.', ','], ['', '.'], $request->addition));
+            $dailyRate->addition = Money::unformat($request->addition);
             $dailyRate->addition_description = $request->addition_description;
 
-            $dailyRate->collaborator_participation = floatval(str_replace(['.', ','], ['', '.'], $request->collaborator_participation));
+            $dailyRate->collaborator_participation = Money::unformat($request->collaborator_participation);
 
-            $dailyRate->total = floatval(str_replace(['.', ','], ['', '.'], $request->total));
-
-            $dailyRate->pix_key = $request->pix_key;
+            $dailyRate->total = Money::unformat($request->total);
 
             $dailyRate->observation = $request->observation;
 
@@ -237,24 +235,22 @@ class DailyRateController extends Controller
             $dailyRate->end = $request->end;
             $dailyRate->total_time = $request->total_time;
 
-            $dailyRate->hourly_rate = floatval(str_replace(['.', ','], ['', '.'], $request->hourly_rate));
+            $dailyRate->hourly_rate = Money::unformat($request->hourly_rate);
 
-            $dailyRate->costs = floatval(str_replace(['.', ','], ['', '.'], $request->costs));
+            $dailyRate->costs = Money::unformat($request->costs);
             $dailyRate->costs_description = $request->costs_description;
 
-            $dailyRate->addition = floatval(str_replace(['.', ','], ['', '.'], $request->addition));
+            $dailyRate->addition = Money::unformat($request->addition);
             $dailyRate->addition_description = $request->addition_description;
 
-            $dailyRate->collaborator_participation = floatval(str_replace(['.', ','], ['', '.'], $request->collaborator_participation));
+            $dailyRate->collaborator_participation = Money::unformat($request->collaborator_participation);
 
-            $dailyRate->total = floatval(str_replace(['.', ','], ['', '.'], $request->total));
-
-            $dailyRate->pix_key = $request->pix_key;
+            $dailyRate->total = Money::unformat($request->total);
 
             $dailyRate->observation = $request->observation;
 
             $dailyRate->save();
-
+            
             DB::commit();
 
             return response()->json(['type' => 'success', 'message' => 'Cadastro realizado com sucesso!'], 201);

@@ -202,7 +202,7 @@
                   <script>
                     document.write(new Date().getFullYear());
                   </script>
-                  , feito com ❤️ por
+                  , feito por
                   <a href="javascript:void(0)" class="footer-link fw-bolder">Vinícius de Senna & Fhillype Leal</a>
                 </div>
                 <div>
