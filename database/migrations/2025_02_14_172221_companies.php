@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('document')->nullable();
-            $table->float('time_value')->nullable();
+            $table->float('time_value')->default(0)->nullable();
             $table->string('category')->default('indefinido')->nullable();
             $table->string('chain_of_stores')->default('indefinido')->nullable();
             $table->string('observation')->nullable();

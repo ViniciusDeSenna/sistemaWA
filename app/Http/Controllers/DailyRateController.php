@@ -170,17 +170,17 @@ class DailyRateController extends Controller
             $dailyRate->end = $request->end;
             $dailyRate->total_time = $request->total_time;
 
-            $dailyRate->hourly_rate = $request->hourly_rate;
+            $dailyRate->hourly_rate = floatval(str_replace(['.', ','], ['', '.'], $request->hourly_rate));
 
-            $dailyRate->costs = $request->costs;
+            $dailyRate->costs = floatval(str_replace(['.', ','], ['', '.'], $request->costs));
             $dailyRate->costs_description = $request->costs_description;
 
-            $dailyRate->addition = $request->addition;
+            $dailyRate->addition = floatval(str_replace(['.', ','], ['', '.'], $request->addition));
             $dailyRate->addition_description = $request->addition_description;
 
-            $dailyRate->collaborator_participation = $request->collaborator_participation;
+            $dailyRate->collaborator_participation = floatval(str_replace(['.', ','], ['', '.'], $request->collaborator_participation));
 
-            $dailyRate->total = $request->total;
+            $dailyRate->total = floatval(str_replace(['.', ','], ['', '.'], $request->total));
 
             $dailyRate->pix_key = $request->pix_key;
 
@@ -229,21 +229,30 @@ class DailyRateController extends Controller
             DB::beginTransaction();
 
             $dailyRate = DailyRate::find($id);
+            
             $dailyRate->collaborator_id = $request->collaborator_id;
             $dailyRate->company_id = $request->company_id;
+
             $dailyRate->start = $request->start;
-            $dailyRate->start_interval = $request->start_interval;
-            $dailyRate->end_interval = $request->end_interval;
             $dailyRate->end = $request->end;
-            $dailyRate->daily_total_time = $request->daily_total_time;
-            $dailyRate->hourly_rate = $request->hourly_rate;
-            $dailyRate->costs = $request->costs;
+            $dailyRate->total_time = $request->total_time;
+
+            $dailyRate->hourly_rate = floatval(str_replace(['.', ','], ['', '.'], $request->hourly_rate));
+
+            $dailyRate->costs = floatval(str_replace(['.', ','], ['', '.'], $request->costs));
             $dailyRate->costs_description = $request->costs_description;
-            $dailyRate->addition = $request->addition;
+
+            $dailyRate->addition = floatval(str_replace(['.', ','], ['', '.'], $request->addition));
             $dailyRate->addition_description = $request->addition_description;
-            $dailyRate->total = $request->total;
+
+            $dailyRate->collaborator_participation = floatval(str_replace(['.', ','], ['', '.'], $request->collaborator_participation));
+
+            $dailyRate->total = floatval(str_replace(['.', ','], ['', '.'], $request->total));
+
             $dailyRate->pix_key = $request->pix_key;
+
             $dailyRate->observation = $request->observation;
+
             $dailyRate->save();
 
             DB::commit();

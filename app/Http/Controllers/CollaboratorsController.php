@@ -145,6 +145,7 @@ class CollaboratorsController extends Controller
             $collaborator->update([
                 'name' => $request->name,
                 'document' => $request->document,
+                'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
             ]);
 

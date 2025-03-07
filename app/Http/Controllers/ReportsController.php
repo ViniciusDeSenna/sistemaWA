@@ -21,17 +21,15 @@ class ReportsController extends Controller
             ->where('daily_rate.active', '=', true)
             ->orderBy('daily_rate.collaborator_id')
             ->select([
-                'daily_rate.id as daily_rate_id',
-                'daily_rate.collaborator_id as daily_rate_collaborator_id',
-                'daily_rate.company_id as daily_rate_company_id',
+                'daily_rate.collaborator_id as collaborator_id',
+                'daily_rate.company_id as company_id',
                 'collaborators.name as collaborators_name',
                 'companies.name as companies_name',
-                'daily_rate.start as daily_rate_start',
-                'daily_rate.end as daily_rate_end',
-                'daily_rate.daily_total_time as daily_rate_daily_total_time',
-                'daily_rate.hourly_rate as daily_rate_hourly_rate',
-                'daily_rate.total_value as daily_rate_total_value',
-                'collaborators.pix_key as collaborators_pix_key'
+                'daily_rate.start as start',
+                'daily_rate.end as end',
+                'daily_rate.total_time as total_time',
+                'daily_rate.collaborator_participation as collaborator_participation',
+                'collaborators.pix_key as pix_key'
             ]);
 
             if ($request->collaborator_id) {
@@ -53,7 +51,7 @@ class ReportsController extends Controller
 
         $dailyRate = $dailyRate->get();
 
-        $groupedDailyRates = $dailyRate->groupBy('daily_rate_collaborator_id');
+        $groupedDailyRates = $dailyRate->groupBy('collaborator_id');
 
         $html = View::make('reports.daily-rate-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
     
@@ -72,18 +70,18 @@ class ReportsController extends Controller
             ->where('daily_rate.active', '=', true)
             ->orderBy('daily_rate.collaborator_id')
             ->select([
-                'daily_rate.id as daily_id',
                 'daily_rate.collaborator_id as collaborator_id',
                 'daily_rate.company_id as company_id',
                 'collaborators.name as collaborators_name',
                 'companies.name as companies_name',
-                'companies.time_value as companies_time_value',
-                'daily_rate.start as daily_rate_start',
-                'daily_rate.end as daily_rate_end',
-                'daily_rate.daily_total_time as daily_rate_total_time',
+                'daily_rate.start as start',
+                'daily_rate.end as end',
+                'daily_rate.total_time as total_time',
                 'daily_rate.hourly_rate as hourly_rate',
                 'daily_rate.costs as costs',
-                'daily_rate.total_value as total_value',
+                'daily_rate.addition as addition',
+                'daily_rate.collaborator_participation as collaborator_participation',
+                'daily_rate.total as total',
             ]);
 
             if ($request->collaborator_id) {
@@ -105,9 +103,9 @@ class ReportsController extends Controller
 
         $dailyRate = $dailyRate->get();
 
-        $groupedDailyRates = $dailyRate->groupBy('daily_rate_collaborator_id');
+        $groupedDailyRates = $dailyRate->groupBy('collaborator_id');
 
-        $html = View::make('reports.daily-rate-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
+        $html = View::make('reports.financial-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
     
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);

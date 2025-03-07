@@ -50,12 +50,12 @@
                     @can('Visualizar e inserir informações financeiras nas diárias')
                         <div class="mb-3">
                             <label class="form-label" for="hourly_rate">Valor por Hora</label>
-                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{ $dailyRate?->hourly_rate ?? '0' }}">
+                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{$dailyRate?->hourly_rate ?? '' }}">
                         </div>
                  
                         <div class="mb-3">
                             <label class="form-label" for="costs">Gastos</label>
-                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '0' }}">
+                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ number_format($dailyRate?->costs ?? '0', 2, ".", ",") }}">
                         </div>
 
                         <div class="mb-3">
@@ -65,7 +65,7 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
-                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '0' }}">
+                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ number_format($dailyRate?->addition ?? '0', 2, ".", ",") }}">
                         </div>
 
                         <div class="mb-3">
@@ -75,12 +75,12 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Participação do Colaborador</label>
-                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ $dailyRate?->collaborator_participation ?? '0' }}">
+                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ number_format($dailyRate?->collaborator_participation ?? '0', 2, ".", ",") }}">
                         </div>
                     
                         <div class="mb-3">
                             <label class="form-label" for="total">Valor Total</label>
-                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '0' }}">
+                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ number_format($dailyRate?->total ?? '0', 2, ".", ",") }}">
                         </div>
                     @endcan
                 
@@ -176,9 +176,9 @@
 
     function getHourlyRate(callback) {
         try {
-            let value = Number($('#hourly_rate').val().replace('.', '').replace(',', '.'));
+            let value = $('#hourly_rate').val();
 
-            if (value === 0) {
+            if (value === "") {
                 let company = $('#company_id').val();
 
                 if (company === null) {
@@ -193,7 +193,8 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        callback(Number(response));
+                        $('#hourly_rate').val(response.replace('.', ','));
+                        callback(Number(response.replace(',', '.')));
                     },
                     error: function() {
                         callback(0);
@@ -201,7 +202,7 @@
                 });
 
             } else {
-                callback(value);
+                callback(Number(value.replace(',', '.')));
             }
         } catch {
             callback(0);
@@ -273,17 +274,17 @@
             let costs = Number($('#form-hourly-rate input[name="costs"]').val().replace('.', '').replace(',', '.'));
             let collaboratorParticipation = Number($('#form-hourly-rate input[name="collaborator_participation"]').val().replace('.', '').replace(',', '.'));
 
+            console.log(hourlyRate);
+            console.log(workedHourly);
+            console.log(addition);
+            console.log(costs);
+            console.log(collaboratorParticipation);
 
             // Calcula o total
             let total = (((hourlyRate * workedHourly) + addition) - costs) - collaboratorParticipation;
 
-            // Informa o valor no total
-            if (total < 0) {
-                return 0;
-            }
-
             // Aqui você pode adicionar o valor no campo de total, se necessário
-            $('#form-hourly-rate input[name="total"]').val(total);
+            $('#form-hourly-rate input[name="total"]').val(total.replace(',', '.'));
         });
     }
 
