@@ -83,11 +83,6 @@
                             <input type="text" class="form-control money" id="total" name="total" readonly value="{{ number_format($dailyRate?->total ?? '0', 2, ".", ",") }}">
                         </div>
                     @endcan
-                
-                    {{-- <div class="mb-3">
-                        <label class="form-label" for="pix_key">Chave Pix para pagamento</label>
-                        <input type="text" class="form-control" id="pix_key" name="pix_key" value="{{ $dailyRate?->pix_key ?? '' }}">
-                    </div> --}}
 
                     <div class="mb-3">
                         <label class="form-label" for="observation">Observação</label>
@@ -178,9 +173,11 @@
         try {
             let value = $('#hourly_rate').val();
 
+            // Se o valor não for fornecido
             if (value === "") {
                 let company = $('#company_id').val();
 
+                // Se não houver empresa selecionada, retornamos 0
                 if (company === null) {
                     callback(0);
                     return;
@@ -193,21 +190,43 @@
                         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
                     },
                     success: function(response) {
-                        $('#hourly_rate').val(response.replace('.', ','));
-                        callback(Number(response.replace(',', '.')));
+                        // Converte a resposta para o formato correto de moeda e insere no campo
+                        let rate = response.replace('.', '').replace(',', '.'); // Garantindo que a vírgula seja convertida para ponto
+                        $('#hourly_rate').val(rate.replace('.', ',')); // Exibe o valor com a vírgula de volta
+
+                        // Converte para número e verifica se o valor é válido
+                        let hourlyRate = parseFloat(rate);
+                        if (isNaN(hourlyRate)) {
+                            callback(0);
+                        } else {
+                            callback(hourlyRate);
+                        }
                     },
                     error: function() {
+                        // Se a requisição falhar, retornamos 0
                         callback(0);
                     }
                 });
 
             } else {
-                callback(Number(value.replace(',', '.')));
+                // Caso já tenha valor no campo, converte para número
+                let numericValue = value.replace(',', '.');
+                let hourlyRate = parseFloat(numericValue);
+
+                // Se o valor não for válido, chamamos o callback com 0
+                if (isNaN(hourlyRate)) {
+                    callback(0);
+                } else {
+                    callback(hourlyRate);
+                }
             }
-        } catch {
+        } catch (error) {
+            // Registra o erro para facilitar o diagnóstico
+            console.error('Erro ao obter o valor da taxa horária:', error);
             callback(0);
         }
     }
+
 
     function getPixKey() {
         let value = $('#pix_key').val();
@@ -227,79 +246,12 @@
         }
     }
 
-    function difHourly(start, end) {
-        try {
-
-            if (start == "") return 0;
-            if (end == "") return 0;
-            
-            let startDate = new Date(start); // Example start datetime
-            let endDate = new Date(end);   // Example end datetime
-
-            let diffInMilliseconds = endDate - startDate; // Difference in milliseconds
-
-            // Convert to different units
-            let diffInSeconds = diffInMilliseconds / 1000;
-            let diffInMinutes = diffInSeconds / 60;
-            let diffInHours = diffInMinutes / 60;
-
-            return diffInHours ?? 0;
-
-        } catch {
-            return 0;
-        }
-    }
-
-    function formatTime(value) {
-        let hours = Math.floor(value); // Obtém a parte inteira como horas
-        let minutes = Math.round((value % 1) * 60); // Converte a parte decimal para minutos
-
-        // Garante que o formato seja sempre HH:MM
-        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
-    }
-
-    function calcular() {
-        // Chama getHourlyRate com um callback para lidar com o valor retornado
-        getHourlyRate(function(hourlyRate) {
-
-            // Pega o horário de início até fim e calcula quantas horas deu, faz x valor por hora se não existir início ou fim valor é = 0
-            let startDate = $('#form-hourly-rate input[name="start"]').val();
-            let endDate = $('#form-hourly-rate input[name="end"]').val();
-            let workedHourly = difHourly(startDate, endDate);
-
-            $('#form-hourly-rate input[name="total_time"]').val(formatTime(workedHourly));
-
-            // Soma o resto com acréscimos - gastos para descobrir quanto a empresa vai receber
-            let addition = Number($('#form-hourly-rate input[name="addition"]').val().replace('.', '').replace(',', '.'));
-            let costs = Number($('#form-hourly-rate input[name="costs"]').val().replace('.', '').replace(',', '.'));
-            let collaboratorParticipation = Number($('#form-hourly-rate input[name="collaborator_participation"]').val().replace('.', '').replace(',', '.'));
-
-            console.log(hourlyRate);
-            console.log(workedHourly);
-            console.log(addition);
-            console.log(costs);
-            console.log(collaboratorParticipation);
-
-            // Calcula o total
-            let total = (((hourlyRate * workedHourly) + addition) - costs) - collaboratorParticipation;
-
-            // Aqui você pode adicionar o valor no campo de total, se necessário
-            $('#form-hourly-rate input[name="total"]').val(total.replace(',', '.'));
-        });
-    }
-
-
     $(document).ready(function () {
         $('#form-hourly-rate').on('input change', function () {
             calcular();
         });
 
-        // $('#collaborator_id').on('change', function () { 
-        //     console.log('Colaborador selecionado:', $(this).val());
-        //     getPixKey();
-        // });
-
-
+        // Inicializando o select2 para os campos de colaborador e empresa
         $('#collaborator_id').select2({
             theme: 'bootstrap-5'
         });
@@ -307,18 +259,65 @@
             theme: 'bootstrap-5'
         });
 
-        $('.money').mask('#.###.###.##0,00', {
+        // Máscara para campos de moeda (R$ 0,00)
+        $('.money').mask('000.000.000.000.000,00', {
             reverse: true,
-            translation: {
-                '#': {
-                pattern: /-?\d/,
-                optional: true
-                }
-            },
             placeholder: "R$ 0,00"
         });
 
-        // getPixKey();
+        // Máscara para o campo de horas (00:00)
+        $('#total_time').mask('00:00');
     });
+
+    function calcular() {
+        // Obtendo os valores dos campos com a máscara aplicada
+        let hourlyRate = $('#hourly_rate').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
+        let costs = $('#costs').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
+        let addition = $('#addition').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
+        let collaboratorParticipation = $('#collaborator_participation').val().replace(/\./g, '').replace(',', '.'); // Convertendo para formato numérico
+
+        // Obtendo o horário de início e fim para calcular as horas trabalhadas
+        let startDate = $('#form-hourly-rate input[name="start"]').val();
+        let endDate = $('#form-hourly-rate input[name="end"]').val();
+        
+        // Calculando as horas trabalhadas
+        let workedHourly = difHourly(startDate, endDate);
+
+        // Atualizando o campo de total_time com o valor calculado
+        $('#total_time').val(formatTime(workedHourly));
+
+        // Calculando o total (considerando valores numéricos)
+        let total = (((parseFloat(hourlyRate) * workedHourly) + parseFloat(addition)) - parseFloat(costs)) - parseFloat(collaboratorParticipation);
+
+        // Atualizando o campo de total com o valor calculado
+        $('#total').val(formatCurrency(total));
+    }
+
+    
+    // Função para formatar o valor como moeda
+    function formatCurrency(value) {
+        return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+    }
+
+    function difHourly(start, end) {
+        try {
+            if (start == "" || end == "") return 0;
+            
+            let startDate = new Date(start);
+            let endDate = new Date(end);
+            let diffInMilliseconds = endDate - startDate;
+            let diffInHours = diffInMilliseconds / (1000 * 60 * 60);
+            
+            return diffInHours;
+        } catch {
+            return 0;
+        }
+    }
+
+    function formatTime(value) {
+        let hours = Math.floor(value);
+        let minutes = Math.round((value % 1) * 60);
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
 
 </script>

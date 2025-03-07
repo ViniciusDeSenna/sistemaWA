@@ -2,7 +2,7 @@
 
 namespace App\BlueUtils;
 
-class Money
+class Number
 {
     public static function onlyNumber(string $num): int 
     { 

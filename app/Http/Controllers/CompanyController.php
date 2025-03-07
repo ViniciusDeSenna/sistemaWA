@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\BlueUtils\Money;
+use App\BlueUtils\Number;
 use App\Models\Company;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
@@ -80,10 +82,10 @@ class CompanyController extends Controller
 
             Company::create([
                 'name' => $request->name,
-                'document' => $request->document,
-                'time_value' => str_replace(['.', ','], ['', '.'], $request->value),
-                'observation' => $request->observation,
+                'document' => Number::onlyNumber($request->document),
+                'time_value' => Money::unformat($request->value),
                 'chain_of_stores' => $request->category,
+                'observation' => $request->observation,
             ]);
 
             DB::commit();
@@ -144,8 +146,8 @@ class CompanyController extends Controller
             $establishment = Company::findOrFail($id);
             $establishment->update([
                 'name' => $request->name,
-                'document' => $request->document,
-                'time_value' => $request->value,
+                'document' => Number::onlyNumber($request->document),
+                'time_value' => Money::unformat($request->value),
                 'chain_of_stores' => $request->category,
                 'observation' => $request->observation,
             ]);

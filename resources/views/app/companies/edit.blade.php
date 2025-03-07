@@ -17,7 +17,7 @@
 
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Valor da Diária/Hora</label>
-                        <input type="text" class="form-control money" id="basic-default-fullname" name="value" placeholder="R$0,00" value="{{ $establishment?->time_value ?? ''}}" />
+                        <input type="text" class="form-control money" id="basic-default-fullname" name="value" placeholder="R$0,00" value="{{ $establishment?->time_value ?? '' }}" />
                     </div>
                     <div class="mb-3">
                             <label class="form-label" for="basic-default-text">Rede Pertencente</label>
@@ -108,17 +108,23 @@
     }
 
     $(document).ready(function () {
-        // Money mask
-        $('.cnpj').mask('00.000.000/0000-00', {reverse: true});
-        $('.money').mask('#.###.###.##0,00', {
-            reverse: true,
-            translation: {
-                '#': {
-                pattern: /-?\d/,
-                optional: true
-                }
-            },
-            placeholder: "R$ 0,00"
+        var cnpjMask = new Inputmask('99.999.999/9999-99', { 
+            placeholder: ' ', 
+            clearIncomplete: true 
         });
+        cnpjMask.mask('.cnpj');
+
+        var moneyMask = new Inputmask("R$ 999,99", {
+            numericInput: true,
+            rightAlign: false,
+            prefix: "R$ ",
+            groupSeparator: ".",
+            radixPoint: ",",
+            autoGroup: true,
+            unmaskAsNumber: true,
+            allowMinus: true
+        });
+        moneyMask.mask('.money');
     });
+
 </script>

@@ -24,17 +24,17 @@ return new class extends Migration
             $table->timestamp('end')->nullable();
             $table->time('total_time')->nullable();
 
-            $table->float('hourly_rate')->default(0)->nullable();
+            $table->decimal('hourly_rate', 8, 2)->default(0)->nullable();
 
-            $table->float('costs')->default(0)->nullable();
+            $table->decimal('costs', 8, 2)->default(0)->nullable();
             $table->text('costs_description')->nullable();
 
-            $table->float('addition')->default(0)->nullable();
+            $table->decimal('addition', 8, 2)->default(0)->nullable();
             $table->text('addition_description')->nullable();
 
-            $table->float('collaborator_participation')->default(0)->nullable();
+            $table->decimal('collaborator_participation', 8, 2)->default(0)->nullable();
 
-            $table->float('total')->default(0)->nullable();
+            $table->decimal('total', 8, 2)->default(0)->nullable();
 
             $table->string('pix_key')->nullable();
 
