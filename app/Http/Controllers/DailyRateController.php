@@ -43,13 +43,13 @@ class DailyRateController extends Controller
                 'daily_rate.company_id as daily_rate_company_id',
                 'collaborators.name as collaborators_name',
                 'companies.name as companies_name',
-                'daily_rate.start as daily_rate_start',
-                'daily_rate.end as daily_rate_end',
-                'daily_rate.daily_total_time as daily_rate_daily_total_time',
-                'daily_rate.hourly_rate as daily_rate_hourly_rate',
-                'daily_rate.addition as daily_rate_addition',
-                'daily_rate.costs as daily_rate_costs',
-                'daily_rate.total as daily_rate_total',
+                'daily_rate.start as start',
+                'daily_rate.end as end',
+                'daily_rate.total_time as total_time',
+                'daily_rate.hourly_rate as hourly_rate',
+                'daily_rate.addition as addition',
+                'daily_rate.costs as costs',
+                'daily_rate.total as total',
             ]);
 
             if ($request->collaborator_id) {
@@ -70,52 +70,52 @@ class DailyRateController extends Controller
         
         return DataTables::of($dailyRate)
             ->addColumn('collaborators_name', function ($daily) {
-                return mb_strimwidth($daily->collaborators_name ?? '', 0, 20, '...');
+                return mb_strimwidth($daily->collaborators_name ?? 'Não Informado', 0, 20, '...');
             })
             ->addColumn('companies_name', function ($daily) {
-                return mb_strimwidth($daily->companies_name ?? '', 0, 20, '...');
+                return mb_strimwidth($daily->companies_name ?? 'Não Informado', 0, 20, '...');
             })
-            ->addColumn('daily_rate_start', function ($daily) {
-                if (isset($daily->daily_rate_start)) {
-                    return Carbon::parse($daily->daily_rate_start)->format('d/m/Y H:i:s');
+            ->addColumn('start', function ($daily) {
+                if (isset($daily->start)) {
+                    return Carbon::parse($daily->start)->format('d/m/Y H:i:s');
                 } else {
                     return '--/--/-- --:--:--';
                 }
             })
-            ->addColumn('daily_rate_end', function ($daily) {
-                if (isset($daily->daily_rate_end)) {
-                    return Carbon::parse($daily->daily_rate_end)->format('d/m/Y H:i:s');
+            ->addColumn('end', function ($daily) {
+                if (isset($daily->end)) {
+                    return Carbon::parse($daily->end)->format('d/m/Y H:i:s');
                 } else {
                     return '--/--/-- --:--:--';
                 }
             })
-            ->addColumn('daily_rate_daily_total_time', function ($daily) {
-                return str_replace('.', ':', $daily->daily_rate_daily_total_time);
+            ->addColumn('total_time', function ($daily) {
+                return str_replace('.', ':', $daily->total_time);
             })
-            ->addColumn('daily_rate_hourly_rate', function ($daily) use ($user) {
+            ->addColumn('hourly_rate', function ($daily) use ($user) {
                 if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.');
+                    return Money::format($daily->hourly_rate ?? '0', 'R$ ', 2, ',', '.');
                 } else {
                     return 'R$ --,--';
                 }
             })
-            ->addColumn('daily_rate_addition', function ($daily) use ($user) {
+            ->addColumn('addition', function ($daily) use ($user) {
                 if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->daily_rate_addition ?? '0', 'R$ ', 2, ',', '.');
+                    return Money::format($daily->addition ?? '0', 'R$ ', 2, ',', '.');
                 } else {
                     return 'R$ --,--';
                 }
             })
-            ->addColumn('daily_rate_costs', function ($daily) use ($user) {
+            ->addColumn('costs', function ($daily) use ($user) {
                 if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->daily_rate_costs ?? '0', 'R$ ', 2, ',', '.');
+                    return Money::format($daily->costs ?? '0', 'R$ ', 2, ',', '.');
                 } else {
                     return 'R$ --,--';
                 }
             })
-            ->addColumn('daily_rate_total', function ($daily) use ($user) {
+            ->addColumn('total', function ($daily) use ($user) {
                 if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->daily_rate_total ?? '0', 'R$ ', 2, ',', '.');
+                    return Money::format($daily->total ?? '0', 'R$ ', 2, ',', '.');
                 } else {
                     return 'R$ --,--';
                 }
@@ -157,23 +157,35 @@ class DailyRateController extends Controller
 
             DB::beginTransaction();
 
+            if ($request->company_id) {
+                $company = Company::find($request->company_id);
+            }
+
             $dailyRate = new DailyRate();
+
             $dailyRate->collaborator_id = $request->collaborator_id;
             $dailyRate->company_id = $request->company_id;
+
             $dailyRate->start = $request->start;
-            $dailyRate->start_interval = $request->start_interval;
-            $dailyRate->end_interval = $request->end_interval;
             $dailyRate->end = $request->end;
-            $dailyRate->daily_total_time = $request->daily_total_time;
+            $dailyRate->total_time = $request->total_time;
+
             $dailyRate->hourly_rate = $request->hourly_rate;
-            $dailyRate->total_value = Time::convertTimeToDecimal($request->daily_total_time) * $request->hourly_rate;
+
             $dailyRate->costs = $request->costs;
             $dailyRate->costs_description = $request->costs_description;
+
             $dailyRate->addition = $request->addition;
             $dailyRate->addition_description = $request->addition_description;
+
+            $dailyRate->collaborator_participation = $request->collaborator_participation;
+
             $dailyRate->total = $request->total;
+
             $dailyRate->pix_key = $request->pix_key;
+
             $dailyRate->observation = $request->observation;
+
             $dailyRate->save();
 
             DB::commit();

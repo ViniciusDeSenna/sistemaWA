@@ -13,25 +13,35 @@ return new class extends Migration
     {
         Schema::create('daily_rate', function($table){
             $table->id();
+
             $table->foreignId('collaborator_id')->nullable();
             $table->foreign('collaborator_id')->references('id')->on('collaborators');
+
             $table->foreignId('company_id')->nullable();
             $table->foreign('company_id')->references('id')->on('companies');
+
             $table->timestamp('start')->nullable();
-            $table->timestamp('start_interval')->nullable();
-            $table->timestamp('end_interval')->nullable();
             $table->timestamp('end')->nullable();
-            $table->time('daily_total_time')->nullable();
-            $table->float('hourly_rate')->nullable();
-            $table->float('total_value')->nullable();
-            $table->float('costs')->nullable();
+            $table->time('total_time')->nullable();
+
+            $table->float('hourly_rate')->defoult(0)->nullable();
+
+            $table->float('costs')->defoult(0)->nullable();
             $table->text('costs_description')->nullable();
-            $table->float('addition')->nullable();
+
+            $table->float('addition')->defoult(0)->nullable();
             $table->text('addition_description')->nullable();
-            $table->float('total')->nullable();
+
+            $table->float('collaborator_participation')->defoult(0)->nullable();
+
+            $table->float('total')->defoult(0)->nullable();
+
             $table->string('pix_key')->nullable();
+
             $table->text('observation')->nullable();
+
             $table->boolean('active')->default(true);
+            
             $table->timestamps();
         });
     }

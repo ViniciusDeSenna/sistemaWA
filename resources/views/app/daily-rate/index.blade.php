@@ -56,9 +56,8 @@
 
                     <div class="card-footer d-flex justify-content-end align-items-center">
                         <div class="d-flex justify-content-end gap-3">
-                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="reportDailyRate()">Relatório Diárias</button>
-                            <button type="button" class="btn btn-secondary right" style="margin-right: 0%" onclick="reportFinancial()">Relatório Financeiro</button>
-                            <button type="button" class="btn btn-primary right" style="margin-right: 0%" onclick="reloadDataTable()">Salvar</button>
+                            <button type="button" class="btn btn-info right" style="margin-right: 0%" onclick="reportDailyRate()">Relatório Diárias</button>
+                            <button type="button" class="btn btn-info right" style="margin-right: 0%" onclick="reportFinancial()">Relatório Financeiro</button>
                         </div>
                     </div> 
                 </form>
@@ -114,13 +113,13 @@
             columns: [
                 { data: 'collaborators_name', name: 'collaborators_name' },
                 { data: 'companies_name', name: 'companies_name' },
-                { data: 'daily_rate_start', name: 'daily_rate_start' },
-                { data: 'daily_rate_end', name: 'daily_rate_end' },
-                { data: 'daily_rate_daily_total_time', name: 'daily_rate_daily_total_time' },
-                { data: 'daily_rate_hourly_rate', name: 'daily_rate_hourly_rate' },
-                { data: 'daily_rate_addition', name: 'daily_rate_addition' },
-                { data: 'daily_rate_costs', name: 'daily_rate_costs' },
-                { data: 'daily_rate_total', name: 'daily_rate_total' },
+                { data: 'start', name: 'start' },
+                { data: 'end', name: 'end' },
+                { data: 'total_time', name: 'total_time' },
+                { data: 'hourly_rate', name: 'hourly_rate' },
+                { data: 'addition', name: 'addition' },
+                { data: 'costs', name: 'costs' },
+                { data: 'total', name: 'total' },
                 { data: 'actions', name: 'actions' },
             ],
             language: {
@@ -145,9 +144,9 @@
         window.location.href = "{{ route('report.financial') }}?" + $('#form-hourly-rate-filter').serialize();
     }
 
-    function reloadDataTable() {
+    $('#form-hourly-rate-filter input, #form-hourly-rate-filter select').on('input change', function () {
         $('#table-daily-rate').DataTable().ajax.reload();
-    }
+    });
 
     function remove(id){
         Swal.fire({

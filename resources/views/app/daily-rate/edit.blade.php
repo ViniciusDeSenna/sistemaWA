@@ -37,37 +37,25 @@
                         <input type="datetime-local" class="form-control" id="start" name="start" value="{{ $dailyRate?->start ?? '' }}">
                     </div>
 
-                    {{-- <div class="mb-3">
-                        <label class="form-label" for="start_interval">Chegada Intervalo</label>
-                        <input type="datetime-local" class="form-control" id="start_interval" name="start_interval" value="{{ $dailyRate?->start_interval ?? '' }}">
-                    </div>
-                    
-                    <div class="mb-3">
-                        <label class="form-label" for="end_interval">Saida Intervalo</label>
-                        <input type="datetime-local" class="form-control" id="end_interval" name="end_interval" value="{{ $dailyRate?->end_interval ?? '' }}">
-                    </div> --}}
-
                     <div class="mb-3">
                         <label class="form-label" for="end">Saída</label>
                         <input type="datetime-local" class="form-control" id="end" name="end" value="{{ $dailyRate?->end ?? '' }}">
                     </div>
                 
                     <div class="mb-3">
-                        <label class="form-label" for="daily_total_time">Quantidade de Horas Trabalhadas</label>
-                        <input type="text" class="form-control" id="daily_total_time" name="daily_total_time" data-mask="00:00" readonly value="{{ $dailyRate?->daily_total_time ?? '' }}">
+                        <label class="form-label" for="total_time">Quantidade de Horas Trabalhadas</label>
+                        <input type="text" class="form-control" id="total_time" name="total_time" data-mask="00:00" readonly value="{{ $dailyRate?->total_time ?? '' }}">
                     </div>
                 
                     @can('Visualizar e inserir informações financeiras nas diárias')
                         <div class="mb-3">
                             <label class="form-label" for="hourly_rate">Valor por Hora</label>
-                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{ $dailyRate?->hourly_rate ?? '' }}">
+                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{ $dailyRate?->hourly_rate ?? '0' }}">
                         </div>
-                    @endcan
-
-                    @can('Visualizar e inserir informações financeiras nas diárias')
+                 
                         <div class="mb-3">
                             <label class="form-label" for="costs">Gastos</label>
-                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '' }}">
+                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '0' }}">
                         </div>
 
                         <div class="mb-3">
@@ -77,17 +65,22 @@
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
-                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
+                            <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '0' }}">
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="addition_description">Descrição dos Acréscimos</label>
                             <textarea class="form-control" id="addition_description" name="addition_description" rows="4">{!! $dailyRate?->addition_description ?? '' !!}</textarea>
                         </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="addition">Participação do Colaborador</label>
+                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ $dailyRate?->collaborator_participation ?? '0' }}">
+                        </div>
                     
                         <div class="mb-3">
                             <label class="form-label" for="total">Valor Total</label>
-                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '' }}">
+                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '0' }}">
                         </div>
                     @endcan
                 
@@ -273,19 +266,16 @@
             let endDate = $('#form-hourly-rate input[name="end"]').val();
             let workedHourly = difHourly(startDate, endDate);
 
-            $('#form-hourly-rate input[name="daily_total_time"]').val(formatTime(workedHourly));
-
-            // let startIntervalDate = $('#form-hourly-rate input[name="start_interval"]').val();
-            // let endIntervalDate = $('#form-hourly-rate input[name="end_interval"]').val();
-            // let intervaledHourly = difHourly(startIntervalDate, endIntervalDate);
+            $('#form-hourly-rate input[name="total_time"]').val(formatTime(workedHourly));
 
             // Soma o resto com acréscimos - gastos para descobrir quanto a empresa vai receber
             let addition = Number($('#form-hourly-rate input[name="addition"]').val().replace('.', '').replace(',', '.'));
             let costs = Number($('#form-hourly-rate input[name="costs"]').val().replace('.', '').replace(',', '.'));
+            let collaboratorParticipation = Number($('#form-hourly-rate input[name="collaborator_participation"]').val().replace('.', '').replace(',', '.'));
 
 
             // Calcula o total
-            let total = ((hourlyRate * workedHourly) + addition) - costs;
+            let total = (((hourlyRate * workedHourly) + addition) - costs) - collaboratorParticipation;
 
             // Informa o valor no total
             if (total < 0) {

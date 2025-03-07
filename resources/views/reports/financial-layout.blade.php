@@ -81,34 +81,33 @@
                 <thead>
                     <tr>
                         <th>Estabelecimento</th>
+                        <th>Valor pago pelo estabelecimento</th>
                         <th>Início</th>
-                        {{-- <th>Início Intervalo</th>
-                        <th>Fim Intervalo</th> --}}
                         <th>Fim</th>
                         <th>Tempo Total</th>
                         <th>Valor da Diária</th>
                         <th>Custo</th>
-                        <th>Acréscimos</th>
+                        <th>Valor Colaborador</th>
                         <th>Valor Total</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($rates as $rate)
 
+                        @php($companyPay = $rate->companies_time_value * App\BlueUtils\Time::convertTimeToDecimal($rate->daily_rate_daily_total_time))
+                        @php($dailyRateTotal = ($companyPay - $rate->daily_rate_costs) - $rate->daily_rate_total_value)
                         @php($totalCollaborator += $rate->daily_rate_total)
                         @php($total += $rate->daily_rate_total)
 
                         <tr>
                             <td>{{ mb_strimwidth($rate->companies_name ?? '', 0, 20, '...') }}</td>
+                            <td>{{ mb_strimwidth($rate->companies_name ?? '', 0, 20, '...') }}</td>
                             <td>{{ isset($rate->daily_rate_start) ? Carbon\Carbon::parse($rate->daily_rate_start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            {{-- <td>{{ isset($rate->daily_rate_start_interval) ? Carbon\Carbon::parse($rate->daily_rate_start_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            <td>{{ isset($rate->daily_rate_end_interval) ? Carbon\Carbon::parse($rate->daily_rate_end_interval)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td> --}}
                             <td>{{ isset($rate->daily_rate_end) ? Carbon\Carbon::parse($rate->daily_rate_end)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
                             <td>{{ $rate->daily_rate_daily_total_time }}</td>
                             <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_hourly_rate ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_addition ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
                             <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_costs ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->daily_rate_total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
+                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($dailyRateTotal ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
                         </tr>
                     @endforeach
                 </tbody>
