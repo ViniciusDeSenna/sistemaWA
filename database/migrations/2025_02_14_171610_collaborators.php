@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('document')->nullable();
+            $table->string('city')->nullable();
+            $table->boolean('intermittent_contract')->default(false);
             $table->text('observation')->nullable();
             $table->string('pix_key')->nullable();
             $table->boolean('active')->default(true);

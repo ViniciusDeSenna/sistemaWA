@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\BlueUtils\Money;
 use App\BlueUtils\Number;
 use App\Models\Company;
+use App\Models\CompanyHasSection;
+use App\Models\Section;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -55,12 +57,14 @@ class CompanyController extends Controller
      */
     public function create()
     {
-        return View('app.companies.edit');
+        $sections = Section::all();
+        return View('app.companies.edit', compact('sections'));
     }
 
     /**
      * Store a newly created resource in storage.
      */
+    
     public function store(Request $request)
     {
         try {
@@ -80,10 +84,9 @@ class CompanyController extends Controller
                 ], 422);
             }
 
-            Company::create([
+            $company = Company::create([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
-                'time_value' => Money::unformat($request->value),
                 'chain_of_stores' => $request->category,
                 'observation' => $request->observation,
             ]);
@@ -93,7 +96,8 @@ class CompanyController extends Controller
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Estabelecimento cadastrado com sucesso!',
-                'type' => 'success'
+                'type' => 'success',
+                'company_id' => $company->id
             ], 201);
 
         } catch(Exception $exception){
@@ -118,7 +122,15 @@ class CompanyController extends Controller
      */
     public function edit(string $id)
     {
-        return View('app.companies.edit', ['establishment' => Company::find($id)]);
+        $establishment = Company::find($id); 
+        $sections = Section::all();  
+        $companySections = CompanyHasSection::where('company_id', $id)
+                             ->get();
+        return View('app.companies.edit', [
+            'establishment' => $establishment,
+            'sections' => $sections,
+            'companySections' => $companySections, 
+        ]);
     }
 
     /**
@@ -213,4 +225,7 @@ class CompanyController extends Controller
             return 0;
         }
     }
+
+
+
 }
