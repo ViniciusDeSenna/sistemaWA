@@ -101,9 +101,9 @@ class CompanyController extends Controller
                     'company_id' => $company->id,
                     'section_id' => $section_id,
                     'earned' => $request->earned[$section_id],
-                    'diaria' => $request->diaria[$section_id],
-                    'lider' => $request->lider[$section_id],
-                    'comissao' => $request->comissao[$section_id],
+                    'employeePay' => $request->diaria[$section_id],
+                    'leaderPay' => $request->lider[$section_id],
+                    'leaderComission' => $request->comissao[$section_id],
                 ]);
             }
             
@@ -171,14 +171,29 @@ class CompanyController extends Controller
                 ], 422);
             }
 
-            $establishment = Company::findOrFail($id);
-            $establishment->update([
+            $company = Company::findOrFail($id);
+            $company->update([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
-                'time_value' => Money::unformat($request->value),
                 'chain_of_stores' => $request->category,
                 'observation' => $request->observation,
             ]);
+
+            foreach($request->section_id as $section_id){
+                CompanyHasSection::updateOrCreate(
+                [
+                    'company_id' => $company->id,
+                    'section_id' => $section_id,
+                ],
+                [
+                    'company_id' => $company->id,
+                    'section_id' => $section_id,
+                    'earned' => $request->earned[$section_id],
+                    'employeePay' => $request->diaria[$section_id],
+                    'leaderPay' => $request->lider[$section_id],
+                    'leaderComission' => $request->comissao[$section_id],
+                ]);
+            }
 
             DB::commit();
 

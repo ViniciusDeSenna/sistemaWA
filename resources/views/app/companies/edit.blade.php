@@ -331,13 +331,7 @@
                     title: response?.title ?? 'Sucesso!',
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
-                }).then(() => {
-                    //$('#form-edit-establishment')[0].reset();
-                    
-                    if (response.company_id) {
-                        getSections(response.company_id);
-                    }
-                });
+                })
             },
             error: function(response) {
                 response = JSON.parse(response.responseText);
@@ -363,11 +357,7 @@
                     title: response?.title ?? 'Sucesso!',
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
-                }).then((result) => {
-                    $('#form-edit-establishment')[0].reset();
-
-                    //window.location.reload();
-                });
+                })
             },
             error: function(response) {
                 response = JSON.parse(response.responseText);

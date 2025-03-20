@@ -17,6 +17,7 @@ class CompanyHasSection extends Model
         "leaderPay",
         "leaderComission",
         "earned",
+        "diaria",
     ];
 
     public function company()
