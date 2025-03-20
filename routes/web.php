@@ -65,11 +65,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-});
+
     //Route::delete('/company-sections/remove', [CompanyHasSectionController::class, 'remove']);
     Route::delete('/company-has-section/remove', [CompanyHasSectionController::class, 'remove'])->name(name: 'companyHasSection.remove');
 
     Route::post('/company-has-section/storeObject', [CompanyHasSectionController::class, 'storeObject'])->name(name: 'companyHasSection.storeObject');
     Route::post('/company-has-section/store', [CompanyHasSectionController::class, 'storeArray'])->name(name: 'companyHasSection.storeArray');
 
+});
 require __DIR__.'/auth.php';

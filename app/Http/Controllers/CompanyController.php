@@ -91,6 +91,22 @@ class CompanyController extends Controller
                 'observation' => $request->observation,
             ]);
 
+            foreach($request->section_id as $section_id){
+                CompanyHasSection::updateOrCreate(
+                [
+                    'company_id' => $company->id,
+                    'section_id' => $section_id,
+                ],
+                [
+                    'company_id' => $company->id,
+                    'section_id' => $section_id,
+                    'earned' => $request->earned[$section_id],
+                    'diaria' => $request->diaria[$section_id],
+                    'lider' => $request->lider[$section_id],
+                    'comissao' => $request->comissao[$section_id],
+                ]);
+            }
+            
             DB::commit();
 
             return response()->json([

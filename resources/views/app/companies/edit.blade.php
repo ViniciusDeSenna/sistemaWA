@@ -75,29 +75,25 @@
                     <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="heading${setorId}" data-bs-parent="#accordionDiv">
 
                     <div class="accordion-body d-flex justify-content-end">
-                            <input type="hidden" id="setores[${setorId}][id]" value="${setorId}">
+                            <input type="hidden" id="setores[${setorId}][id]" name="section_id[${setorId}]" value="${setorId}">
                             <label class="form-label mb-3">Recebido: 
-                                <input type="number" class="form-control number" id="setores[${setorId}][earned]" value="${earned ?? 1000}">
+                                <input type="number" class="form-control number" id="setores[${setorId}][earned]" name="earned[${setorId}]" value="${earned ?? 1000}">
                             </label>
                             <label class="form-label mb-1">Diária: 
-                                <input type="number" class="form-control number" id="setores[${setorId}][diaria]" value="${employee_pay ?? 100}">
+                                <input type="number" class="form-control number" id="setores[${setorId}][diaria]" name="diaria[${setorId}]" value="${employee_pay ?? 100}">
                             </label>
                             <label class="form-label mb-1">Líder: 
-                                <input type="number" class="form-control number" id="setores[${setorId}][lider]" value="${leader_pay ?? 122}">
+                                <input type="number" class="form-control number" id="setores[${setorId}][lider]" name="lider[${setorId}]" value="${leader_pay ?? 122}">
                             </label>
                             <label class="form-label mb-3">Comissão: 
-                                <input type="number" class="form-control number" id="setores[${setorId}][comissao]" value="${comission ?? 8}">
+                                <input type="number" class="form-control number" id="setores[${setorId}][comissao]" name="comissao[${setorId}]" value="${comission ?? 8}">
                             </label>
                         </div>
                         <div class="d-flex justify-content-center d-flex bd-highlight">
                             @if ($establishment?->id ?? false)
-                                <button type="button" class="btn btn-info mt-2 p-2 flex-fill bd-highlight" onclick="saveSection('${setorId}', '${setorNome}', {{ $establishment?->id }})">Salvar</button>
                                 <button type="button" class="btn btn-danger mt-2 p-2 flex-fill bd-highlight" onclick="removeSection('${setorId}', '${setorNome}', {{ $establishment?->id }})">Remover</button>
-                                
                             @else
-                                <button type="button" style="#63666A" class="mt-2 p-2 flex-fill bd-highlight" onclick="" disabled>Salvar</button>
                                 <button type="button" class="btn btn-danger mt-2 p-2 flex-fill bd-highlight" onclick="removeSection('${setorId}', '${setorNome}', {{ 0 }})">Remover</button>
-
                             @endif
                         </div>
                         </div>
@@ -167,48 +163,48 @@
         setorSelect.options[setorSelect.selectedIndex].remove();
     }
 
-    function saveSection(sectionId, sectionName, establishmentId) {
-        // Extração dos valores dos campos
-        let employeePay = document.getElementById(`setores[${sectionId}][diaria]`).value;
-        let leaderPay = document.getElementById(`setores[${sectionId}][lider]`).value;
-        let comission = document.getElementById(`setores[${sectionId}][comissao]`).value;
-        let earned = document.getElementById(`setores[${sectionId}][earned]`).value;
+    // function saveSection(sectionId, sectionName, establishmentId) {
+    //     // Extração dos valores dos campos
+    //     let employeePay = document.getElementById(`setores[${sectionId}][diaria]`).value;
+    //     let leaderPay = document.getElementById(`setores[${sectionId}][lider]`).value;
+    //     let comission = document.getElementById(`setores[${sectionId}][comissao]`).value;
+    //     let earned = document.getElementById(`setores[${sectionId}][earned]`).value;
 
-        console.log(sectionId);
-        // Enviar dados via AJAX
-        $.ajax({
-            url: '{{ route('companyHasSection.storeObject') }}',  // URL da rota
-            type: 'POST',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Garantir CSRF token
-            },
-            data: {
-                establishment_id: establishmentId,
-                section_id: sectionId,
-                employee_pay: employeePay,
-                leader_pay: leaderPay,
-                leaderComission: comission,
-                earned: earned
-            },
-            success: function(response) {
-                Swal.fire({
-                    title: response?.title ?? 'Sucesso!',
-                    text: response?.message ?? 'Sucesso na ação!',
-                    icon: response?.type ?? 'success'
-                }).then((result) => {
-                    //window.location.reload();
-                });
-            },
-            error: function(response) {
-                response = JSON.parse(response.responseText); // Captura o erro
-                Swal.fire({
-                    title: response?.title ?? 'Oops!',
-                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
-                    icon: response?.type ?? 'error'
-                });
-            }
-        });
-    }
+    //     console.log(sectionId);
+    //     // Enviar dados via AJAX
+    //     $.ajax({
+    //         url: '{{ route('companyHasSection.storeObject') }}',  // URL da rota
+    //         type: 'POST',
+    //         headers: {
+    //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Garantir CSRF token
+    //         },
+    //         data: {
+    //             establishment_id: establishmentId,
+    //             section_id: sectionId,
+    //             employee_pay: employeePay,
+    //             leader_pay: leaderPay,
+    //             leaderComission: comission,
+    //             earned: earned
+    //         },
+    //         success: function(response) {
+    //             Swal.fire({
+    //                 title: response?.title ?? 'Sucesso!',
+    //                 text: response?.message ?? 'Sucesso na ação!',
+    //                 icon: response?.type ?? 'success'
+    //             }).then((result) => {
+    //                 //window.location.reload();
+    //             });
+    //         },
+    //         error: function(response) {
+    //             response = JSON.parse(response.responseText); // Captura o erro
+    //             Swal.fire({
+    //                 title: response?.title ?? 'Oops!',
+    //                 html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
+    //                 icon: response?.type ?? 'error'
+    //             });
+    //         }
+    //     });
+    // }
 
     function removeSection(sectionId, sectionName, establishmentID) {
         let sectionDiv = document.getElementById(`setor-${sectionId}`);
