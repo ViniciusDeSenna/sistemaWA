@@ -6,27 +6,15 @@
             </div> 
             <div class="card-body">
                 <form id="form-edit-establishment">
-                    <div class="mb-3">
-                        <label class="form-label" for="basic-default-fullname">Nome</label>
-                        <input type="text" class="form-control" id="basic-default-fullname" name="name" placeholder="WA Merchandising e Terceirização" value="{{ $establishment?->name ?? ''}}" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="basic-default-fullname">CNPJ</label>
-                        <input type="text" class="form-control cnpj" id="basic-default-fullname" name="document" placeholder="XX.XXX.XXX/XXXX-XX" value="{{ $establishment?->document ?? ''}}" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="basic-default-fullname">Cidade</label>
-                        <input type="text" class="form-control" id="basic-default-fullname" name="city" placeholder="Nome da Cidade" value="{{ $establishment?->city ?? ''}}" />
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="basic-default-fullname">Uniformes em Loja</label>
-                        <input type="number" class="form-control" id="uniforms_laid" name="uniforms_laid" placeholder="0" value="{{ $establishment?->uniforms_laid ?? ''}}" />
-                    </div>
-<!--                    <div class="mb-3">
-                            <label class="form-label" for="basic-default-text">Rede Pertencente</label>
-                            <input type="text" class="form-control" id="category" name="category" placeholder="Rede" value="{{ $establishment?->chain_of_stores ?? ''}}" />
-                    </div>                    
--->
+
+                    <x-input id="name" name="name" type="text" label="Nome" :value="$company?->name" placeholder="Nome do Estabelecimento" />
+
+                    <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document" placeholder="Documento do Estabelecimento" class="cnpj" />
+                    
+                    <x-input id="city" name="city" type="text" label="Cidade" :value="$company?->city" placeholder="Cidade" />
+
+                    <x-input id="uniforms_laid" name="uniforms_laid" type="number" label="Qtd. Uniformes em Loja" :value="$company?->uniforms_laid" placeholder="Quantidade de uniformes em loja" />
+
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-text">Setores</label><br>
                         <div class="d-flex align-items-center gap-2">
@@ -42,17 +30,15 @@
                             <div id="selectedSections" class="w-100"></div>
                         </div>
                     </div>
-                    <div class="mb-3">
-                        <label class="form-label" for="basic-default-message">Observação</label>
-                        <textarea id="basic-default-message" class="form-control" placeholder="Alguma observação?" name="observation">{!! $establishment?->observation ?? '' !!}</textarea>
-                    </div>
+
+                    <x-textarea id="observation" name="observation" label="Observação" placeholder="Alguma observação?">{!! $company?->observation !!}</x-textarea>
                 </form>
             </div>
     
             <div class="card-footer">
-                @if ($establishment?->id ?? false)
+                @if ($company?->id ?? false)
                     <div class="d-flex justify-content-end">
-                        <button type="button" class="btn btn-primary right" onclick="update({{ $establishment?->id ?? null }})">Salvar</button>
+                        <button type="button" class="btn btn-primary right" onclick="update({{ $company?->id ?? null }})">Salvar</button>
                     </div>
                 @else
                     <div class="d-flex justify-content-end">
@@ -66,8 +52,8 @@
 
 <script>
     
-    let establishment = @json($establishment ?? null);
-    let companySections = @json($companySections ?? []);
+    let establishment = @json($company ?? null);
+    let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
 
     function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour){
@@ -283,7 +269,7 @@
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
                 }).then((result) => {
-                    $('#form-edit-collaborator')[0].reset();
+                    $('#form-edit-establishment')[0].reset();
 
                     window.location.reload();
                 });

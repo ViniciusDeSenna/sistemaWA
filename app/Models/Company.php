@@ -26,4 +26,9 @@ class Company extends Model
         return self::query()->where('active', '=', true)->get();
 
     }
+    
+    public function companySections()
+    {
+        return $this->hasMany(CompanyHasSection::class);
+    }
 }

@@ -90,28 +90,30 @@ class CompanyController extends Controller
                 'document' => Number::onlyNumber($request->document),
                 'chain_of_stores' => $request->category,
                 'city' => $request->category,
-                'uniforms_laid'=> ($request->uniforms_laid),
+                'uniforms_laid'=> $request->uniforms_laid ?? 0,
                 'observation' => $request->observation,
             ]);
-            foreach($request->section_id as $section_id){
+            if($request->section_id) {
+                foreach($request->section_id as $section_id){
 
-                CompanyHasSection::updateOrCreate(
-                [
-                    'company_id' => $company->id,
-                    'section_id' => $section_id,
-                ],
-                [
-                    'company_id' => $company->id,
-                    'section_id' => $section_id,
-                    'earned' => $request->earned[$section_id],
-                    'employeePay' => $request->diaria[$section_id],
-                    'leaderPay' => $request->lider[$section_id],
-                    'extra' =>  $request->extra[$section_id],
-                    'leaderComission' => $request->comissao[$section_id],
-                    'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
-                    'active' => true,
-                
-                ]);
+                    CompanyHasSection::updateOrCreate(
+                    [
+                        'company_id' => $company->id,
+                        'section_id' => $section_id,
+                    ],
+                    [
+                        'company_id' => $company->id,
+                        'section_id' => $section_id,
+                        'earned' => $request->earned[$section_id],
+                        'employeePay' => $request->diaria[$section_id],
+                        'leaderPay' => $request->lider[$section_id],
+                        'extra' =>  $request->extra[$section_id],
+                        'leaderComission' => $request->comissao[$section_id],
+                        'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
+                        'active' => true,
+                    
+                    ]);
+                }
             }
             
             DB::commit();
@@ -145,16 +147,10 @@ class CompanyController extends Controller
      */
     public function edit(string $id)
     {
-        $establishment = Company::find($id); 
-        $sections = Section::all();  
-        $companySections = CompanyHasSection::where('company_id', $id)->where('active', true)
-                             ->get();
-
-        return View('app.companies.edit', [
-            'establishment' => $establishment,
-            'sections' => $sections,
-            'companySections' => $companySections, 
-        ]);
+        $company = Company::find($id); 
+        $sections = Section::all();
+    
+        return view('app.companies.edit', compact('company', 'sections'));
     }
 
     /**

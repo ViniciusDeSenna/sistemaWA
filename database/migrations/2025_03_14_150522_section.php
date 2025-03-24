@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create("sections", function($table){
             $table->id();
             $table->string("name");
+            $table->timestamps();
         });
     }
 
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('sections');
     }
 };
