@@ -7,13 +7,13 @@
             <div class="card-body">
                 <form id="form-edit-establishment">
 
-                    <x-input id="name" name="name" type="text" label="Nome" :value="$company?->name" placeholder="Nome do Estabelecimento" />
+                    <x-input id="name" name="name" type="text" label="Nome" :value="$company?->name ?? null" placeholder="Nome do Estabelecimento" />
 
-                    <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document" placeholder="Documento do Estabelecimento" class="cnpj" />
+                    <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document ?? null " placeholder="Documento do Estabelecimento" class="cnpj" />
                     
-                    <x-input id="city" name="city" type="text" label="Cidade" :value="$company?->city" placeholder="Cidade" />
+                    <x-input id="city" name="city" type="text" label="Cidade" :value="$company?->city ?? null" placeholder="Cidade" />
 
-                    <x-input id="uniforms_laid" name="uniforms_laid" type="number" label="Qtd. Uniformes em Loja" :value="$company?->uniforms_laid" placeholder="Quantidade de uniformes em loja" />
+                    <x-input id="uniforms_laid" name="uniforms_laid" type="number" label="Qtd. Uniformes em Loja" :value="$company?->uniforms_laid ?? null" placeholder="Quantidade de uniformes em loja" />
 
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-text">Setores</label><br>
@@ -31,7 +31,7 @@
                         </div>
                     </div>
 
-                    <x-textarea id="observation" name="observation" label="Observação" placeholder="Alguma observação?">{!! $company?->observation !!}</x-textarea>
+                    <x-textarea id="observation" name="observation" label="Observação" placeholder="Alguma observação?">{!! $company?->observation ?? null !!}</x-textarea>
                 </form>
             </div>
     
