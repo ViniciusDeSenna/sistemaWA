@@ -11,12 +11,12 @@ class DailyRate extends Model
     protected $fillable = [
         'id',
         'collaborator_id',
-        'company_has_section_id',
+        'section_id',
         'company_id',
         
         'start',
         'end',
-        'daily_total_time',
+        'total_time',
 
         'transportation',
         'feeding',

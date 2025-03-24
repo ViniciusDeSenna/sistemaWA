@@ -156,14 +156,15 @@ class DailyRateController extends Controller
      */
     public function store(Request $request)
     {
-        dd($request->all());
+        //dd($request->all());
         try {
             DB::beginTransaction();
 
             if ($request->company_id) {
                 $company = Company::find($request->company_id);
             }
-            DailyRate::create([
+            $dailyrate = DailyRate::findOrFail($request->id);
+            $dailyrate-> update([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
@@ -173,11 +174,15 @@ class DailyRateController extends Controller
                 'end' => $request->end,
                 'total_time' => $request->total_time,
 
-                //'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
+                'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
                 'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
                 'feeding' => !empty($request->feeding_id) ? Money::unformat($request->feeding_id) : 0,
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
                 'pay_amount' => Money::unformat($request->employee_pay_id),
+                
+                'inss_paid' => !empty($request->addition) ? Money::unformat($request->inss_id) : 0,
+                'tax_paid' => !empty($request->addition) ? Money::unformat($request->imposto_paid_id) : 0,
+                
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
                 
@@ -237,7 +242,8 @@ class DailyRateController extends Controller
         return View('app.daily-rate.edit', [
             'dailyRate' => DailyRate::find($id),
             'collaborators' => Collaborator::getActive(),
-            'companies' => Company::getActive()
+            'companies' => Company::getActive(),
+            'sections' => Section::all(),
         ]);
     }
 
@@ -251,28 +257,31 @@ class DailyRateController extends Controller
             DB::beginTransaction();
 
             $dailyRate = DailyRate::find($id);
-            
-            $dailyRate->collaborator_id = $request->collaborator_id;
-            $dailyRate->company_id = $request->company_id;
+            DailyRate::update([
+                'collaborator_id' => $request->collaborator_id,
+                'section_id' => $request->sectionSelect_id,
+                'company_id' => $request->company_id,
+                'user_id' => $request->user_id,
+                
+                'start' => $request->start,
+                'end' => $request->end,
+                'total_time' => $request->total_time,
 
-            $dailyRate->start = $request->start;
-            $dailyRate->end = $request->end;
-            $dailyRate->total_time = $request->total_time;
+                'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
+                'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
+                'feeding' => !empty($request->feeding_id) ? Money::unformat($request->feeding_id) : 0,
+                'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
+                'pay_amount' => Money::unformat($request->employee_pay_id),
+                
+                'inss_paid' => !empty($request->addition) ? Money::unformat($request->inss_id) : 0,
+                'tax_paid' => !empty($request->addition) ? Money::unformat($request->imposto_paid_id) : 0,
+                
+                'earned' => Money::unformat($request->total),
+                'profit' => Money::unformat($request->total_liq),
+                
+                'observation' => $request->observation,
+            ]);
 
-
-            $dailyRate->costs = Money::unformat($request->costs);
-            $dailyRate->costs_description = $request->costs_description;
-
-            $dailyRate->addition = Money::unformat($request->addition);
-            $dailyRate->addition_description = $request->addition_description;
-
-            $dailyRate->collaborator_participation = Money::unformat($request->collaborator_participation);
-
-            $dailyRate->total = Money::unformat($request->total);
-
-            $dailyRate->observation = $request->observation;
-
-            $dailyRate->save();
             
             DB::commit();
 

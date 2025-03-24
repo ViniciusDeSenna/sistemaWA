@@ -55,9 +55,10 @@
                         <label class="form-label" for="total_time">Horas Trabalhadas</label>
                         <input type="text" class="form-control" id="total_time" name="total_time" data-mask="00:00" readonly value="{{ $dailyRate?->total_time ?? '' }}">
                     </div>
-                
+                    
+                    <input type="text" class="form-control" id="imposto_paid_id" name="imposto_paid_id" hidden readonly value="0">
 <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-                    <div name="EU SOU A DIV QUE PROCURA AAAAAAAA" {{ Auth::user()->hasPermissionTo('Visualizar e inserir informações financeiras nas diárias') ? '' : 'hidden' }}>
+                    <div name="" {{ Auth::user()->hasPermissionTo('Visualizar e inserir informações financeiras nas diárias') ? '' : 'hidden' }}>
                         
                         
                         <div class="d-flex">
@@ -382,6 +383,7 @@ function loadSectionInfo(){
     }
 
     function calcular() {
+
         if (selectedSection == null || selectedCollaborator == null) return;
         
         let transport = Number(((parseFloat(document.getElementById('transport_id').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
@@ -402,16 +404,18 @@ function loadSectionInfo(){
             earned = calculate_pay_perHour(selectedSection.earned);
         }
         $('#employee_pay_id').val((pay_amount + feeding).toFixed(2));
-
+        
         let inss_percentage = parseFloat(document.getElementById('inss_percentage_id').value) || 0;
         let inss_discount = (pay_amount * inss_percentage) / (100 - inss_percentage)
         document.getElementById('inss_id').value = parseFloat(inss_discount).toFixed(2);
-
+        
         let tax = ((parseFloat(document.getElementById('imposto_id').value) || 0) / 100);
         console.log("imposto: ", tax);
- 
+        
         let total = ((earned) + addition).toFixed(2);
         let total_liq = (total * (1-tax) - (pay_amount + feeding) - transport - inss_discount - leaderComission).toFixed(2);
+        
+        $('#imposto_paid_id').val((pay_amount * tax).toFixed(2));
         $("#leaderComission_id").val(leaderComission.toFixed(2));
         $('#total').val(parseFloat(total).toFixed(2));
         $('#total_liq').val(parseFloat(total_liq).toFixed(2));
