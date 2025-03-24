@@ -16,12 +16,9 @@ class CompanyHasSection extends Model
 
         "pay_amount",
         "leaderPay",
-        
         "leaderComission",
         "extra",
-        "profit",
-        "feeding",
-        "earned",
+        
         "perHour",
         "active",
     ];

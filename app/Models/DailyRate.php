@@ -25,7 +25,9 @@ class DailyRate extends Model
         'leader_comission',
         'earned',
         'profit',
-
+        'inss_paid',
+        'tax_paid',
+        
         'active',
         'user_id',
     ];
