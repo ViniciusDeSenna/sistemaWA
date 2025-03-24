@@ -89,7 +89,7 @@ class CompanyController extends Controller
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
                 'chain_of_stores' => $request->category,
-                'city' => $request->category,
+                'city' => $request->city,
                 'uniforms_laid'=> $request->uniforms_laid ?? 0,
                 'observation' => $request->observation,
             ]);

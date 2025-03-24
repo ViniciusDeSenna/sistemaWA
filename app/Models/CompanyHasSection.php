@@ -14,10 +14,11 @@ class CompanyHasSection extends Model
         "company_id",
         "section_id",
 
-        "pay_amount",
+        "employeePay",
         "leaderPay",
         "leaderComission",
         "extra",
+        "earned",
         
         "perHour",
         "active",

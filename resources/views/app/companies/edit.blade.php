@@ -80,7 +80,7 @@
                                 <input type="number" class="form-control number" id="setores[${setorId}][diaria]" name="diaria[${setorId}]" value="${employee_pay ?? 100}">
                             </label>
                             <label class="form-label mb-1">Colaborador Extra: 
-                                <input type="number" class="form-control number" id="setores[${setorId}][extra]" name="extra[${setorId}]" value="${employee_pay ?? 110}">
+                                <input type="number" class="form-control number" id="setores[${setorId}][extra]" name="extra[${setorId}]" value="${extra ?? 110}">
                             </label>
                             <label class="form-label mb-1">Líder: 
                                 <input type="number" class="form-control number" id="setores[${setorId}][lider]" name="lider[${setorId}]" value="${leader_pay ?? 122}">
@@ -144,7 +144,11 @@
         let setorNome = setorSelect.options[setorSelect.selectedIndex].dataset.nome;
 
         if (setorId === "empty") {
-            alert("Por favor, selecione um setor antes de adicionar.");
+            Swal.fire({
+                    title: 'Error!',
+                    text: 'Por favor, selecione um setor antes de adicionar.!',
+                    icon: 'Error'
+                });
             return;
         }
 
