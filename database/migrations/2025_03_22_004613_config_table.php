@@ -15,6 +15,7 @@ return new class extends Migration
         Schema::create('config_table', function($table){
             $table->string('id')->primary();
             $table->string('value');
+            $table->timestamps();
         });
     }
 

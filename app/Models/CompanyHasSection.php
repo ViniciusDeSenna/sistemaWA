@@ -36,6 +36,5 @@ class CompanyHasSection extends Model
         return self::query()->where('active', '=', true)->get();
 
     }
-
     
 }

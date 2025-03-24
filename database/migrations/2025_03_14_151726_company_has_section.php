@@ -31,6 +31,7 @@ return new class extends Migration
             $table->boolean('perHour')->default(false);
             $table->boolean('active')->default(true);
 
+            $table->timestamps();
         });
     }
 
@@ -39,6 +40,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        //
+        Schema::dropIfExists('company_has_section');
     }
 };
