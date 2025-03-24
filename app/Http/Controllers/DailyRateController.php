@@ -156,6 +156,7 @@ class DailyRateController extends Controller
      */
     public function store(Request $request)
     {
+        dd($request->all());
         try {
             DB::beginTransaction();
 
@@ -164,7 +165,7 @@ class DailyRateController extends Controller
             }
             DailyRate::create([
                 'collaborator_id' => $request->collaborator_id,
-                'company_has_section_id' => $request->sectionSelect_id,
+                'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
                 'user_id' => $request->user_id,
                 
@@ -172,6 +173,7 @@ class DailyRateController extends Controller
                 'end' => $request->end,
                 'total_time' => $request->total_time,
 
+                //'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
                 'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
                 'feeding' => !empty($request->feeding_id) ? Money::unformat($request->feeding_id) : 0,
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
