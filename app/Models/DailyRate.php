@@ -11,24 +11,24 @@ class DailyRate extends Model
     protected $fillable = [
         'id',
         'collaborator_id',
+        'company_has_section_id',
         'company_id',
+        
         'start',
-        'start_interval',
-        'end_interval',
         'end',
         'daily_total_time',
-        'hourly_rate',
-        'costs',
-        'costs_description',
+
+        'transportation',
+        'feeding',
         'addition',
-        'addition_description',
-        'total',
-        'pix_key',
-        'observation',
+        'pay_amount',
+        'leader_comission',
+        'earned',
+        'profit',
+
         'active',
         'user_id',
     ];
-
     public static function getActive()
     {
         return self::query()->where('active', '=', true)->get();

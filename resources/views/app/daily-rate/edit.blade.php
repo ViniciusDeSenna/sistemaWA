@@ -71,7 +71,7 @@
                             </div>
                         </div>
                         <div class="d-flex">
-                            <input type="text" hidden value="{{auth()->user()->id}}" />
+                            <input type="text" name="user_id" hidden value="{{auth()->user()->id}}" />
                             <div class="mb-3 me-3 flex-grow-1">
                                 <label class="form-label" for="inss_id">INSS Pago</label>
                                 <input type="text" class="form-control money" id="inss_id" readonly name="inss_id" value="">
@@ -105,7 +105,7 @@
 
                             <div class="mb-3">
                                 <label class="form-label" for="total_liq">Valor Total Liquido</label>
-                                <input type="text" class="form-control money" id="total_liq" name="total_liq" readonly value="{{ $dailyRate?->total ?? '' }}">
+                                <input type="text" class="form-control" x-mask:dynamic="$money($input, 'R$')" id="total_liq" name="total_liq" readonly value="{{ $dailyRate?->total ?? '' }}">
                             </div>
 
                         </div>
@@ -367,6 +367,10 @@ function loadSectionInfo(){
         let workedHourly = difHourly(startDate, endDate);
         if (workedHourly <= 0){
             $('#total_time').val(formatTime(0));
+            if (workedHourly < 0){
+                $('#total_time').val("Horarios invalidos, Saída antecede entrada");
+
+            }
 
             return 0;
         } else{
@@ -405,8 +409,7 @@ function loadSectionInfo(){
 
         let tax = ((parseFloat(document.getElementById('imposto_id').value) || 0) / 100);
         console.log("imposto: ", tax);
-
-        
+ 
         let total = ((earned) + addition).toFixed(2);
         let total_liq = (total * (1-tax) - (pay_amount + feeding) - transport - inss_discount - leaderComission).toFixed(2);
         $("#leaderComission_id").val(leaderComission.toFixed(2));
