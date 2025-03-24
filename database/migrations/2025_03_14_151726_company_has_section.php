@@ -27,9 +27,6 @@ return new class extends Migration
             $table->float('extra')->nullable();
             $table->float('leaderPay')->nullable();
 
-            $table->float('inss_paid')->nullable();
-            $table->float('tax_paid')->nullable();
-
             $table->float('leaderComission')->default(8.0);
             $table->boolean('perHour')->default(false);
             $table->boolean('active')->default(true);

@@ -36,6 +36,9 @@ return new class extends Migration
 
             $table->decimal('addition', 8, 2)->default(0)->nullable();
             
+            $table->float('inss_paid')->nullable();
+            $table->float('tax_paid')->nullable();
+            
             $table->decimal('earned', 8, 2)->default(0)->nullable();
             $table->decimal('profit', 8, 2)->default(0)->nullable();
 
