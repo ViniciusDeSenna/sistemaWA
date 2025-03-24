@@ -15,11 +15,11 @@ class CompanyHasSectionController extends Controller
                 'establishment_id' => 'required|exists:companies,id',
                 'section_id' => 'required|exists:sections,id',
             ]);
-    
+            
             DB::table('company_has_section')
-                ->where('company_id', $request->establishment_id)
-                ->where('section_id', $request->section_id)
-                ->delete();
+            ->where('company_id', $request->establishment_id)
+            ->where('section_id', $request->section_id)
+            ->update(['active' => false]);
     
             return response()->json([
                 'title' => 'Sucesso!',
@@ -56,7 +56,6 @@ class CompanyHasSectionController extends Controller
      */
     public function storeArray(Request $request)
     {
-        dd($request->all());
         try {
             
             DB::beginTransaction();

@@ -20,21 +20,24 @@ return new class extends Migration
             $table->foreignId('company_id')->nullable();
             $table->foreign('company_id')->references('id')->on('companies');
 
+            $table->foreignId('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+            
             $table->timestamp('start')->nullable();
             $table->timestamp('end')->nullable();
             $table->time('total_time')->nullable();
 
             $table->decimal('hourly_rate', 8, 2)->default(0)->nullable();
 
-            $table->decimal('costs', 8, 2)->default(0)->nullable();
-            $table->text('costs_description')->nullable();
+            $table->decimal('pay_amount', 8, 2)->default(0)->nullable();
+            $table->decimal('transportation', 8, 2)->default(0)->nullable();
+            $table->decimal('feeding', 8, 2)->default(0)->nullable();
+            $table->decimal('leader_comission', 8, 2)->default(0)->nullable();
 
             $table->decimal('addition', 8, 2)->default(0)->nullable();
-            $table->text('addition_description')->nullable();
-
-            $table->decimal('collaborator_participation', 8, 2)->default(0)->nullable();
-
-            $table->decimal('total', 8, 2)->default(0)->nullable();
+            
+            $table->decimal('earned', 8, 2)->default(0)->nullable();
+            $table->decimal('profit', 8, 2)->default(0)->nullable();
 
             $table->text('observation')->nullable();
 

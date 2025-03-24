@@ -67,6 +67,7 @@ class CompanyController extends Controller
     
     public function store(Request $request)
     {
+        //dd($request->all());
         try {
             DB:: beginTransaction();
 
@@ -88,10 +89,12 @@ class CompanyController extends Controller
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
                 'chain_of_stores' => $request->category,
+                'city' => $request->category,
+                'uniforms_laid'=> ($request->uniforms_laid),
                 'observation' => $request->observation,
             ]);
-
             foreach($request->section_id as $section_id){
+
                 CompanyHasSection::updateOrCreate(
                 [
                     'company_id' => $company->id,
@@ -103,12 +106,16 @@ class CompanyController extends Controller
                     'earned' => $request->earned[$section_id],
                     'employeePay' => $request->diaria[$section_id],
                     'leaderPay' => $request->lider[$section_id],
+                    'extra' =>  $request->extra[$section_id],
                     'leaderComission' => $request->comissao[$section_id],
+                    'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
+                    'active' => true,
+                
                 ]);
             }
             
             DB::commit();
-
+            
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Estabelecimento cadastrado com sucesso!',
@@ -140,8 +147,9 @@ class CompanyController extends Controller
     {
         $establishment = Company::find($id); 
         $sections = Section::all();  
-        $companySections = CompanyHasSection::where('company_id', $id)
+        $companySections = CompanyHasSection::where('company_id', $id)->where('active', true)
                              ->get();
+
         return View('app.companies.edit', [
             'establishment' => $establishment,
             'sections' => $sections,
@@ -175,13 +183,15 @@ class CompanyController extends Controller
             $company->update([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
+                'city' => $request->city,
+                'uniforms_laid'=> ($request->uniforms_laid),
                 'chain_of_stores' => $request->category,
                 'observation' => $request->observation,
             ]);
-
+            
             foreach($request->section_id as $section_id){
                 CompanyHasSection::updateOrCreate(
-                [
+                    [
                     'company_id' => $company->id,
                     'section_id' => $section_id,
                 ],
@@ -191,12 +201,15 @@ class CompanyController extends Controller
                     'earned' => $request->earned[$section_id],
                     'employeePay' => $request->diaria[$section_id],
                     'leaderPay' => $request->lider[$section_id],
+                    'extra' => (int) $request->extra[$section_id],
                     'leaderComission' => $request->comissao[$section_id],
+                    'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
+                    'active' => true,
                 ]);
             }
 
             DB::commit();
-
+            
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Colaborador cadastrado com sucesso!',

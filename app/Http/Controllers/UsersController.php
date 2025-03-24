@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Collaborator;
 use App\Models\User;
 use App\Http\Controllers\Controller;
 use Exception;
@@ -47,7 +48,8 @@ class UsersController extends Controller
     }
 
     public function create(){
-        return View('app.users.edit', ['permissions' => Permission::all()]);
+
+        return View('app.users.edit', ['permissions' => Permission::all(), 'collaborators' => Collaborator::getActiveLeaders()]);
     }
 
     
@@ -78,7 +80,7 @@ class UsersController extends Controller
                 'email.email' => 'O e-mail informado não é válido.',
                 'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
                 'email.unique' => 'Este e-mail já está em uso.',
-            
+                
                 'password.required' => 'O campo senha é obrigatório.',
                 'password.confirmed' => 'A confirmação da senha não confere.',
             ]);
@@ -88,11 +90,12 @@ class UsersController extends Controller
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
-        
+            
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
+                'collaborator_id' => $request->collaborator_id,
             ]);
 
             event(new Registered($user));
@@ -168,6 +171,8 @@ class UsersController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password ? Hash::make($request->password) : $user->password,
+                'collaborator_id' => $request->collaborator_id,
+            
             ]);
         
             // Seta as pemissoes no usuário

@@ -31,58 +31,87 @@
                             @endforeach
                         </select>
                     </div>
-                
+                    <div class="mb-3">
+                        <label class="form-label" for="sectionSelect_id">Setor Trabalhado</label>
+                        <select class="form-control" id="sectionSelect_id" name="sectionSelect_id" disabled>
+
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label class="form-label" for="start">Chegada</label>
-                        <input type="datetime-local" class="form-control" id="start" name="start" value="{{ $dailyRate?->start ?? '' }}">
+                        <input type="datetime-local" class="form-control" id="start" name="start" disabled value="{{ $dailyRate?->start ?? '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="end">Saída</label>
-                        <input type="datetime-local" class="form-control" id="end" name="end" value="{{ $dailyRate?->end ?? '' }}">
+                        <input type="datetime-local" class="form-control" id="end" name="end" disabled value="{{ $dailyRate?->end ?? '' }}">
                     </div>
-                
                     <div class="mb-3">
-                        <label class="form-label" for="total_time">Quantidade de Horas Trabalhadas</label>
+                            <label class="form-label" for="feeding_id">Alimentação</label>
+                            <input type="checkbox" class="" id="feeding_id" name="feeding_id" {{ isset($dailyRate) && $dailyRate?->feeding != 0 ? 'checked' : ''}}> R$10,00
+                        </div>
+
+                    <div class="mb-3">
+                        <label class="form-label" for="total_time">Horas Trabalhadas</label>
                         <input type="text" class="form-control" id="total_time" name="total_time" data-mask="00:00" readonly value="{{ $dailyRate?->total_time ?? '' }}">
                     </div>
                 
-                    @can('Visualizar e inserir informações financeiras nas diárias')
-                        <div class="mb-3">
-                            <label class="form-label" for="hourly_rate">Valor por Hora</label>
-                            <input type="text" class="form-control money" id="hourly_rate" name="hourly_rate" value="{{$dailyRate?->hourly_rate ?? '' }}">
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
+                    <div name="EU SOU A DIV QUE PROCURA AAAAAAAA" {{ Auth::user()->hasPermissionTo('Visualizar e inserir informações financeiras nas diárias') ? '' : 'hidden' }}>
+                        
+                        
+                        <div class="d-flex">
+                            <div class="mb-3 me-3">
+                                <label class="form-label" for="employee_pay_id">Colaborador</label>
+                                <input type="text" class="form-control money" id="employee_pay_id" readonly name="employee_pay_id" value="">
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="leaderComission_id">Comissão</label>
+                                <input type="text" class="form-control money" id="leaderComission_id" readonly name="leaderComission_id" value="">
+                            </div>
                         </div>
-                 
-                        <div class="mb-3">
-                            <label class="form-label" for="costs">Gastos</label>
-                            <input type="text" class="form-control money" id="costs" name="costs" value="{{ $dailyRate?->costs ?? '' }}">
+                        <div class="d-flex">
+                            <input type="text" hidden value="{{auth()->user()->id}}" />
+                            <div class="mb-3 me-3 flex-grow-1">
+                                <label class="form-label" for="inss_id">INSS Pago</label>
+                                <input type="text" class="form-control money" id="inss_id" readonly name="inss_id" value="">
+                            </div>
+                            <div class="mb-3" style="flex: 0.5;">
+                                <label class="form-label" for="inss_percentage">%INSS</label>
+                                <input type="text" class="form-control" id="inss_percentage_id" name="inss_percentage_id" value="7">
+                            </div>
                         </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label" for="transport_id">Transporte</label>
+                            <input type="text" class="form-control money" id="transport_id" name="transport_id" value="{{ $dailyRate?->costs ?? '' }}">
+                        </div>
+                        
 
-                        <div class="mb-3">
-                            <label class="form-label" for="costs_description">Descrição dos Gastos</label>
-                            <textarea class="form-control" id="costs_description" name="costs_description" rows="4">{!! $dailyRate?->costs_description ?? '' !!}</textarea>
-                        </div>
 
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
                             <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
                         </div>
+                        <div class="d-flex ml-0">
+                            <div class="mb-3 me-3">
+                                <label class="form-label" for="total">Valor Total Bruto</label>
+                                <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '' }}">
+                            </div>
+                            <div class="mb-3 me-3">
+                                <label class="form-label" for="imposto_id">Imposto (%)</label>
+                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14}}">
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="addition_description">Descrição dos Acréscimos</label>
-                            <textarea class="form-control" id="addition_description" name="addition_description" rows="4">{!! $dailyRate?->addition_description ?? '' !!}</textarea>
-                        </div>
+                            <div class="mb-3">
+                                <label class="form-label" for="total_liq">Valor Total Liquido</label>
+                                <input type="text" class="form-control money" id="total_liq" name="total_liq" readonly value="{{ $dailyRate?->total ?? '' }}">
+                            </div>
 
-                        <div class="mb-3">
-                            <label class="form-label" for="addition">Participação do Colaborador</label>
-                            <input type="text" class="form-control money" id="collaborator_participation" name="collaborator_participation" value="{{ $dailyRate?->collaborator_participation ?? '' }}">
                         </div>
-                    
-                        <div class="mb-3">
-                            <label class="form-label" for="total">Valor Total</label>
-                            <input type="text" class="form-control money" id="total" name="total" readonly value="{{ $dailyRate?->total ?? '' }}">
-                        </div>
-                    @endcan
+                        
+                 </div>
+<!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
                     <div class="mb-3">
                         <label class="form-label" for="observation">Observação</label>
@@ -109,13 +138,59 @@
 
 
 <script>
+    let companySections = [];
+    let selectedSection;
+    let selectedCollaborator;
     $(document).ready(function () {
-        $('#form-hourly-rate input:not([name="company_id"])').on('input change', function () {
+        $('#inss_percentage_id').on('input change', function(){
             calcular();
+        });
+        $('#addition').on('input change', function(){
+            calcular();
+        });
+        $('#collaborator_id').on('input change', function(){
+            getSelectedColaborator($(this).val());
+        });
+
+        $('#transport_id').on('input change', function(){
+            calcular();
+        });
+        $('#transport_id').on('input change', function(){
+            calcular();
+        });
+        $('#imposto_id').on('input change', function(){
+            calcular();
+        });
+        $('#form-hourly-rate input:not([name="company_id"])').on('input change', function () {
+          //  calcular();
         });
 
         $('#company_id').on('input change', function () {
-            getHourlyRate();
+            getCompanySections($(this).val());
+            //getHourlyRate();
+        });
+        $('#sectionSelect_id').on('input change', function () {
+            selectedSection = companySections.find(item => item.section_id === Number($(this).val()));
+            loadSectionInfo();
+            //getHourlyRate();
+            calcular();
+
+        });
+        $('#feeding_id').on('input change', function () {
+            calcular();
+
+        });
+        $('#start').on('input change', function () {
+            if (selectedSection.perHour === 1){
+                calcular();
+
+            }
+        });
+        $('#end').on('input change', function () {
+            if (selectedSection.perHour === 1){
+                calcular();
+
+            }
         });
 
 
@@ -127,7 +202,7 @@
             theme: 'bootstrap-5'
         });
 
-        let moneyMask = new Inputmask("R$ 999,99", {
+        let moneyMask = new Inputmask("R$ 99999,99", {
             numericInput: true,
             rightAlign: false,
             prefix: "R$ ",
@@ -160,10 +235,10 @@
                 });
             },
             error: function(response) {
-                response = JSON.parse(response.responseText);
+                response = JSON.parse(response.responseText);s
                 Swal.fire({
                     title: response?.title ?? 'Oops!',
-                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
+                    html: response?.message?.replace(/\n/, '<br>') ?? 'Erro na ação!',
                     icon: response?.type ?? 'error'
                 });
             }
@@ -200,49 +275,143 @@
         });
     }
 
-    function getHourlyRate(callback) {
-        let company = $('#company_id').val();
+function loadSectionInfo(){
+    if (selectedSection){
+        document.getElementById("start").disabled = false;
+        if (selectedSection.perHour === 1){
+            if (document.getElementById("end").disabled){
+                document.getElementById("end").disabled = false;
+    
+            }
+            document.getElementById("employee_pay_id").value = 0;
+    
+            //document.getElementById("end").hidden = false;
+            
+            //document.getElementById("total_time").hidden = false;
+        }else{
+            //document.getElementById("employee_pay_id").value = selectedSection.employeePay;
+            
+            document.getElementById("end").disabled = true;
+            //document.getElementById("end").hidden = true;
+            //document.getElementById("total_time").hidden = true;
+            
+        }
+        //document.getElementById("leaderComission_id").value = selectedSection.leaderComission * 100;
+    
+    } else {
+        document.getElementById("start").disabled = true;
+        document.getElementById("end").disabled = true;
+        document.getElementById("employee_pay_id").value = '';
+        document.getElementById("transport_id").value = '';
+        document.getElementById("leaderComission_id").value = '';
+        document.getElementById("total").value = '';
+        document.getElementById("total_liq").value = '';
+
+    }    
+
+}
+
+    function getSectionNameById(id) {
+        let sections = @json($sections);
+        const section = sections.find(item => item.id === id);
+        return section ? section.name : 'ID não encontrado';
+}
+    function getSelectedColaborator(colaboratorId){
         $.ajax({
-            url: "{{ route('companies.hourly-rate', '') }}" + '/' + company,
-            type: 'GET',
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-            },
-            success: function(response) {
-                $('#hourly_rate').val(response);
+            url: "/get-colaborator/" + colaboratorId,
+            type: "GET",
+            dataType: "json",
+            success: function (colaborador) {
+                selectedCollaborator = colaborador;
                 calcular();
-                return;
             },
+            error: function (xhr) {
+                console.error("Erro ao buscar setores:", xhr.responseText);
+            }
         });
     }
 
-    function calcular() {
-        // Obtendo os valores dos campos com a máscara aplicada
-        let hourlyRate = Number(((parseFloat(document.getElementById('hourly_rate').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
-        let costs = Number(((parseFloat(document.getElementById('costs').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
-        let addition = Number(((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
-        let collaboratorParticipation = Number(((parseFloat(document.getElementById('collaborator_participation').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+    function getCompanySections(companyId){
+  
+        $.ajax({
+            url: "/get-company-sections/" + companyId,
+            type: "GET",
+            dataType: "json",
+            success: function (sections) {
+                let select = $("#sectionSelect_id");
+                select.empty();
+                select.append('<option value="" disabled selected>Selecione um setor</option>');
+                companySections = sections;
+                if (sections.length > 0) {
+                    sections.forEach(function (section) {
+                        select.append(`<option value="${section.section_id}">${getSectionNameById(section.section_id)}</option>`);
+                    });
+                    selectedSection = null;
+                    loadSectionInfo();
+                    select.prop("disabled", false); 
+                } else {
+                    select.append('<option value="" disabled>Nenhum setor encontrado</option>');
+                    select.prop("disabled", true);
+                }
+            },
+            error: function (xhr) {
+                console.error("Erro ao buscar setores:", xhr.responseText);
+            }
+        });
+    }
 
-        console.log(hourlyRate);
-        console.log(costs);
-        console.log(addition);
-        console.log(collaboratorParticipation);
-
-        // Obtendo o horário de início e fim para calcular as horas trabalhadas
+    function calculate_pay_perHour(value_per_hour){
         let startDate = $('#form-hourly-rate input[name="start"]').val();
         let endDate = $('#form-hourly-rate input[name="end"]').val();
         
-        // Calculando as horas trabalhadas
         let workedHourly = difHourly(startDate, endDate);
+        if (workedHourly <= 0){
+            $('#total_time').val(formatTime(0));
 
-        // Atualizando o campo de total_time com o valor calculado
-        $('#total_time').val(formatTime(workedHourly));
+            return 0;
+        } else{
+            $('#total_time').val(formatTime(workedHourly));
 
-        // Calculando o total (considerando valores numéricos)
-        let total = (((hourlyRate * workedHourly) + addition) - costs) - collaboratorParticipation;
-        console.log(total);
-        // Atualizando o campo de total com o valor calculado
+            return workedHourly * value_per_hour;
+        }
+
+    }
+
+    function calcular() {
+        if (selectedSection == null || selectedCollaborator == null) return;
+        
+        let transport = Number(((parseFloat(document.getElementById('transport_id').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let feeding = (document.getElementById('feeding_id').checked ? 10 : 0);
+        let addition = Number(((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let leaderComission = selectedSection.leaderComission;
+        let earned = selectedSection.earned;
+        
+        let pay_amount = selectedSection.employeePay;
+        if (selectedCollaborator.is_leader === 1) {
+            leaderComission = 0;
+            pay_amount = selectedSection.leaderPay;
+        }else if (selectedCollaborator.is_extra === 1) {
+            pay_amount = selectedSection.extra;
+        }
+        if (selectedSection.perHour === 1)  {
+            pay_amount = calculate_pay_perHour(pay_amount);
+            earned = calculate_pay_perHour(selectedSection.earned);
+        }
+        $('#employee_pay_id').val((pay_amount + feeding).toFixed(2));
+
+        let inss_percentage = parseFloat(document.getElementById('inss_percentage_id').value) || 0;
+        let inss_discount = (pay_amount * inss_percentage) / (100 - inss_percentage)
+        document.getElementById('inss_id').value = parseFloat(inss_discount).toFixed(2);
+
+        let tax = ((parseFloat(document.getElementById('imposto_id').value) || 0) / 100);
+        console.log("imposto: ", tax);
+
+        
+        let total = ((earned) + addition).toFixed(2);
+        let total_liq = (total * (1-tax) - (pay_amount + feeding) - transport - inss_discount - leaderComission).toFixed(2);
+        $("#leaderComission_id").val(leaderComission.toFixed(2));
         $('#total').val(parseFloat(total).toFixed(2));
+        $('#total_liq').val(parseFloat(total_liq).toFixed(2));
     }
 
     function difHourly(start, end) {

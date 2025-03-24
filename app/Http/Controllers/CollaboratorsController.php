@@ -76,12 +76,15 @@ class CollaboratorsController extends Controller
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
-        
             Collaborator::create([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
+                'is_leader' => $request->is_leader == 'on'? 1 :  0,
+                'is_extra' => $request->is_extra == 'on'? 1 :  0,
+                'intermittent_contract' => $request->intermittent_contract == 'on'? 1 : 0,
+                'city' => $request->city,
             ]);
 
             DB::commit();
@@ -148,6 +151,10 @@ class CollaboratorsController extends Controller
                 'document' => Number::onlyNumber($request->document),
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
+                'is_leader' => $request->is_leader == 'on'? 1 :  0,
+                'is_extra' => $request->is_extra == 'on'? 1 :  0,
+                'intermittent_contract' => $request->intermittent_contract == 'on'? 1 : 0,
+                'city' => $request->city,
             ]);
 
             DB::commit();

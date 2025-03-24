@@ -7,7 +7,9 @@ use App\BlueUtils\Time;
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use App\Models\Company;
+use App\Models\CompanyHasSection;
 use App\Models\DailyRate;
+use App\Models\Section;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -48,8 +50,10 @@ class DailyRateController extends Controller
                 'daily_rate.total_time as total_time',
                 'daily_rate.hourly_rate as hourly_rate',
                 'daily_rate.addition as addition',
-                'daily_rate.costs as costs',
-                'daily_rate.total as total',
+                'daily_rate.transportation as transportation',
+                'daily_rate.feeding as feeding',
+                'daily_rate.earned as earned',
+                'daily_rate.profit as profit',
             ]);
 
             if ($request->collaborator_id) {
@@ -92,34 +96,34 @@ class DailyRateController extends Controller
             ->addColumn('total_time', function ($daily) {
                 return str_replace('.', ':', $daily->total_time);
             })
-            ->addColumn('hourly_rate', function ($daily) use ($user) {
-                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->hourly_rate ?? '0', 'R$ ', 2, ',', '.');
-                } else {
-                    return 'R$ --,--';
-                }
-            })
-            ->addColumn('addition', function ($daily) use ($user) {
-                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->addition ?? '0', 'R$ ', 2, ',', '.');
-                } else {
-                    return 'R$ --,--';
-                }
-            })
-            ->addColumn('costs', function ($daily) use ($user) {
-                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->costs ?? '0', 'R$ ', 2, ',', '.');
-                } else {
-                    return 'R$ --,--';
-                }
-            })
-            ->addColumn('total', function ($daily) use ($user) {
-                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-                    return Money::format($daily->total ?? '0', 'R$ ', 2, ',', '.');
-                } else {
-                    return 'R$ --,--';
-                }
-            })
+//            ->addColumn('hourly_rate', function ($daily) use ($user) {
+//                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+//                    return Money::format($daily->hourly_rate ?? '0', 'R$ ', 2, ',', '.');
+//                } else {
+//                    return 'R$ --,--';
+//                }
+//            })
+//            ->addColumn('addition', function ($daily) use ($user) {
+//            if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+//                    return Money::format($daily->addition ?? '0', 'R$ ', 2, ',', '.');
+//                } else {
+//                    return 'R$ --,--';
+//                }
+//            })
+//            ->addColumn('transport', function ($daily) use ($user) {
+//            if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+//                return Money::format($daily->costs ?? '0', 'R$ ', 2, ',', '.');
+//                } else {
+//                    return 'R$ --,--';
+//                }
+//            })
+//            ->addColumn('total', function ($daily) use ($user) {
+//                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
+//                    return Money::format($daily->total ?? '0', 'R$ ', 2, ',', '.');
+//                } else {
+//                    return 'R$ --,--';
+//                }
+//            })
             ->addColumn('actions', function ($daily) {
                 return '
                     <div class="demo-inline-spacing">
@@ -143,7 +147,8 @@ class DailyRateController extends Controller
     {
         return View('app.daily-rate.edit', [
             'collaborators' => Collaborator::getActive(),
-            'companies' => Company::getActive()
+            'companies' => Company::getActive(), 
+            'sections' => Section::all(),
         ]);
     }
 
@@ -170,19 +175,19 @@ class DailyRateController extends Controller
             $dailyRate->end = $request->end;
             $dailyRate->total_time = $request->total_time;
 
-            $dailyRate->hourly_rate = Money::unformat($request->hourly_rate);
-
-            $dailyRate->costs = Money::unformat($request->costs);
-            $dailyRate->costs_description = $request->costs_description;
+            $dailyRate->transportation = Money::unformat($request->transportation);
+            $dailyRate->feeding = Money::unformat($request->feeding);
 
             $dailyRate->addition = Money::unformat($request->addition);
-            $dailyRate->addition_description = $request->addition_description;
 
-            $dailyRate->collaborator_participation = Money::unformat($request->collaborator_participation);
+            $dailyRate->pay_amount = Money::unformat($request->employee_pay_id);
 
-            $dailyRate->total = Money::unformat($request->total);
+            $dailyRate->earned = Money::unformat($request->total);
 
+            $dailyRate->profit = Money::unformat($request->total_liq);
+            
             $dailyRate->observation = $request->observation;
+            $dailyRate->user_id = $request->user_id;
 
             $dailyRate->save();
 
@@ -291,5 +296,15 @@ class DailyRateController extends Controller
                 'type' => 'error'
             ], 500);
         }
+    }
+    public function getCompanySections($companyId)
+    {
+        $sections = CompanyHasSection::where('company_id', $companyId)->get();
+        
+        if ($sections->isEmpty()) {
+            return response()->json(['message' => 'Nenhum setor encontrado.'], 404);
+        }
+
+        return response()->json($sections);
     }
 }

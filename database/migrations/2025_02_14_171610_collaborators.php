@@ -17,9 +17,12 @@ return new class extends Migration
             $table->string('document')->nullable();
             $table->string('city')->nullable();
             $table->boolean('intermittent_contract')->default(false);
+            $table->boolean('is_leader')->default(false);
+            $table->boolean('is_extra')->default(false);
             $table->text('observation')->nullable();
             $table->string('pix_key')->nullable();
             $table->boolean('active')->default(true);
+
             $table->timestamps();
         });
     }

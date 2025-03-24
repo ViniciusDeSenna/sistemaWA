@@ -15,6 +15,17 @@
                         <input type="email" class="form-control" id="basic-default-company" name="email" placeholder="exemplo@exemplo.com" value="{{ $user?->email ?? ''}}" />
                     </div>
                     <div class="mb-3">
+                        <label class="form-label" for="collaborator_id">Colaborador</label>
+                        <select class="form-control" id="collaborator_id" name="collaborator_id">
+                            <option value="" disabled selected>Selecione um colaborador</option>
+                            @foreach ($collaborators as $colaborator)
+                                <option value="{{ $colaborator->id }}" {{ ($dailyRate?->collaborator_id ?? 0) == $colaborator->id ? 'selected' : '' }}>
+                                    {{ $colaborator->name }}
+                                </option>                            
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="mb-3">
                         <label class="form-label" for="basic-default-company">Senha</label>
                         <input type="password" class="form-control" id="basic-default-company" name="password" />
                     </div>

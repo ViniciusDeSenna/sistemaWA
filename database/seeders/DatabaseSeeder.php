@@ -23,13 +23,18 @@ class DatabaseSeeder extends Seeder
                 'email' => 'dev@dev.com',
             ]);
         }
-        
-        Section::create(['name'=> 'Flv',]);
-        Section::create(['name'=> 'Flc',]);
-        Section::create(['name'=> 'Floricultura',]);
+       
+        Section::create(['name'=> 'Flv - Hortifruti',]);
+        Section::create(['name'=> 'Flc - Frios',]);
+        Section::create(['name'=> 'Padaria',]);
         Section::create(['name'=> 'Mercearia',]);
-        
         Section::create(['name'=> 'Frente de Caixa',]);
+        Section::create(['name'=> 'Depósito',]);
+       
+        Section::create(['name'=> 'Floricultura',]);
+        
+        Section::create(['name'=> 'Separação',]);
+        Section::create(['name'=> 'Conferência',]);
         // User::factory(count: 1)->create();
 
         $this->call([

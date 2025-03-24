@@ -14,7 +14,14 @@
                         <label class="form-label" for="basic-default-fullname">CNPJ</label>
                         <input type="text" class="form-control cnpj" id="basic-default-fullname" name="document" placeholder="XX.XXX.XXX/XXXX-XX" value="{{ $establishment?->document ?? ''}}" />
                     </div>
-
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Cidade</label>
+                        <input type="text" class="form-control" id="basic-default-fullname" name="city" placeholder="Nome da Cidade" value="{{ $establishment?->city ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Uniformes em Loja</label>
+                        <input type="number" class="form-control" id="uniforms_laid" name="uniforms_laid" placeholder="0" value="{{ $establishment?->uniforms_laid ?? ''}}" />
+                    </div>
 <!--                    <div class="mb-3">
                             <label class="form-label" for="basic-default-text">Rede Pertencente</label>
                             <input type="text" class="form-control" id="category" name="category" placeholder="Rede" value="{{ $establishment?->chain_of_stores ?? ''}}" />
@@ -63,7 +70,7 @@
     let companySections = @json($companySections ?? []);
     let sections = @json($sections ?? null);
 
-    function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, leader_pay, comission){
+    function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour){
         return `
                 <div class="accordion-item card-body mb-1 w-100">
                     <h2 class="accordion-header" id="heading${setorId}">
@@ -74,13 +81,20 @@
 
                     <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="heading${setorId}" data-bs-parent="#accordionDiv">
 
-                    <div class="accordion-body d-flex justify-content-end">
+                    <div class="accordion-body justify-content-end">
                             <input type="hidden" id="setores[${setorId}][id]" name="section_id[${setorId}]" value="${setorId}">
+                            <div class="form-check mb-3">
+                                <input type="checkbox" class="form-check-input" id="setores[${ setorId }][perHour]" name="perHour[${ setorId }]" ${perHour == 1 ? 'checked' : '' }>
+                                <label class="form-check-label" for="setores[${ setorId }][perHour]">Contrato por Hora</label>
+                            </div>
                             <label class="form-label mb-3">Recebido: 
                                 <input type="number" class="form-control number" id="setores[${setorId}][earned]" name="earned[${setorId}]" value="${earned ?? 1000}">
                             </label>
                             <label class="form-label mb-1">Diária: 
                                 <input type="number" class="form-control number" id="setores[${setorId}][diaria]" name="diaria[${setorId}]" value="${employee_pay ?? 100}">
+                            </label>
+                            <label class="form-label mb-1">Colaborador Extra: 
+                                <input type="number" class="form-control number" id="setores[${setorId}][extra]" name="extra[${setorId}]" value="${employee_pay ?? 110}">
                             </label>
                             <label class="form-label mb-1">Líder: 
                                 <input type="number" class="form-control number" id="setores[${setorId}][lider]" name="lider[${setorId}]" value="${leader_pay ?? 122}">
@@ -117,7 +131,7 @@
 
             let collapseId = "collapse" + setSection?.id;
             let sectioName = sections.find(section => section.id === setSection.section_id);
-            let sectionContent = createSectionCard(collapseId, setSection.section_id, sectioName.name, setSection.earned, setSection.employeePay, setSection.leaderPay, setSection.leaderComission);
+            let sectionContent = createSectionCard(collapseId, setSection.section_id, sectioName.name, setSection.earned, setSection.employeePay, setSection.extra, setSection.leaderPay, setSection.leaderComission, setSection.perHour);
             
             console.log(setSection.section_id);
             //setorSelect.options[setSection.section_id].remove();
@@ -173,7 +187,7 @@
     //     console.log(sectionId);
     //     // Enviar dados via AJAX
     //     $.ajax({
-    //         url: '{{ route('companyHasSection.storeObject') }}',  // URL da rota
+    //         url: '{ route('companyHasSection.storeObject') }}',  // URL da rota
     //         type: 'POST',
     //         headers: {
     //             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') // Garantir CSRF token
@@ -207,10 +221,7 @@
     // }
 
     function removeSection(sectionId, sectionName, establishmentID) {
-        let sectionDiv = document.getElementById(`setor-${sectionId}`);
-        if (sectionDiv) {
-            sectionDiv.remove();
-        }
+
 
         let setorSelect = document.getElementById("sectionSelect");
         let option = document.createElement("option");
@@ -237,8 +248,12 @@
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
                 }).then((result) => {
+                    let sectionDiv = document.getElementById(`setor-${sectionId}`);
+                    if (sectionDiv) {
+                        sectionDiv.remove();
+                    }       
                     window.location.reload();
-                });
+                })
                 },
                 error: function(response) {
                     Swal.fire({
@@ -252,73 +267,9 @@
     }
 
 
-    function getSections(companyId){
-        let sections = @json($sections);
-        let sectionsData = [];
-
-        for (let section of sections) {
-            let sectionId = section.id;
-
-            let employeePayElement = document.getElementById(`setores[${sectionId}][diaria]`);
-            let leaderPayElement = document.getElementById(`setores[${sectionId}][lider]`);
-            let comissionElement = document.getElementById(`setores[${sectionId}][comissao]`);
-            let earnedElement = document.getElementById(`setores[${sectionId}][earned]`);
-            
-            // Check if the elements exist before accessing the 'value' property
-            if (employeePayElement && leaderPayElement && comissionElement && earnedElement) {
-                let employeePay = employeePayElement.value;
-                let leaderPay = leaderPayElement.value;
-                let comission = comissionElement.value;
-                let earned = earnedElement.value;
-                console.log(employeePay, leaderPay, comission, earned);
-                
-                // Ensure none of the values are null or empty
-                if (employeePay && leaderPay && comission && earned) {
-                    sectionsData.push({
-                        company_id: companyId,
-                        section_id: sectionId,
-                        employeePay: employeePay,
-                        leaderPay: leaderPay,
-                        leaderComission: comission,
-                        earned: earned
-                    });
-                }
-            }
-        }
-            
-            
-        console.log(sectionsData);
-        $.ajax({
-            url: '{{ route('companyHasSection.storeArray') }}',  // URL da rota
-            type: 'POST',
-            dataType: "json",
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')  // Garantir CSRF token
-            },
-            data: { sections: sectionsData },
-            success: function(response) {
-                Swal.fire({
-                    title: response?.title ?? 'Sucesso!',
-                    text: response?.message ?? 'Sucesso na ação!',
-                    icon: response?.type ?? 'success'
-                }).then((result) => {
-                    //window.location.reload();
-                });
-            },
-            error: function(response) {
-                response = JSON.parse(response.responseText); // Captura o erro
-                Swal.fire({
-                    title: response?.title ?? 'Oops!',
-                    html: response?.message?.replace(/\n/g, '<br>') ?? 'Erro na ação!',
-                    icon: response?.type ?? 'error'
-                });
-            }
-        });
-    }
-
     function post() {
         
- 
+        console.log($('#form-edit-establishment').serialize());
         $.ajax({
             url: '{{ route('companies.store') }}',
             type: 'POST',
@@ -331,7 +282,11 @@
                     title: response?.title ?? 'Sucesso!',
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
-                })
+                }).then((result) => {
+                    $('#form-edit-collaborator')[0].reset();
+
+                    window.location.reload();
+                });
             },
             error: function(response) {
                 response = JSON.parse(response.responseText);
@@ -345,6 +300,8 @@
     }
 
     function update(id) {
+        console.log($('#form-edit-establishment').serialize());
+
         $.ajax({
             url: "{{ route('companies.update', '') }}" + '/' + id,
             type: 'PUT',
@@ -357,7 +314,10 @@
                     title: response?.title ?? 'Sucesso!',
                     text: response?.message ?? 'Sucesso na ação!',
                     icon: response?.type ?? 'success'
-                })
+                }).then((result) => {
+
+                    window.location.reload();
+                });
             },
             error: function(response) {
                 response = JSON.parse(response.responseText);

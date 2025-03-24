@@ -14,9 +14,35 @@
                         <label class="form-label" for="basic-default-fullname">Documento</label>
                         <input type="text" class="form-control cpf" id="basic-default-fullname" name="document" placeholder="000.000.000-00" value="{{ $collaborator?->document ?? ''}}" />
                     </div>
+                    <div class="d-flex">
+                          <div class="form-check mb-3 me-2">
+                           <input class="form-check-input me-2" type="checkbox" id="intermittent_contract" name="intermittent_contract" 
+                                {{ isset($collaborator) && $collaborator?->intermittent_contract == 1 ? 'checked' : '' }}>
+                        <label class="form-check-label" for="intermittent_contract">Contrato Intermitente</label>
+                        </div>
+
+                        <div class="form-check mb-3  me-2">
+                            <input class="form-check-input" type="checkbox" id="is_leader" name="is_leader" 
+                                {{ isset($collaborator) && $collaborator?->is_leader == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_leader">Líder</label>
+                        </div>
+
+                        <div class="form-check mb-3  me-2">
+                            <input class="form-check-input" type="checkbox" id="is_extra" name="is_extra" 
+                                {{ isset($collaborator) && $collaborator?->is_extra == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_extra">Recebe Valor Extra</label>
+                        </div>
+
+                        
+                    </div>
+                    
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Chave Pix</label>
                         <input type="text" class="form-control" id="pix_key" name="pix_key" value="{{ $collaborator?->pix_key ?? ''}}" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label" for="basic-default-fullname">Cidade</label>
+                        <input type="text" class="form-control" id="city" name="city" placeholder="A cidade em que o colaborador se encontra" value="{{ $collaborator?->city ?? ''}}" />
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-message">Observação</label>

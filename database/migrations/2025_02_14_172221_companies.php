@@ -16,7 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('document')->nullable();
             $table->string('category')->default('indefinido')->nullable();
-            $table->string('chain_of_stores')->default('indefinido')->nullable();
+            $table->integer('uniforms_laid')->default(0);
+            $table->string('city')->nullable();
+            $table->string('chain_of_stores')->nullable();
             $table->string('observation')->nullable();
             $table->boolean('active')->default(true);
             $table->timestamps();

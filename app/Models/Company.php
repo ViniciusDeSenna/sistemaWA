@@ -13,6 +13,8 @@ class Company extends Model
         'observation',
         'time_value',
         'category',
+        'city',
+        'uniforms_laid',
         'chain_of_stores',
     ];
     public static function getAll()

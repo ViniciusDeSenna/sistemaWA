@@ -13,68 +13,32 @@ class CompanyHasSection extends Model
     protected $fillable = [
         "company_id",
         "section_id",
-        "employeePay",
+
+        "pay_amount",
         "leaderPay",
+        
         "leaderComission",
+        "extra",
+        "profit",
+        "feeding",
         "earned",
-        "diaria",
+        "perHour",
+        "active",
     ];
 
     public function company()
     {
         return $this->belongsTo(Company::class, 'company_id');
     }
-
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id');
     }
-
-    public static function storeOrUpdateSectionArray($sectionData)  
+    public function getActive()
     {
+        return self::query()->where('active', '=', true)->get();
 
-        try {
-            $data = [
-                'employeePay' => $sectionData['employeePay'],
-                'leaderPay' => $sectionData['leaderPay'],
-                'leaderComission' => $sectionData['leaderComission'] ?? 0,
-                'earned' => $sectionData['earned'],
-            ];
-    
-            $companyHasSection = self::updateOrCreate(
-                [
-                    'company_id' => $sectionData['company_id'],
-                    'section_id' => $sectionData['section_id'],
-                ],
-                $data
-            );
-    
-            return $companyHasSection;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
     }
-    public static function storeOrUpdateSectionObject($sectionData)  
-    {
-        try {    
-            $data = [
-                'employeePay' => $sectionData->employeePay,
-                'leaderPay' => $sectionData->leaderPay,
-                'leaderComission' => $sectionData->leaderComission ?? 0,
-                'earned' => $sectionData->earned,
-            ];
+
     
-            $companyHasSection = self::updateOrCreate(
-                [
-                    'company_id' => $sectionData->company_id,
-                    'section_id' => $sectionData->section_id,
-                ],
-                $data
-            );
-    
-            return $companyHasSection;
-        } catch (Exception $e) {
-            throw new Exception($e->getMessage());
-        }
-    }
 }

@@ -26,6 +26,7 @@ class DailyRate extends Model
         'pix_key',
         'observation',
         'active',
+        'user_id',
     ];
 
     public static function getActive()

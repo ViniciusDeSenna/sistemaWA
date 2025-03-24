@@ -16,10 +16,18 @@ class Collaborator extends Model
         'document',
         'pix_key',
         'observation',
+        'is_leader',
+        'is_extra',
+        'city',
+        'intermittent_contract'
     ];
 
     public static function getActive()
     {
         return self::query()->where('active', '=', true)->get();
+    }
+    public static function getActiveLeaders()
+    {
+        return self::query()->where('active', '=', true)->where('is_leader','=', true)->get();
     }
 }
