@@ -163,8 +163,7 @@ class DailyRateController extends Controller
             if ($request->company_id) {
                 $company = Company::find($request->company_id);
             }
-            $dailyrate = DailyRate::findOrFail($request->id);
-            $dailyrate-> update([
+            DailyRate::create([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
@@ -242,8 +241,7 @@ class DailyRateController extends Controller
         return View('app.daily-rate.edit', [
             'dailyRate' => DailyRate::find($id),
             'collaborators' => Collaborator::getActive(),
-            'companies' => Company::getActive(),
-            'sections' => Section::all(),
+            'companies' => Company::getActive()
         ]);
     }
 
@@ -256,8 +254,7 @@ class DailyRateController extends Controller
 
             DB::beginTransaction();
 
-            $dailyRate = DailyRate::find($id);
-            DailyRate::update([
+            DailyRate::create([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
