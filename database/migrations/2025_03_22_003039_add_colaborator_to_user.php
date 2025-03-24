@@ -13,7 +13,6 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->unsignedBigInteger('collaborator_id')->after('id')->nullable();
             $table->foreign('collaborator_id')->references('id')->on('collaborators');
-            $table->timestamps();
         });
     }
 

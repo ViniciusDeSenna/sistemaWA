@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::table('daily_rate', function (Blueprint $table) {
             $table->unsignedBigInteger('section_id')->after('id');
             $table->foreign('section_id')->references('id')->on('sections')->onDelete('cascade');
-            $table->timestamps();
         });
     }
 
