@@ -127,8 +127,8 @@ class DailyRateController extends Controller
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
                 'pay_amount' => Money::unformat($request->employee_pay_id),
                 
-                'inss_paid' => !empty($request->addition) ? Money::unformat($request->inss_id) : 0,
-                'tax_paid' => !empty($request->addition) ? Money::unformat($request->imposto_paid_id) : 0,
+                'inss_paid' => !empty($request->inss_paid) ? Money::unformat($request->inss_paid) : 0,
+                'tax_paid' => !empty($request->imposto_paid_id) ? Money::unformat($request->imposto_paid_id) : 0,
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
@@ -189,7 +189,8 @@ class DailyRateController extends Controller
         return View('app.daily-rate.edit', [
             'dailyRate' => DailyRate::find($id),
             'collaborators' => Collaborator::getActive(),
-            'companies' => Company::getActive()
+            'companies' => Company::getActive(),
+            'sections' => Section::all(),
         ]);
     }
 
@@ -201,8 +202,7 @@ class DailyRateController extends Controller
         try {
 
             DB::beginTransaction();
-
-            DailyRate::create([
+            DailyRate::findOrFail($id)->update([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,

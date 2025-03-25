@@ -16,10 +16,10 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="collaborator_id">Colaborador</label>
-                        <select class="form-control" id="collaborator_id" name="collaborator_id">
+                        <select class="form-control" id="collaborator_id" name="collaborator_id" >
                             <option value="" disabled selected>Selecione um colaborador</option>
                             @foreach ($collaborators as $colaborator)
-                                <option value="{{ $colaborator->id }}" {{ ($dailyRate?->collaborator_id ?? 0) == $colaborator->id ? 'selected' : '' }}>
+                                <option value="{{ $colaborator->id }}" {{ ($user?->collaborator_id ?? 0) == $colaborator->id ? 'selected' : '' }}>
                                     {{ $colaborator->name }}
                                 </option>                            
                             @endforeach

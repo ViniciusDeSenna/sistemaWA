@@ -84,8 +84,9 @@
                         </div>
                         
                         <div class="mb-3">
+                            
                             <label class="form-label" for="transport_id">Transporte</label>
-                            <input type="text" class="form-control money" id="transport_id" name="transport_id" value="{{ $dailyRate?->costs ?? '' }}">
+                            <input type="text" class="form-control money" id="transport_id" name="transport_id" value="{{ $dailyRate?->transportation ?? '' }}">
                         </div>
                         
 
@@ -157,9 +158,6 @@
             getSelectedColaborator($(this).val());
         });
 
-        $('#transport_id').on('input change', function(){
-            calcular();
-        });
         $('#transport_id').on('input change', function(){
             calcular();
         });
@@ -281,6 +279,7 @@
     }
 
 function loadSectionInfo(){
+
     if (selectedSection){
         document.getElementById("start").disabled = false;
         if (selectedSection.perHour === 1){
@@ -352,8 +351,13 @@ function loadSectionInfo(){
                         select.append(`<option value="${section.section_id}">${getSectionNameById(section.section_id)}</option>`);
                     });
                     selectedSection = null;
-                    loadSectionInfo();
                     select.prop("disabled", false); 
+                    if(@json($dailyRate)){
+                        $('#sectionSelect_id').val(@json($dailyRate->section_id));
+                        selectedSection = companySections.find(item => item.section_id === Number(@json($dailyRate->section_id)));
+                    }
+                    loadSectionInfo();
+                    calcular();
                 } else {
                     select.append('<option value="" disabled>Nenhum setor encontrado</option>');
                     select.prop("disabled", true);
@@ -451,6 +455,12 @@ function loadSectionInfo(){
         // Garante que o formato seja sempre HH:MM
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
+    $(document).ready(function() {
 
+        if (@json($dailyRate)){
+            getSelectedColaborator(@json($dailyRate->collaborator_id));
+            getCompanySections(@json($dailyRate->company_id));
+        }
+    });
     
 </script>

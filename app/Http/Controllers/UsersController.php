@@ -125,7 +125,7 @@ class UsersController extends Controller
     
 
     public function edit($id){
-        return View('app.users.edit', ['user' => User::find($id), 'permissions' => Permission::all()]);
+        return View('app.users.edit', ['user' => User::find($id), 'permissions' => Permission::all(), 'collaborators' => Collaborator::getActiveLeaders()]);
     }
 
     public function update(Request $request, $id){
@@ -225,4 +225,5 @@ class UsersController extends Controller
             ], 500);
         }
     }
+    
 }
