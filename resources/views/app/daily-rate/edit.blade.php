@@ -280,7 +280,6 @@
 function loadSectionInfo(){
 
     if (selectedSection){
-        document.getElementById("start").disabled = false;
         if (selectedSection.perHour === 1){
             if (document.getElementById("end").disabled){
                 document.getElementById("end").disabled = false;
@@ -303,7 +302,6 @@ function loadSectionInfo(){
     
     } else {
         if (@json($dailyRate) == null){
-            document.getElementById("start").disabled = true;
             document.getElementById("end").disabled = true;
             document.getElementById("employee_pay_id").value = '';
             document.getElementById("transport_id").value = '';
@@ -397,7 +395,7 @@ function loadSectionInfo(){
     }
 
     function calcular() {
-
+        loadSectionInfo();
         if (selectedSection == null || selectedCollaborator == null) return;
         
         let transport = Number(((parseFloat(document.getElementById('transport_id').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
@@ -462,6 +460,7 @@ function loadSectionInfo(){
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
     $(document).ready(function() {
+        $('start').disabled = false;
         let dailyRate = @json($dailyRate);
 
         if (dailyRate) { 
