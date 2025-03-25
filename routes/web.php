@@ -60,7 +60,7 @@ Route::middleware('auth')->group(function () {
         Route::delete('/{id}', [DailyRateController::class, 'destroy'])->name('daily-rate.destroy')->middleware('permission:Deletar diárias');
         
     });
-    Route::get('get-company-sections/{companyId}', [DailyRateController::class, 'getCompanySections'])->name('company.sections')->middleware('permission:Formulário de criação dos diárias');;
+    Route::get('get-company-sections/{companyId}', [DailyRateController::class, 'getCompanySections'])->name('company.sections')->middleware('permission:Formulário de criação dos diárias');
     Route::get('get-colaborator/{colaboratorId}', function ($colaboratorId) {return Collaborator::findOrFail($colaboratorId);})->name('company.colaborator');
     Route::prefix('report')->group(function () {
         Route::get('/dailyrates', [ReportsController::class, 'dailyRates'])->name('report.daily-rates');

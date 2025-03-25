@@ -96,7 +96,7 @@ class DailyRateController extends Controller
             'collaborators' => Collaborator::getActive(),
             'companies' => Company::getActive(), 
             'sections' => Section::all(),
-            'dailyRate' => new DailyRate(),
+            'dailyRate' => null,
         ]);
     }
 
@@ -105,7 +105,6 @@ class DailyRateController extends Controller
      */
     public function store(Request $request)
     {
-        //dd($request->all());
         try {
             DB::beginTransaction();
 
@@ -133,7 +132,6 @@ class DailyRateController extends Controller
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
-                
                 'observation' => $request->observation,
             ]);
 

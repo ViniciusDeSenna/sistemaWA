@@ -101,7 +101,7 @@
                             </div>
                             <div class="mb-3 me-3">
                                 <label class="form-label" for="imposto_id">Imposto (%)</label>
-                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14.32}}">
+                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14}}">
                             </div>
 
                             <div class="mb-3">
@@ -303,7 +303,7 @@ function loadSectionInfo(){
     
     } else {
         if (@json($dailyRate) == null){
-                document.getElementById("start").disabled = true;
+            document.getElementById("start").disabled = true;
             document.getElementById("end").disabled = true;
             document.getElementById("employee_pay_id").value = '';
             document.getElementById("transport_id").value = '';
@@ -352,11 +352,17 @@ function loadSectionInfo(){
                     });
                     selectedSection = null;
                     select.prop("disabled", false); 
-                    if(@json($dailyRate ?? null)){
-                        $('#sectionSelect_id').val(@json($dailyRate->section_id));
-                        selectedSection = companySections.find(item => item.section_id === Number(@json($dailyRate->section_id)));
+
+                    let dailyRate = @json($dailyRate);
+
+                    if (dailyRate) { 
+                        let sectionId = Number(dailyRate.section_id) || null;
+
+                        if (sectionId) {
+                            $('#sectionSelect_id').val(sectionId);
+                            selectedSection = companySections.find(item => item.section_id === sectionId);
+                        }
                     }
-                    loadSectionInfo();
                     calcular();
                 } else {
                     select.append('<option value="" disabled>Nenhum setor encontrado</option>');
@@ -456,11 +462,20 @@ function loadSectionInfo(){
         return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
     }
     $(document).ready(function() {
+        let dailyRate = @json($dailyRate);
 
-        if (@json($dailyRate)){
-            $('#company_id').val(@json($dailyRate->company_id)).trigger('change');
-            getSelectedColaborator(@json($dailyRate->collaborator_id));
-            getCompanySections(@json($dailyRate->company_id));
+        if (dailyRate) { 
+            let companyId = dailyRate.company_id || null;
+            let collaboratorId = dailyRate.collaborator_id || null;
+
+            if (companyId) {
+                $('#company_id').val(companyId).trigger('change');
+                getCompanySections(companyId);
+            }
+
+            if (collaboratorId) {
+                getSelectedColaborator(collaboratorId);
+            }
         }
     });
     
