@@ -143,6 +143,10 @@
     let selectedSection;
     let selectedCollaborator;
     $(document).ready(function () {
+
+        loadSectionInfo();
+        calcular();
+
         $('#inss_percentage_id').on('input change', function(){
             calcular();
         });

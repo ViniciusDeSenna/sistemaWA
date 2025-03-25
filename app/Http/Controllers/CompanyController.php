@@ -107,11 +107,10 @@ class CompanyController extends Controller
                         'earned' => $request->earned[$section_id],
                         'employeePay' => $request->diaria[$section_id],
                         'leaderPay' => $request->lider[$section_id],
-                        'extra' =>  $request->extra[$section_id],
+                        'extra' => (int) $request->extra[$section_id],
                         'leaderComission' => $request->comissao[$section_id],
                         'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
                         'active' => true,
-                    
                     ]);
                 }
             }

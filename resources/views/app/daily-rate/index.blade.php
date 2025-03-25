@@ -71,15 +71,11 @@
                 <table id="table-daily-rate" class="table" style="width:100%">
                     <thead>
                         <tr>
-                            <th>Colaborador</th>
-                            <th>Estabelecimento</th>
-                            <th>Hora Início</th>
-                            <th>Hora Fim</th>
-                            <th>Horas Totais</th>
-                            <th>Valor Hora</th>
-                            <th>Valor Acréscimos</th>
-                            <th>Valor Custos</th>
-                            <th>Valor Total</th>
+                            <th>Empresa</th>
+                            <th>Setor</th>
+                            <th>Collaborador</th>
+                            <th>Inicio</th>
+                            <th>Fim</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
@@ -111,15 +107,11 @@
                 }
             },
             columns: [
-                { data: 'collaborators_name', name: 'collaborators_name' },
-                { data: 'companies_name', name: 'companies_name' },
+                { data: 'company', name: 'company' },
+                { data: 'section', name: 'section' },
+                { data: 'collaborator', name: 'collaborator' },
                 { data: 'start', name: 'start' },
                 { data: 'end', name: 'end' },
-                { data: 'total_time', name: 'total_time' },
-                { data: 'hourly_rate', name: 'hourly_rate' },
-                { data: 'addition', name: 'addition' },
-                { data: 'costs', name: 'costs' },
-                { data: 'total', name: 'total' },
                 { data: 'actions', name: 'actions' },
             ],
             language: {

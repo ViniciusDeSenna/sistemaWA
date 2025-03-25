@@ -35,107 +35,55 @@ class DailyRateController extends Controller
     public function table(Request $request) {
         $user = Auth::user();
         $dailyRate = DailyRate::query()
-            ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')
-            ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
             ->where('daily_rate.active', '=', true)
-            ->orderBy('daily_rate.created_at')
-            ->select([
-                'daily_rate.id as daily_rate_id',
-                'daily_rate.collaborator_id as daily_rate_collaborator_id',
-                'daily_rate.company_id as daily_rate_company_id',
-                'collaborators.name as collaborators_name',
-                'companies.name as companies_name',
-                'daily_rate.start as start',
-                'daily_rate.end as end',
-                'daily_rate.total_time as total_time',
-                'daily_rate.addition as addition',
-                'daily_rate.transportation as transportation',
-                'daily_rate.feeding as feeding',
-                'daily_rate.earned as earned',
-                'daily_rate.profit as profit',
-            ]);
+            ->orderBy('daily_rate.created_at');
 
-            if ($request->collaborator_id) {
-                $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
-            }
-            
-            if ($request->company_id) {
-                $dailyRate->whereIn('daily_rate.company_id', $request->company_id);
-            }
-            
-            if ($request->start) {
-                $dailyRate->where('daily_rate.start', '>=', $request->start);
-            }
-            
-            if ($request->end) {
-                $dailyRate->where('daily_rate.end', '<=', $request->end);
-            }
+        if ($request->collaborator_id) {
+            $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
+        }
+        
+        if ($request->company_id) {
+            $dailyRate->whereIn('daily_rate.company_id', $request->company_id);
+        }
+        
+        if ($request->start) {
+            $dailyRate->where('daily_rate.start', '>=', $request->start);
+        }
+        
+        if ($request->end) {
+            $dailyRate->where('daily_rate.end', '<=', $request->end);
+        }
         
         return DataTables::of($dailyRate)
-            ->addColumn('collaborators_name', function ($daily) {
-                return mb_strimwidth($daily->collaborators_name ?? 'Não Informado', 0, 20, '...');
+            ->addColumn('company', function ($daily) {
+                return mb_strimwidth($daily->company->name ?? 'Não Informado', 0, 20, '...');
             })
-            ->addColumn('companies_name', function ($daily) {
-                return mb_strimwidth($daily->companies_name ?? 'Não Informado', 0, 20, '...');
+            ->addColumn('section', function ($daily) {
+                return mb_strimwidth($daily->section->name ?? 'Não Informado', 0, 20, '...');
+            })
+            ->addColumn('collaborator', function ($daily) {
+                return mb_strimwidth($daily->collaborator->name ?? 'Não Informado', 0, 20, '...');
             })
             ->addColumn('start', function ($daily) {
-                if (isset($daily->start)) {
-                    return Carbon::parse($daily->start)->format('d/m/Y H:i:s');
-                } else {
-                    return '--/--/-- --:--:--';
-                }
+                return $daily->start ? \Carbon\Carbon::parse($daily->start)->format('d/m/Y H:i') : 'Não Informado';
             })
             ->addColumn('end', function ($daily) {
-                if (isset($daily->end)) {
-                    return Carbon::parse($daily->end)->format('d/m/Y H:i:s');
-                } else {
-                    return '--/--/-- --:--:--';
-                }
+                return $daily->end ? \Carbon\Carbon::parse($daily->end)->format('d/m/Y H:i') : 'Não Informado';
             })
-            ->addColumn('total_time', function ($daily) {
-                return str_replace('.', ':', $daily->total_time);
-            })
-//            ->addColumn('hourly_rate', function ($daily) use ($user) {
-//                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-//                    return Money::format($daily->hourly_rate ?? '0', 'R$ ', 2, ',', '.');
-//                } else {
-//                    return 'R$ --,--';
-//                }
-//            })
-//            ->addColumn('addition', function ($daily) use ($user) {
-//            if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-//                    return Money::format($daily->addition ?? '0', 'R$ ', 2, ',', '.');
-//                } else {
-//                    return 'R$ --,--';
-//                }
-//            })
-//            ->addColumn('transport', function ($daily) use ($user) {
-//            if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-//                return Money::format($daily->costs ?? '0', 'R$ ', 2, ',', '.');
-//                } else {
-//                    return 'R$ --,--';
-//                }
-//            })
-//            ->addColumn('total', function ($daily) use ($user) {
-//                if ($user->can('Visualizar e inserir informações financeiras nas diárias')) {
-//                    return Money::format($daily->total ?? '0', 'R$ ', 2, ',', '.');
-//                } else {
-//                    return 'R$ --,--';
-//                }
-//            })
+                     
             ->addColumn('actions', function ($daily) {
                 return '
                     <div class="demo-inline-spacing">
-                        <a type="button" class="btn btn-icon btn-primary" href="'. route('daily-rate.edit', [$daily->daily_rate_id]) . '">
+                        <a type="button" class="btn btn-icon btn-primary" href="'. route('daily-rate.edit', [$daily->id]) . '">
                             <span class="tf-icons bx bx-pencil"></span>
                         </a>
-                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $daily->daily_rate_id . ')">
+                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $daily->id . ')">
                             <span class="tf-icons bx bx-trash"></span>
                         </a>
                     </div>
                 ';
             })
-            ->rawColumns(['actions']) // Permite renderizar HTML no DataTables
+            ->rawColumns(['actions'])
             ->make(true);
     }
 

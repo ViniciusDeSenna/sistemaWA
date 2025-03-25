@@ -31,9 +31,24 @@ class DailyRate extends Model
         'active',
         'user_id',
     ];
+
     public static function getActive()
     {
         return self::query()->where('active', '=', true)->get();
     }
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'id');
+    }
+
+    public function collaborator()
+    {
+        return $this->belongsTo(Collaborator::class, 'collaborator_id', 'id');
+    }
+
+    public function section()
+    {
+        return $this->belongsTo(Section::class, 'section_id', 'id');
+    }
 }
