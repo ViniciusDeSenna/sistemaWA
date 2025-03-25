@@ -47,6 +47,7 @@
                         <input type="datetime-local" class="form-control" id="end" name="end" disabled value="{{ $dailyRate?->end ?? '' }}">
                     </div>
                     <div class="mb-3">
+                        
                             <label class="form-label" for="feeding_id">Alimentação</label>
                             <input type="checkbox" class="" id="feeding_id" name="feeding_id" {{ isset($dailyRate) && $dailyRate?->feeding != 0 ? 'checked' : ''}}> R$10,00
                         </div>
@@ -84,7 +85,6 @@
                         </div>
                         
                         <div class="mb-3">
-                            
                             <label class="form-label" for="transport_id">Transporte</label>
                             <input type="text" class="form-control money" id="transport_id" name="transport_id" value="{{ $dailyRate?->transportation ?? '' }}">
                         </div>
@@ -352,7 +352,7 @@ function loadSectionInfo(){
                     });
                     selectedSection = null;
                     select.prop("disabled", false); 
-                    if(@json($dailyRate)){
+                    if(@json($dailyRate ?? null)){
                         $('#sectionSelect_id').val(@json($dailyRate->section_id));
                         selectedSection = companySections.find(item => item.section_id === Number(@json($dailyRate->section_id)));
                     }
@@ -458,6 +458,7 @@ function loadSectionInfo(){
     $(document).ready(function() {
 
         if (@json($dailyRate)){
+            $('#company_id').val(@json($dailyRate->company_id)).trigger('change');
             getSelectedColaborator(@json($dailyRate->collaborator_id));
             getCompanySections(@json($dailyRate->company_id));
         }
