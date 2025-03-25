@@ -96,6 +96,7 @@ class DailyRateController extends Controller
             'collaborators' => Collaborator::getActive(),
             'companies' => Company::getActive(), 
             'sections' => Section::all(),
+            'dailyRate' => new DailyRate(),
         ]);
     }
 
@@ -214,7 +215,7 @@ class DailyRateController extends Controller
 
                 'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
                 'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
-                'feeding' => !empty($request->feeding_id) ? Money::unformat($request->feeding_id) : 0,
+                'feeding' => $request->feeding_id=='on'? 10 : 0,
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
                 'pay_amount' => Money::unformat($request->employee_pay_id),
                 

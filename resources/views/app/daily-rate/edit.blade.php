@@ -47,7 +47,6 @@
                         <input type="datetime-local" class="form-control" id="end" name="end" disabled value="{{ $dailyRate?->end ?? '' }}">
                     </div>
                     <div class="mb-3">
-                        
                             <label class="form-label" for="feeding_id">Alimentação</label>
                             <input type="checkbox" class="" id="feeding_id" name="feeding_id" {{ isset($dailyRate) && $dailyRate?->feeding != 0 ? 'checked' : ''}}> R$10,00
                         </div>
@@ -102,7 +101,7 @@
                             </div>
                             <div class="mb-3 me-3">
                                 <label class="form-label" for="imposto_id">Imposto (%)</label>
-                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14}}">
+                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14.32}}">
                             </div>
 
                             <div class="mb-3">
@@ -303,14 +302,15 @@ function loadSectionInfo(){
         //document.getElementById("leaderComission_id").value = selectedSection.leaderComission * 100;
     
     } else {
-        document.getElementById("start").disabled = true;
-        document.getElementById("end").disabled = true;
-        document.getElementById("employee_pay_id").value = '';
-        document.getElementById("transport_id").value = '';
-        document.getElementById("leaderComission_id").value = '';
-        document.getElementById("total").value = '';
-        document.getElementById("total_liq").value = '';
-
+        if (@json($dailyRate) == null){
+                document.getElementById("start").disabled = true;
+            document.getElementById("end").disabled = true;
+            document.getElementById("employee_pay_id").value = '';
+            document.getElementById("transport_id").value = '';
+            document.getElementById("leaderComission_id").value = '';
+            document.getElementById("total").value = '';
+            document.getElementById("total_liq").value = '';
+        }
     }    
 
 }
@@ -423,9 +423,9 @@ function loadSectionInfo(){
         let total = ((earned) + addition).toFixed(2);
         let total_liq = (total * (1-tax) - (pay_amount + feeding) - transport - inss_discount - leaderComission).toFixed(2);
         
-        $('#imposto_paid_id').val((pay_amount * tax).toFixed(2));
         $("#leaderComission_id").val(leaderComission.toFixed(2));
         $('#total').val(parseFloat(total).toFixed(2));
+        $('#imposto_paid_id').val((total * tax).toFixed(2));
         $('#total_liq').val(parseFloat(total_liq).toFixed(2));
     }
 
