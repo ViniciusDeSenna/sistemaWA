@@ -39,12 +39,12 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="start">Chegada</label>
-                        <input type="datetime-local" class="form-control" id="start" name="start" disabled value="{{ $dailyRate?->start ?? '' }}">
+                        <input type="datetime-local" class="form-control" id="start" name="start" value="{{ $dailyRate?->start ?? '' }}">
                     </div>
 
                     <div class="mb-3">
                         <label class="form-label" for="end">Saída</label>
-                        <input type="datetime-local" class="form-control" id="end" name="end" disabled value="{{ $dailyRate?->end ?? '' }}">
+                        <input type="datetime-local" class="form-control" id="end" disabled name="end" value="{{ $dailyRate?->end ?? '' }}">
                     </div>
                     <div class="mb-3">
                             <label class="form-label" for="feeding_id">Alimentação</label>
@@ -75,12 +75,12 @@
                             <input type="text" name="user_id" hidden value="{{auth()->user()->id}}" />
                             <div class="mb-3 me-3 flex-grow-1">
                                 <label class="form-label" for="inss_id">INSS Pago</label>
-                                <input type="text" class="form-control money" id="inss_id" readonly name="inss_id" value="">
+                                <input type="text" class="form-control" id="inss_id" name="inss_id" value="{{ $inss_pago ?? '' }}">
                             </div>
-                            <div class="mb-3" style="flex: 0.5;">
+                    <!--        <div class="mb-3" style="flex: 0.5;">
                                 <label class="form-label" for="inss_percentage">%INSS</label>
                                 <input type="text" class="form-control" id="inss_percentage_id" name="inss_percentage_id" value="7">
-                            </div>
+                            </div> -->
                         </div>
                         
                         <div class="mb-3">
@@ -101,7 +101,7 @@
                             </div>
                             <div class="mb-3 me-3">
                                 <label class="form-label" for="imposto_id">Imposto (%)</label>
-                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{14}}">
+                                <input type="number" class="form-control percentage" id="imposto_id" name="imposto_id" value="{{$imposto_pago ?? 0}}">
                             </div>
 
                             <div class="mb-3">
@@ -147,10 +147,10 @@
         loadSectionInfo();
         calcular();
 
-        $('#inss_percentage_id').on('input change', function(){
+        $('#addition').on('input change', function(){
             calcular();
         });
-        $('#addition').on('input change', function(){
+        $('#inss_id').on('input change', function(){
             calcular();
         });
         $('#collaborator_id').on('input change', function(){
@@ -237,7 +237,7 @@
                 });
             },
             error: function(response) {
-                response = JSON.parse(response.responseText);s
+                response = JSON.parse(response.responseText);
                 Swal.fire({
                     title: response?.title ?? 'Oops!',
                     html: response?.message?.replace(/\n/, '<br>') ?? 'Erro na ação!',
@@ -277,40 +277,29 @@
         });
     }
 
-function loadSectionInfo(){
-
+    function loadSectionInfo(){
     if (selectedSection){
         if (selectedSection.perHour === 1){
-            if (document.getElementById("end").disabled){
-                document.getElementById("end").disabled = false;
-    
+            if ($('#end').prop('disabled')){  
+                $('#end').prop('disabled', false);
             }
+            
             document.getElementById("employee_pay_id").value = 0;
-    
-            //document.getElementById("end").hidden = false;
-            
-            //document.getElementById("total_time").hidden = false;
-        }else{
-            //document.getElementById("employee_pay_id").value = selectedSection.employeePay;
-            
-            document.getElementById("end").disabled = true;
-            //document.getElementById("end").hidden = true;
-            //document.getElementById("total_time").hidden = true;
-            
+        } else {
+            if (!$('#end').prop('disabled')) {
+                $('#end').prop('disabled', true);
+            }
+            $('#end').val('');
         }
-        //document.getElementById("leaderComission_id").value = selectedSection.leaderComission * 100;
-    
     } else {
-        if (@json($dailyRate) == null){
-            document.getElementById("end").disabled = true;
+        if (@json($dailyRate) === null){
             document.getElementById("employee_pay_id").value = '';
             document.getElementById("transport_id").value = '';
             document.getElementById("leaderComission_id").value = '';
             document.getElementById("total").value = '';
             document.getElementById("total_liq").value = '';
         }
-    }    
-
+    }
 }
 
     function getSectionNameById(id) {
@@ -417,9 +406,8 @@ function loadSectionInfo(){
         }
         $('#employee_pay_id').val((pay_amount + feeding).toFixed(2));
         
-        let inss_percentage = parseFloat(document.getElementById('inss_percentage_id').value) || 0;
-        let inss_discount = (pay_amount * inss_percentage) / (100 - inss_percentage)
-        document.getElementById('inss_id').value = parseFloat(inss_discount).toFixed(2);
+        let inss_discount = $('#inss_id').val();
+        //document.getElementById('inss_id').value = parseFloat(inss_discount).toFixed(2);
         
         let tax = ((parseFloat(document.getElementById('imposto_id').value) || 0) / 100);
         console.log("imposto: ", tax);

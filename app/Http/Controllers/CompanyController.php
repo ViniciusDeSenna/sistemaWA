@@ -73,10 +73,13 @@ class CompanyController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
+                'document' => ['required', 'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/'],
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
                 'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+                'document.required' => 'O CNPJ é obrigatório.',
+                'document.regex' => 'O CNPJ deve estar no formato correto (00.000.000/0000-00).',
             ]);
             
             if ($validator->fails()) {
@@ -84,6 +87,7 @@ class CompanyController extends Controller
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
+
 
             $company = Company::create([
                 'name' => $request->name,
@@ -162,10 +166,16 @@ class CompanyController extends Controller
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
+                'document' => ['required', 'regex:/^\d{2}\.\d{3}\.\d{3}\/\d{4}-\d{2}$/'],
+                'section_id' => ['required', ],
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
+                'section_id.required' => 'Você deve selecionar pelo menos um setor.',
                 'name.max' => 'O nome não pode ter mais de 255 caracteres.',
+                'document.required' => 'O CNPJ é obrigatório.',
+                'document.regex' => 'O CNPJ deve estar no formato correto (00.000.000/0000-00).',
+
             ]);
             
             if ($validator->fails()) {

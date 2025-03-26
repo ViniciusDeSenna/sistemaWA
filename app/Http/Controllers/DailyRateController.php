@@ -8,16 +8,19 @@ use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
 use App\Models\Company;
 use App\Models\CompanyHasSection;
+use App\Models\ConfigTable;
 use App\Models\DailyRate;
 use App\Models\Section;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 use Mpdf\Mpdf;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Validator;
 
 class DailyRateController extends Controller
 {
@@ -97,6 +100,8 @@ class DailyRateController extends Controller
             'companies' => Company::getActive(), 
             'sections' => Section::all(),
             'dailyRate' => null,
+            'inss_pago' => ConfigTable::getValue('inss_default'),
+            'imposto_pago' => ConfigTable::getValue('tax_default'),
         ]);
     }
 
@@ -105,8 +110,42 @@ class DailyRateController extends Controller
      */
     public function store(Request $request)
     {
+
         try {
+            $requested_section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
+            
+            if ($requested_section->perHour === 1 && is_null($request->end)) {
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Selecione um horário de saída.',
+                ], 422);
+            }
+            $validator = Validator::make($request->all(), [
+            'collaborator_id' => ['required',],
+            'company_id' => ['required',],
+            'sectionSelect_id' => ['required',],
+            'start' => ['required',],
+            'end' => [ 'nullable', 'after:start'],
+            ], [
+            'collaborator_id.required' => 'O colaborador é obrigatório.',
+            'company_id.required' => 'A empresa é obrigatória.',
+            'sectionSelect_id.required' => 'O setor é obrigatório.',
+            'start.required' => 'O horário de início é obrigatório.',
+            'end.after' => 'O horário de saída deve ser maior que o horário de início.',
+            'end.exists' => 'Insira uma saída.',
+            
+        ]);
+                        
+            if ($validator->fails()) {
+                return response()->json([
+                    'message' => implode("\n", $validator->errors()->all()),
+                ], 422);
+            }
+
+
             DB::beginTransaction();
+            ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
+            ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
 
             if ($request->company_id) {
                 $company = Company::find($request->company_id);
@@ -190,6 +229,8 @@ class DailyRateController extends Controller
             'collaborators' => Collaborator::getActive(),
             'companies' => Company::getActive(),
             'sections' => Section::all(),
+            'inss_pago' => ConfigTable::getValue('inss_default'),
+            'imposto_pago' => ConfigTable::getValue('tax_default'),
         ]);
     }
 
@@ -199,9 +240,12 @@ class DailyRateController extends Controller
     public function update(Request $request, string $id)
     {
         try {
-
             DB::beginTransaction();
-            DailyRate::findOrFail($id)->update([
+            ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
+            ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
+
+            
+            DailyRate::findOrFail($id)->update([    
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
@@ -278,4 +322,5 @@ class DailyRateController extends Controller
 
         return response()->json($sections);
     }
+
 }
