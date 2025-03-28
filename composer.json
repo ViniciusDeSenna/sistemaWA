@@ -14,6 +14,7 @@
         "laravel/framework": "^11.31",
         "laravel/tinker": "^2.9",
         "league/flysystem-local": "^3.29",
+        "livewire/livewire": "^3.6",
         "mpdf/mpdf": "^8.0",
         "spatie/laravel-permission": "^6.15",
         "yajra/laravel-datatables-oracle": "^11.1"

@@ -7,6 +7,7 @@ use App\Http\Controllers\UsersController;
 use App\Http\Controllers\CollaboratorsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ReportsController;
+use App\Livewire\CashFlow;
 use App\Models\Collaborator;
 use App\Models\CompanyHasSection;
 use Illuminate\Support\Facades\Route;
@@ -73,5 +74,6 @@ Route::middleware('auth')->group(function () {
 
     //Route::delete('/company-sections/remove', [CompanyHasSectionController::class, 'remove']);
 
+    Route::get('/cash-flow', CashFlow::class);
 });
 require __DIR__.'/auth.php';
