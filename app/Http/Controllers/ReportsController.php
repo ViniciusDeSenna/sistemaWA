@@ -79,6 +79,7 @@ class ReportsController extends Controller
             'daily_rate.collaborator_id as collaborator_id',
             'daily_rate.company_id as company_id',
             'daily_rate.section_id as section_id',
+            'daily_rate.leader_comission as leader_comission',
             'collaborators.name as collaborators_name',
             'companies.name as company_name',
             'sections.name as section_name', // Setor
@@ -167,17 +168,3 @@ class ReportsController extends Controller
         $mpdf->Output();
     }
 }
-
-
-
-->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')
-->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
-->leftJoin('sections', 'sections.id', '=', 'daily_rate.section_id')
-->where('daily_rate.active', true)
-->select([
-    $parametro 'as parameter_name'
-    'daily_rate.earned as earned',
-    'daily_rate.profit as profit',
-    'collaborators.pix_key as pix_key'
-]);
-groupBy("parameter_name)"
