@@ -66,6 +66,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('report')->group(function () {
         Route::get('/dailyrates', [ReportsController::class, 'dailyRates'])->name('report.daily-rates');
         Route::get('/financial', [ReportsController::class, 'financial'])->name('report.financial');
+        Route::get('/registers', [ReportsController::class, 'registers'])->name('report.registers');
     });
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');

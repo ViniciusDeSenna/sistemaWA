@@ -1,6 +1,7 @@
 <x-app-layout>
     <div class="container">
         <div class="md-3 mb-3">
+
             <a href="{{ route('daily-rate.create') }}" class="btn btn-outline-primary w-100">Registrar Diária</a>
         </div>
 
@@ -56,8 +57,8 @@
 
                     <div class="card-footer d-flex justify-content-end align-items-center">
                         <div class="d-flex justify-content-end gap-3">
+                            <button type="button" class="btn btn-info right" style="margin-right: 0%" onclick="reportRegisters()">Relatório de Registros</button>
                             <button type="button" class="btn btn-info right" style="margin-right: 0%" onclick="reportDailyRate()">Relatório Diárias</button>
-                            <button type="button" class="btn btn-info right" style="margin-right: 0%" onclick="reportFinancial()">Relatório Financeiro</button>
                         </div>
                     </div> 
                 </form>
@@ -127,14 +128,15 @@
             theme: 'bootstrap-5'
         });
     });
+    function reportRegisters(){
+        window.location.href = "{{ route('report.registers') }}?" + $('#form-hourly-rate-filter').serialize();
+
+    };
 
     function reportDailyRate() {
         window.location.href = "{{ route('report.daily-rates') }}?" + $('#form-hourly-rate-filter').serialize();
     }
 
-    function reportFinancial() {
-        window.location.href = "{{ route('report.financial') }}?" + $('#form-hourly-rate-filter').serialize();
-    }
 
     $('#form-hourly-rate-filter input, #form-hourly-rate-filter select').on('input change', function () {
         $('#table-daily-rate').DataTable().ajax.reload();
