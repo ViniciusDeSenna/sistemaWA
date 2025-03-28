@@ -150,7 +150,9 @@
                         <!-- Collaborator Summary Row -->
                         <tr class="collaborator-summary">
                             <td colspan="3">
-                                <strong>Chave Pix:</strong> {{ $collaboratorPixKey }} - <strong>{{ $collaboratorName }}</strong>
+                                <strong>Chave Pix:</strong> {{ $collaboratorPixKey }} - <strong>{{ $collaboratorName }}</strong> - 
+                                <strong>Total a Pagar:</strong> 
+                                {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($totalForCollaborator ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}
                             </td>
                         </tr>
 
