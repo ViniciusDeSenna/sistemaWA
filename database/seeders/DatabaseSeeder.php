@@ -33,9 +33,10 @@ class DatabaseSeeder extends Seeder
         //Section::create(['name'=> 'Depósito',]);
        
         
-        Section::create(['name'=> 'Açougue Abastecimento',]);
-        Section::create(['name'=> 'Açougue Cortes/Manipulação',]);
-        Section::create(['name'=> 'FLV - Central - Bistek',]);
+        //Section::create(['name'=> 'Açougue Abastecimento',]);
+        //Section::create(['name'=> 'Açougue Cortes/Manipulação',]);
+        //Section::create(['name'=> 'FLV - Central - Bistek',]);
+        Section::create(['name'=> 'Diária Proporcional',]);
         //Section::create(['name'=> 'Conferência',]);
 
         //Section::create(['name'=> 'Floricultura',]);
@@ -44,15 +45,15 @@ class DatabaseSeeder extends Seeder
         //Section::create(['name'=> 'Conferência',]);
 
         // Criando um novo registro na tabela config_table
-        ConfigTable::create([
-            'id' => 'inss_default', // Se o id for um UUID, senão pode ser um valor fixo
-            'value' => 7.5,
-        ]);
+        //ConfigTable::create([
+        //    'id' => 'inss_default', // Se o id for um UUID, senão pode ser um valor fixo
+        //    'value' => 7.5,
+        //]);
         
-        ConfigTable::create([
-            'id' => 'tax_default',
-            'value' => 14.32,
-        ]);
+        //ConfigTable::create([
+        //    'id' => 'tax_default',
+        //    'value' => 14.32,
+        //]);
 
     }
 }

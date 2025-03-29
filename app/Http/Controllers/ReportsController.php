@@ -104,7 +104,7 @@ class ReportsController extends Controller
                 $dailyRate->where('daily_rate.end', '<=', $request->end);
             }
 
-
+            $dailyRate = DailyRate::query()
             ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')  // Colaborador que trabalhou na diária
             ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
             ->leftJoin('sections', 'sections.id', '=', 'daily_rate.section_id')

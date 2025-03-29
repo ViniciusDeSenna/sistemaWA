@@ -89,6 +89,8 @@
     <h1>Relatório de Diária</h1>
 
     @php($total = 0)
+    @php($userCommissions = [])
+
     @foreach($dailyRate as $collaboratorId => $rates)
         <div class="info">
             <p><strong>Estabelecimento:</strong> {{ $rates[0]['company_name'] ?? 'Não informado' }}</p>
@@ -101,34 +103,49 @@
                         <th>Setor trabalhado</th>
                         <th>Data</th>
                         <th>Quantia paga</th>
-                        <th>Comissão</th>
                     </tr>
                 </thead>
                 <tbody>
                     @foreach($rates->groupBy('collaborator_id') as $collaboratorId => $Sections)
-                        @php($collaboratorName = $Sections->first()->collaborators_name ?? 'Não Informado')
-                        @php($collaboratorPixKey = $Sections->first()->pix_key ?? 'Não Informado')
-                        @php($totalForCollaborator = 0)
+                        @php
+                            $collaboratorName = $Sections->first()->collaborators_name ?? 'Não Informado';
+                            $collaboratorPixKey = $Sections->first()->pix_key ?? 'Não Informado';
+                            $totalForCollaborator = 0;
+                        @endphp
 
                         <tr class="collaborator-row">
-                            <td colspan="4"><strong>{{ $collaboratorName }}</strong></td>
+                            <td colspan="3"><strong>{{ $collaboratorName }}</strong></td>
                         </tr>
 
                         @foreach ($Sections as $rate)
-                            @php($totalForCollaborator += $rate->pay_amount)
-                            @php($total += $rate->pay_amount)
+                            @php
+                                $totalForCollaborator += $rate->pay_amount;
+                                $total += $rate->pay_amount;
+                            @endphp
 
                             <tr>
                                 <td>{{ mb_strimwidth($rate->section_name ?? 'Não Informado', 0, 20, '...') }}</td>
                                 <td>{{ isset($rate->start) ? Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
                                 <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->pay_amount ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                                <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->leader_comission ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
                             </tr>
+
+                            @php
+                                $userId = $rate->user_id;
+                                if (!isset($userCommissions[$userId])) {
+                                    $userCommissions[$userId] = [
+                                        'user_name' => $rate->user_name ?? 'Desconhecido',
+                                        'user_pix_key' => $rate->user_pix_key ?? 'Não Informado',
+                                        'user_id' => $userId,
+                                        'total_comission' => 0
+                                    ];
+                                }
+                                $userCommissions[$userId]['total_comission'] += $rate->leader_comission;
+                            @endphp
                         @endforeach
 
                         <tr class="collaborator-summary">
-                            <td colspan="4">
-                                <strong>Chave Pix:</strong> {{ $collaboratorPixKey }} - <strong>{{ $collaboratorName }}</strong>
+                            <td colspan="3">
+                            <td>{{ App\BlueUtils\Money::format($user['total_comission'] ?? '0', 'R$ ', 2, ',', '.') }}</td>
                             </td>
                         </tr>
                     @endforeach
@@ -136,9 +153,31 @@
             </table>
         </div>
     @endforeach
-    
+
+    <h2>Comissões</h2>
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Nome</th>
+                    <th>Chave Pix</th>
+                    <th>Total a Pagar</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach($userCommissions as $user)
+                    <tr>
+                        <td>{{ $user['user_name'] }}</td>
+                        <td>{{ $user['user_pix_key'] }}</td>
+                        <td>{{ App\BlueUtils\Money::format($user['total_comission'] ?? '0', 'R$ ', 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
+
     <div class="footer">
-        <p><strong>Total Geral:</strong> {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</p>
+        <p><strong>Total Geral:</strong> {{ App\BlueUtils\Money::format($total, 'R$ ', 2, ',', '.') }}</p>
         <p>Gerado em: {{ date('d/m/Y') }}</p>
     </div>
 </body>
