@@ -23,12 +23,17 @@
         }
 
         .info {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             padding: 15px;
             background: #e9ecef;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-left: 5px solid #4C73FF;
+            border: 2px solid #4C73FF; /* Borda externa mais destacada */
+        }
+
+        .info p {
+            margin: 5px 0;
+            font-size: 14px;
         }
 
         .table-container {
@@ -42,6 +47,7 @@
             background-color: #ffffff;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 2px solid #4C73FF; /* Borda externa mais destacada */
         }
 
         th, td {
@@ -56,14 +62,26 @@
             color: white;
             text-transform: uppercase;
             font-weight: bold;
+            letter-spacing: 1px;
         }
 
         tr:nth-child(even) {
             background-color: #f2f2f2;
         }
 
+        tr:hover {
+            background-color: #e1e1e1;
+        }
+
+        .footer {
+            margin-top: 20px;
+            text-align: right;
+            font-size: 14px;
+            color: #555;
+        }
+
         .collaborator-row {
-            background-color: #d1e3f1;
+            background-color: #d1e3f1; /* Cor padronizada para o fundo do nome do colaborador */
             font-weight: bold;
             font-size: 16px;
         }
@@ -73,15 +91,13 @@
             font-size: 16px;
             font-weight: bold;
             text-align: center;
-            padding: 10px;
-            border-top: 2px solid #4C73FF;
+            padding: 15px;
+            border-top: 2px solid #4C73FF; /* Borda superior mais destacada */
         }
 
-        .footer {
-            margin-top: 20px;
-            text-align: right;
-            font-size: 14px;
-            color: #555;
+        .collaborator-summary strong {
+            font-size: 18px;
+            color: #333;
         }
     </style>
 </head>
@@ -89,11 +105,12 @@
     <h1>Relatório de Diária</h1>
 
     @php($total = 0)
-    @php($userCommissions = [])
-
     @foreach($dailyRate as $collaboratorId => $rates)
+        
+        @php($companyName = $rates[0]['company_name'] ?? 'Não informado')
+        
         <div class="info">
-            <p><strong>Estabelecimento:</strong> {{ $rates[0]['company_name'] ?? 'Não informado' }}</p>
+            <p><strong>Estabelecimento: </strong> {{ $companyName }}</p>
         </div>
 
         <div class="table-container">
@@ -106,78 +123,54 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach($rates->groupBy('collaborator_id') as $collaboratorId => $Sections)
-                        @php
-                            $collaboratorName = $Sections->first()->collaborators_name ?? 'Não Informado';
-                            $collaboratorPixKey = $Sections->first()->pix_key ?? 'Não Informado';
-                            $totalForCollaborator = 0;
-                        @endphp
+                    @php($groupedByCollaborator = $rates->groupBy('collaborator_id'))
+                    @foreach($groupedByCollaborator as $collaboratorId => $Sections)
+                        @php($collaboratorName = $Sections->first()->collaborators_name ?? 'Não Informado')
+                        @php($collaboratorPixKey = $Sections->first()->pix_key ?? 'Não Informado')
+                        @php($totalForCollaborator = 0)
 
+                        <!-- Collaborator Name Row -->
                         <tr class="collaborator-row">
-                            <td colspan="3"><strong>{{ $collaboratorName }}</strong></td>
+                            <td colspan="3">
+                                <strong>{{ $collaboratorName }}</strong>
+                            </td>
                         </tr>
 
                         @foreach ($Sections as $rate)
-                            @php
-                                $totalForCollaborator += $rate->pay_amount;
-                                $total += $rate->pay_amount;
-                            @endphp
+                            @php($totalForCollaborator += $rate->pay_amount)
+                            @php($total += $rate->pay_amount)
 
                             <tr>
                                 <td>{{ mb_strimwidth($rate->section_name ?? 'Não Informado', 0, 20, '...') }}</td>
                                 <td>{{ isset($rate->start) ? Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
                                 <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->pay_amount ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
                             </tr>
-
-                            @php
-                                $userId = $rate->user_id;
-                                if (!isset($userCommissions[$userId])) {
-                                    $userCommissions[$userId] = [
-                                        'user_name' => $rate->user_name ?? 'Desconhecido',
-                                        'user_pix_key' => $rate->user_pix_key ?? 'Não Informado',
-                                        'user_id' => $userId,
-                                        'total_comission' => 0
-                                    ];
-                                }
-                                $userCommissions[$userId]['total_comission'] += $rate->leader_comission;
-                            @endphp
                         @endforeach
 
+                        <!-- Collaborator Summary Row -->
                         <tr class="collaborator-summary">
                             <td colspan="3">
-                            <td>{{ App\BlueUtils\Money::format($user['total_comission'] ?? '0', 'R$ ', 2, ',', '.') }}</td>
+                                <strong>Chave Pix:</strong> {{ $collaboratorPixKey }} - <strong>{{ $collaboratorName }}</strong> - 
+                                <strong>Total a Pagar:</strong> 
+                                {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($totalForCollaborator ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}
                             </td>
+                        </tr>
+
+                        <tr>
+                            <th colspan="3"></th>
                         </tr>
                     @endforeach
                 </tbody>
             </table>
         </div>
-    @endforeach
 
-    <h2>Comissões</h2>
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>Chave Pix</th>
-                    <th>Total a Pagar</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($userCommissions as $user)
-                    <tr>
-                        <td>{{ $user['user_name'] }}</td>
-                        <td>{{ $user['user_pix_key'] }}</td>
-                        <td>{{ App\BlueUtils\Money::format($user['total_comission'] ?? '0', 'R$ ', 2, ',', '.') }}</td>
-                    </tr>
-                @endforeach
-            </tbody>
-        </table>
+    @endforeach
+    
+    <div class="footer">
+        <p>Total Geral: {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</p>
     </div>
 
     <div class="footer">
-        <p><strong>Total Geral:</strong> {{ App\BlueUtils\Money::format($total, 'R$ ', 2, ',', '.') }}</p>
         <p>Gerado em: {{ date('d/m/Y') }}</p>
     </div>
 </body>

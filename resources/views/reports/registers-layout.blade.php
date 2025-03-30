@@ -40,6 +40,18 @@
             margin-top: 20px;
         }
 
+        .sector-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 25px;
+            padding: 8px;
+            background-color: #dbe4ff;
+            border-radius: 8px;
+            border: 2px solid #4C73FF;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
@@ -79,59 +91,128 @@
             color: #555;
         }
 
-        .company-summary {
+        .sector-summary, .company-summary {
             font-size: 18px;
             font-weight: bold;
             text-align: center;
             padding: 15px;
-            background-color: #28a745;
+            background-color: #4C73FF;
             color: white;
             border-radius: 8px;
             margin-top: 10px;
+        }
+
+        .company-summary {
+            background-color: #28a745;
             border: 2px solid #155d27;
+        }
+
+        /* Ajuste para remoção de artefato entre título e setor */
+        .company-break {
+            page-break-after: always;
+        }
+
+        .sector-title, .company-summary {
+            margin-top: 0;
         }
     </style>
 </head>
 <body>
     <h1>Relatório de Diária</h1>
 
-    @php($totalGeral = 0)
-    
-    @foreach($dailyRate as $companyName => $rates)
-        <div class="info">{{ $companyName }}</div>
+    @php($totalGeralDiarias = 0)
+    @php($totalGeralHoras = 0)
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Colaborador</th>
-                        <th>Setor</th>
-                        <th>Data</th>
-                        <th>Valor Pago</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @php($totalEmpresa = 0)
-                    @foreach($rates as $rate)
-                        @php($totalEmpresa += $rate->pay_amount)
-                        @php($totalGeral += $rate->pay_amount)
-                        <tr>
-                            <td>{{ $rate->collaborators_name }}</td>
-                            <td>{{ $rate->section_name }}</td>
-                            <td>{{ \Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') }}</td>
-                            <td>{{ App\BlueUtils\Money::format($rate->pay_amount, 'R$ ', 2, ',', '.') }}</td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+    @foreach($dailyRate as $collaboratorId => $rates)
+        
+        @php($companyName = $rates[0]['company_name'] ?? 'Não informado')
+        
+        <div class="info">
+            {{ $companyName }}
         </div>
 
-        <div class="company-summary">Total da Empresa: {{ App\BlueUtils\Money::format($totalEmpresa, 'R$ ', 2, ',', '.') }}</div>
+        @php($groupedBySector = $rates->groupBy('section_name'))
+
+        @php($totalDiariasEmpresa = 0)
+        @php($totalHorasEmpresa = 0)
+
+        @foreach($groupedBySector as $sectorName => $sectorRates)
+            @php($isHourly = $sectorRates->whereNotNull('end')->isNotEmpty())
+
+            <div class="table-container">
+                <div class="sector-title">{{ $sectorName }}</div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Nome do Colaborador</th>
+                            <th>Data de Início</th>
+                            @if($isHourly)
+                                <th>Data de Saída</th>
+                                <th>Tempo Total</th>
+                            @endif
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @php($totalForSectorDiarias = 0)
+                        @php($totalForSectorHoras = 0)
+
+                        @foreach($sectorRates as $rate)
+                            @if($isHourly)
+                                @php($totalHoras = \Carbon\Carbon::parse($rate->start)->diffInHours(\Carbon\Carbon::parse($rate->end)))
+                                @php($totalForSectorHoras += $totalHoras)
+                                <tr>
+                                    <td>{{ $rate->collaborators_name }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($rate->end)->format('d/m/Y H:i:s') }}</td>
+                                    <td>{{ floor($totalHoras) }}:{{ sprintf('%02d', (-floor($totalHoras) + $totalHoras) * 60) }}</td>
+                                </tr>
+                            @else
+                                @php($totalForSectorDiarias += 1)
+                                <tr>
+                                    <td>{{ $rate->collaborators_name }}</td>
+                                    <td>{{ \Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') }}</td>
+                                </tr>
+                            @endif
+                        @endforeach
+                    </tbody>
+                </table>
+                <div class="sector-summary">
+                    @if($isHourly)
+                        Total de Horas no Setor {{ $sectorName }}: {{ floor($totalForSectorHoras) }}:{{ sprintf('%02d', (-floor($totalForSectorHoras) + $totalForSectorHoras) * 60)}}
+                    @else
+                        Total de Diárias no Setor {{ $sectorName }}: {{ $totalForSectorDiarias }}
+                    @endif
+                </div>
+                @php($totalDiariasEmpresa += $totalForSectorDiarias)
+                @php($totalHorasEmpresa += $totalForSectorHoras)
+            </div>
+        @endforeach
+
+        <div class="company-summary">
+            @if($totalHorasEmpresa > 0)
+                <p>Total de Horas na Empresa {{ $companyName }}: {{ floor($totalHorasEmpresa) }}:{{ sprintf('%02d', (-floor($totalHorasEmpresa) + $totalHorasEmpresa) * 60)}}</p>
+            @endif
+            @if($totalDiariasEmpresa > 0)
+                <p>Total de Diárias na Empresa {{ $companyName }}: {{ $totalDiariasEmpresa }}</p>
+            @endif
+        </div>
+
+        @php($totalGeralDiarias += $totalDiariasEmpresa)
+        @php($totalGeralHoras += $totalHorasEmpresa)
+
+        @if(!$loop->last)
+            <div class="company-break"></div>
+        @endif
     @endforeach
 
     <div class="footer">
-        <p><strong>Total Geral:</strong> {{ App\BlueUtils\Money::format($totalGeral, 'R$ ', 2, ',', '.') }}</p>
-        <p>Gerado em: {{ date('d/m/Y') }}</p>
+        @if($totalGeralHoras > 0)
+            <p><strong>Total Geral de Horas: </strong>{{ floor($totalGeralHoras) }}:{{ sprintf('%02d', (-floor($totalGeralHoras) + $totalGeralHoras) * 60) }} </p>
+        @endif
+        @if($totalGeralDiarias > 0)
+            <p><strong>Total Geral de Diárias: </strong> {{ $totalGeralDiarias }}</p>
+        @endif
     </div>
+
 </body>
 </html>
