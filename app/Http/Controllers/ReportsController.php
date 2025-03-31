@@ -166,9 +166,69 @@ class ReportsController extends Controller
 
         $dailyRate = $dailyRate->get();
 
-        $groupedDailyRates = $dailyRate->groupBy('company_id');
+        $groupedData = [];
+
+        foreach ($dailyRate as $rate) {
+            $companyId = $rate->company_id;
+            $collaboratorId = $rate->collaborator_id;
+            $sectionId = $rate->section_id;
+        
+            // Agrupando por empresa
+            if (!isset($groupedData[$companyId])) {
+                $groupedData[$companyId] = [
+                    'company_id' => $companyId,
+                    'company_name' => $rate->company_name,
+                    'collaborators' => [],
+                ];
+            }
+        
+            // Agrupando por colaborador dentro da empresa
+            if (!isset($groupedData[$companyId]['collaborators'][$collaboratorId])) {
+                $groupedData[$companyId]['collaborators'][$collaboratorId] = [
+                    'collaborator_id' => $collaboratorId,
+                    'collaborator_name' => $rate->collaborators_name,
+                    'pix_key' => $rate->pix_key,
+                    'sections' => [],
+                    'total_pay' => 0, // Inicializando o total por colaborador
+                ];
+            }
+        
+            // Agrupando por setor dentro do colaborador
+            if (!isset($groupedData[$companyId]['collaborators'][$collaboratorId]['sections'][$sectionId])) {
+                $groupedData[$companyId]['collaborators'][$collaboratorId]['sections'][$sectionId] = [
+                    'section_id' => $sectionId,
+                    'section_name' => $rate->section_name,
+                    'daily_rates' => [],
+                ];
+            }
+        
+            // Adicionando a diária ao setor
+            $groupedData[$companyId]['collaborators'][$collaboratorId]['sections'][$sectionId]['daily_rates'][] = [
+                'start' => $rate->start,
+                'pay_amount' => $rate->pay_amount,
+                'leader_comission' => $rate->leader_comission,
+                'user' => [
+                    'user_id' => $rate->user_id,
+                    'user_name' => $rate->user_name,
+                    'user_pix_key' => $rate->user_pix_key,
+                    'leader_pix_key' => $rate->leader_pix_key,
+                ],
+            ];
+        
+            // Somando o total de pagamentos do colaborador
+            $groupedData[$companyId]['collaborators'][$collaboratorId]['total_pay'] += $rate->pay_amount;
+        }
+        
+        // Convertendo arrays indexados para valores numéricos organizados
+        $finalData = array_values($groupedData);
+        foreach ($finalData as &$company) {
+            $company['collaborators'] = array_values($company['collaborators']);
+            foreach ($company['collaborators'] as &$collaborator) {
+                $collaborator['sections'] = array_values($collaborator['sections']);
+            }
+        }
     
-        $html = View::make('reports.daily-rate-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user, 'leaderCommissions' => $leaderCommissions])->render();
+        $html = View::make('reports.daily-rate-layout', ['finalData' => $finalData, 'user' => $user, 'leaderCommissions' => $leaderCommissions])->render();
     
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
