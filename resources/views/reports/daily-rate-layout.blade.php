@@ -85,28 +85,23 @@
 
     @php($total = 0)
     <table>
+        <thead>
+            <tr>
+                <th>Setor</th>
+                <th>Data</th>
+                <th>Valor</th>
+            </tr>
+        </thead>
+        
         @foreach ($finalData as $company)
-            <thead>
-                <tr>
-                    <th colspan="3" style="text-align: center; font-size: 18px;">{{ $company["company_name"] }}</th>
-                </tr>
-            </thead>
+            <tr>
+                <th colspan="3" style="text-align: center; font-size: 18px;">{{ $company["company_name"] }}</th>
+            </tr>
 
             @foreach ($company["collaborators"] as $collaborator)
-                
-                <thead>
-                    <tr>
-                        <th colspan="3" style="text-align: center; font-size: 16px;">{{ $collaborator["collaborator_name"] }}</th>
-                    </tr>
-                </thead>
-
-                <thead>
-                    <tr>
-                        <th>Setor</th>
-                        <th>Data</th>
-                        <th>Valor</th>
-                    </tr>
-                </thead>
+                <tr>
+                    <th colspan="3" style="text-align: center; font-size: 16px;">{{ $collaborator["collaborator_name"] }}</th>
+                </tr>
 
                 <tbody>
                     @foreach ($collaborator["sections"] as $section)
@@ -128,7 +123,6 @@
                 </tfoot>
 
                 @php($total += $collaborator["total_pay"])
-                
             @endforeach
         @endforeach
     </table>
@@ -158,4 +152,5 @@
         </table>
     </div>
 </body>
+
 </html>
