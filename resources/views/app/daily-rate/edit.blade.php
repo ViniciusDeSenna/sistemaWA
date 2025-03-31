@@ -142,6 +142,7 @@
     let companySections = [];
     let selectedSection;
     let selectedCollaborator;
+    let selectedCompany;
     $(document).ready(function () {
 
         loadSectionInfo();
@@ -168,6 +169,7 @@
         });
 
         $('#company_id').on('input change', function () {
+            getSelectedCompany($(this).val());
             getCompanySections($(this).val());
             //getHourlyRate();
         });
@@ -322,6 +324,21 @@
         });
     }
 
+    function getSelectedCompany(companyId){
+        $.ajax({
+            url: "/get-company/" + companyId,
+            type: "GET",
+            dataType: "json",
+            success: function (company) {
+                selectedCompany = company;
+                calcular();
+            },
+            error: function (xhr) {
+                console.error("Erro ao buscar setores:", xhr.responseText);
+            }
+        });
+    }
+
     function getCompanySections(companyId){
   
         $.ajax({
@@ -407,7 +424,9 @@
         $('#employee_pay_id').val((pay_amount + feeding).toFixed(2));
         
         let inss_discount = $('#inss_id').val();
-        //document.getElementById('inss_id').value = parseFloat(inss_discount).toFixed(2);
+        if (selectedCompany.not_flashing) {
+            inss_discount = 0;
+        }
         
         let tax = ((parseFloat(document.getElementById('imposto_id').value) || 0) / 100);
         console.log("imposto: ", tax);

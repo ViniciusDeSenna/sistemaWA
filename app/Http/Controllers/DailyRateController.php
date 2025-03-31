@@ -144,12 +144,20 @@ class DailyRateController extends Controller
 
 
             DB::beginTransaction();
-            ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
-            ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
 
             if ($request->company_id) {
                 $company = Company::find($request->company_id);
             }
+
+            $inss = $request->inss_id;
+            $tax = $request->imposto_id;
+            if (!$company->not_flashing) {
+                ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
+                ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
+            } else {
+                $inss = 0;
+            }
+
             DailyRate::create([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
@@ -166,8 +174,8 @@ class DailyRateController extends Controller
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
                 'pay_amount' => Money::unformat($request->employee_pay_id),
                 
-                'inss_paid' => !empty($request->inss_paid) ? Money::unformat($request->inss_paid) : 0,
-                'tax_paid' => !empty($request->imposto_paid_id) ? Money::unformat($request->imposto_paid_id) : 0,
+                'inss_paid' => !empty($inss) ? Money::unformat($inss) : 0,
+                'tax_paid' => !empty($tax) ? Money::unformat($tax) : 0,
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
@@ -241,8 +249,20 @@ class DailyRateController extends Controller
     {
         try {
             DB::beginTransaction();
-            ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
-            ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
+            
+
+            if ($request->company_id) {
+                $company = Company::find($request->company_id);
+            }
+
+            $inss = $request->inss_id;
+            $tax = $request->imposto_id;
+            if (!$company->not_flashing) {
+                ConfigTable::where('id', 'inss_default')->update(['value' => $request->inss_id]);
+                ConfigTable::where('id', 'tax_default')->update(['value' => $request->imposto_id]);
+            } else {
+                $inss = 0;
+            }
 
             
             DailyRate::findOrFail($id)->update([    
@@ -257,16 +277,15 @@ class DailyRateController extends Controller
 
                 'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
                 'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
-                'feeding' => $request->feeding_id=='on'? 10 : 0,
+                'feeding' => !empty($request->feeding_id) ? Money::unformat($request->feeding_id) : 0,
                 'addition' => !empty($request->addition) ? Money::unformat($request->addition) : 0,
                 'pay_amount' => Money::unformat($request->employee_pay_id),
                 
-                'inss_paid' => !empty($request->addition) ? Money::unformat($request->inss_id) : 0,
-                'tax_paid' => !empty($request->addition) ? Money::unformat($request->imposto_paid_id) : 0,
+                'inss_paid' => !empty($inss) ? Money::unformat($inss) : 0,
+                'tax_paid' => !empty($tax) ? Money::unformat($tax) : 0,
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
-                
                 'observation' => $request->observation,
             ]);
 

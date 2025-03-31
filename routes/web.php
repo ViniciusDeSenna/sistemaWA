@@ -9,6 +9,7 @@ use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ReportsController;
 use App\Livewire\CashFlow;
 use App\Models\Collaborator;
+use App\Models\Company;
 use App\Models\CompanyHasSection;
 use Illuminate\Support\Facades\Route;
 
@@ -62,6 +63,7 @@ Route::middleware('auth')->group(function () {
         
     });
     Route::get('get-company-sections/{companyId}', [DailyRateController::class, 'getCompanySections'])->name('company.sections')->middleware('permission:Formulário de criação dos diárias');
+    Route::get('get-company/{companyId}', function ($companyId) {return Company::findOrFail($companyId);})->name('company.company');
     Route::get('get-colaborator/{colaboratorId}', function ($colaboratorId) {return Collaborator::findOrFail($colaboratorId);})->name('company.colaborator');
     Route::prefix('report')->group(function () {
         Route::get('/dailyrates', [ReportsController::class, 'dailyRates'])->name('report.daily-rates');

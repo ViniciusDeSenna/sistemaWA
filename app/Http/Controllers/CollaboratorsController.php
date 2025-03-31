@@ -66,7 +66,7 @@ class CollaboratorsController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'document' => ['required', 'regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/'],
-                'pix_key' => ['required', 'regex:/^(\d{10,11}|\d{3}\.\d{3}\.\d{3}-\d{2}|\S+@\S+\.\S+)$/i'],
+                'pix_key' => ['required'],
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
@@ -74,7 +74,6 @@ class CollaboratorsController extends Controller
                 'document.required' => 'CPF é obrigatório.',
                 'document.regex' => 'O CPF deve estar no formato correto (000.000.000-00).',
                 'pix_key.required' => 'O campo Chave Pix é obrigatório.',
-                'pix_key.regex' => 'A Chave Pix deve ser um CPF (000.000.000-00), um e-mail ou número de telefone válido.',
             ]);
             
             if ($validator->fails()) {
@@ -142,7 +141,7 @@ class CollaboratorsController extends Controller
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'document' => ['required', 'regex:/^\d{3}\.\d{3}\.\d{3}-\d{2}$/'],
-                'pix_key' => ['required', 'regex:/^(\d{10,11}|\d{3}\.\d{3}\.\d{3}-\d{2}|\S+@\S+\.\S+)$/i'],
+                'pix_key' => ['required'],
             ], [
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
@@ -150,7 +149,6 @@ class CollaboratorsController extends Controller
                 'document.required' => 'CPF é obrigatório.',
                 'document.regex' => 'O CPF deve estar no formato correto (000.000.000-00).',
                 'pix_key.required' => 'O campo Chave Pix é obrigatório.',
-                'pix_key.regex' => 'A Chave Pix deve ser um CPF (000.000.000-00) ou um e-mail válido.',
             ]);
             
             if ($validator->fails()) {
