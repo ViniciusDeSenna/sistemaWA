@@ -24,36 +24,40 @@ class DatabaseSeeder extends Seeder
                 'email' => 'dev@dev.com',
             ]);
         }
+
+        $this->call([
+            PermissionsSeeder::class,
+        ]);
         
-        //Section::create(['name'=> 'Flv - Hortifruti',]);
-        //Section::create(['name'=> 'Flc - Frios',]);
-        //Section::create(['name'=> 'Padaria',]);
-        //Section::create(['name'=> 'Mercearia',]);
-        //Section::create(['name'=> 'Frente de Caixa',]);
-        //Section::create(['name'=> 'Depósito',]);
+        Section::firstOrCreate(['name'=> 'Flv - Hortifruti',]);
+        Section::firstOrCreate(['name'=> 'Flc - Frios',]);
+        Section::firstOrCreate(['name'=> 'Padaria',]);
+        Section::firstOrCreate(['name'=> 'Mercearia',]);
+        Section::firstOrCreate(['name'=> 'Frente de Caixa',]);
+        Section::firstOrCreate(['name'=> 'Depósito',]);
        
         
-        //Section::create(['name'=> 'Açougue Abastecimento',]);
-        //Section::create(['name'=> 'Açougue Cortes/Manipulação',]);
-        //Section::create(['name'=> 'FLV - Central - Bistek',]);
-        Section::create(['name'=> 'Diária Proporcional',]);
-        //Section::create(['name'=> 'Conferência',]);
+        Section::firstOrCreate(['name'=> 'Açougue Abastecimento',]);
+        Section::firstOrCreate(['name'=> 'Açougue Cortes/Manipulação',]);
+        Section::firstOrCreate(['name'=> 'FLV - Central - Bistek',]);
+        Section::firstOrCreate(['name'=> 'Diária Proporcional',]);
+        Section::firstOrCreate(['name'=> 'Conferência',]);
 
-        //Section::create(['name'=> 'Floricultura',]);
+        Section::firstOrCreate(['name'=> 'Floricultura',]);
         
-        //Section::create(['name'=> 'Separação',]);
-        //Section::create(['name'=> 'Conferência',]);
+        Section::firstOrCreate(['name'=> 'Separação',]);
+        Section::firstOrCreate(['name'=> 'Conferência',]);
 
-        // Criando um novo registro na tabela config_table
-        //ConfigTable::create([
-        //    'id' => 'inss_default', // Se o id for um UUID, senão pode ser um valor fixo
-        //    'value' => 7.5,
-        //]);
+         // Criando um novo registro na tabela config_table
+        ConfigTable::firstOrCreate([
+            'id' => 'inss_default', // Se o id for um UUID, senão pode ser um valor fixo
+            'value' => 7.5,
+        ]);
         
-        //ConfigTable::create([
-        //    'id' => 'tax_default',
-        //    'value' => 14.32,
-        //]);
+        ConfigTable::firstOrCreate([
+            'id' => 'tax_default',
+            'value' => 14.32,
+        ]);
 
     }
 }
