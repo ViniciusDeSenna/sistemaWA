@@ -173,5 +173,26 @@
     <div class="footer">
         <p>Gerado em: {{ date('d/m/Y') }}</p>
     </div>
+
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Lider</th>
+                    <th>Comissão</th>
+                    <th>Chave Pix</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($leaderCommissions as $item)
+                    <tr>
+                        <td>{{ mb_strimwidth($item->leader_name ?? 'Não Informado', 0, 20, '...') }}</td>
+                        <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($item->total_leader_comission ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
+                        <td>{{ $item->leader_pix_key ?? 'Não Informado' }}</td>
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+    </div>
 </body>
 </html>

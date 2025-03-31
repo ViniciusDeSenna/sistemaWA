@@ -57,4 +57,9 @@ class User extends Authenticatable
     {
         return self::query()->where('email', '=', $email);
     }
+
+    public function collaborator()
+    {
+        return $this->belongsTo(Collaborator::class, 'collaborator_id', 'id');
+    }
 }

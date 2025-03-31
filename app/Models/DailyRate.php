@@ -47,6 +47,11 @@ class DailyRate extends Model
         return $this->belongsTo(Collaborator::class, 'collaborator_id', 'id');
     }
 
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+
     public function section()
     {
         return $this->belongsTo(Section::class, 'section_id', 'id');
