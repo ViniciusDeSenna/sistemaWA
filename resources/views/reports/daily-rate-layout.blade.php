@@ -16,19 +16,21 @@
             text-align: center;
             color: #696cff;
             margin-bottom: 20px;
+            font-size: 22px;
         }
 
         table {
             width: 100%;
-            margin: 20px auto;
+            margin: 20px 0;
             border-collapse: collapse;
             background-color: white;
         }
 
         th, td {
-            padding: 10px;
+            padding: 8px;
             text-align: left;
             border: 1px solid #ddd;
+            font-size: 12px;
         }
 
         th {
@@ -38,14 +40,6 @@
 
         tr:nth-child(even) {
             background-color: #f9f9f9;
-        }
-
-        .table-container {
-            margin-top: 10px;
-        }
-
-        .collaborator-row td {
-            font-size: 14px;
         }
 
         tfoot {
@@ -64,7 +58,7 @@
         }
 
         .commission-table th, .commission-table td {
-            padding: 12px;
+            padding: 8px;
             border: 1px solid #ddd;
         }
 
@@ -75,6 +69,14 @@
 
         .commission-table tr:nth-child(even) {
             background-color: #f9f9f9;
+        }
+
+        .table-container {
+            margin-top: 10px;
+        }
+
+        .collaborator-row td {
+            font-size: 10px;
         }
     </style>
 </head>
@@ -91,6 +93,7 @@
             </thead>
 
             @foreach ($company["collaborators"] as $collaborator)
+                
                 <thead>
                     <tr>
                         <th colspan="3" style="text-align: center; font-size: 16px;">{{ $collaborator["collaborator_name"] }}</th>

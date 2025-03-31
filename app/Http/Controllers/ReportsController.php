@@ -7,6 +7,7 @@ use App\Models\Collaborator;
 use Illuminate\Http\Request;
 use App\Models\DailyRate;
 use App\Models\User;
+use Dompdf\Dompdf;
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -108,10 +109,6 @@ class ReportsController extends Controller
             //     $dailyRate->where('daily_rate.end', '<=', $request->end);
             // }
 
-            $dailyRate = DailyRate::query()->select([
-                'daily_rate.user.collaborator.pix_key as leader_pix_key'
-            ]);
-
         $dailyRate = DailyRate::query()
             ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')  // Colaborador que trabalhou na diária
             ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
@@ -136,6 +133,7 @@ class ReportsController extends Controller
                 'users.name as user_name',  // Nome do usuário que fez o registro
                 'user_collaborator.pix_key as leader_pix_key' // Chave PIX do líder (usuário que registrou a diária)
             ]);
+            
     
         if ($request->collaborator_id) {
             $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
@@ -165,7 +163,6 @@ class ReportsController extends Controller
             ->get();
 
         $dailyRate = $dailyRate->get();
-
         $groupedData = [];
 
         foreach ($dailyRate as $rate) {
@@ -229,10 +226,19 @@ class ReportsController extends Controller
         }
     
         $html = View::make('reports.daily-rate-layout', ['finalData' => $finalData, 'user' => $user, 'leaderCommissions' => $leaderCommissions])->render();
-    
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
+
+        $dompdf = new Dompdf();
+
+        $dompdf->loadHtml($html);
+
+        // Define o tamanho e orientação da página
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Renderiza o HTML para PDF
+        $dompdf->render();
+
+        // Envia o PDF para o navegador com opção de baixar
+        $dompdf->stream('arquivo.pdf', ['Attachment' => false]);
     }
 
     public function financial(Request $request) {
