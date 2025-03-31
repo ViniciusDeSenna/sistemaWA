@@ -154,6 +154,7 @@ class ReportsController extends Controller
         }
         
         $leaderCommissions = (clone $dailyRate)
+            ->where('collaborators.is_leader', '=', false) //  não recebe caso o colaborador que trabalhe na diária seja o próprio ou outro líder
             ->select([
                 'users.name as leader_name',
                 'user_collaborator.pix_key as leader_pix_key',
