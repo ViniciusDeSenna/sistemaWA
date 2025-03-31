@@ -95,6 +95,7 @@ class CompanyController extends Controller
                 'chain_of_stores' => $request->category,
                 'city' => $request->city,
                 'uniforms_laid'=> $request->uniforms_laid ?? 0,
+                'not_flashing'=> filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
                 'observation' => $request->observation,
             ]);
             if($request->section_id) {
@@ -191,6 +192,7 @@ class CompanyController extends Controller
                 'city' => $request->city,
                 'uniforms_laid'=> ($request->uniforms_laid),
                 'chain_of_stores' => $request->category,
+                'not_flashing'=> filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
                 'observation' => $request->observation,
             ]);
             

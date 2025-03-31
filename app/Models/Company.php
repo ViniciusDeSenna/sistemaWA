@@ -16,6 +16,7 @@ class Company extends Model
         'city',
         'uniforms_laid',
         'chain_of_stores',
+        'not_flashing'
     ];
     public static function getAll()
     {

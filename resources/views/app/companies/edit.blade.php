@@ -31,6 +31,8 @@
                         </div>
                     </div>
 
+                    <x-checkbox id="not_flashing" name="not_flashing" title="Nao Intermitente" :checked="$company->not_flashing ?? false" />
+
                     <x-textarea id="observation" name="observation" label="Observação" placeholder="Alguma observação?">{!! $company?->observation ?? null !!}</x-textarea>
                 </form>
             </div>
