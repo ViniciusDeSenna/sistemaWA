@@ -53,7 +53,7 @@ class ReportsController extends Controller
         }
         
         if ($request->end) {
-            $dailyRate->where('daily_rate.end', '<=', $request->end);
+            $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
 
         $dailyRate = $dailyRate->get();
@@ -148,7 +148,7 @@ class ReportsController extends Controller
         }
     
         if ($request->end) {
-            $dailyRate->where('daily_rate.end', '<=', $request->end);
+            $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
         
         $leaderCommissions = (clone $dailyRate)
@@ -287,7 +287,6 @@ class ReportsController extends Controller
         $groupedDailyRates = $dailyRate->groupBy('collaborator_id');
 
         $html = View::make('reports.financial-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
-    
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
         $mpdf->Output();
