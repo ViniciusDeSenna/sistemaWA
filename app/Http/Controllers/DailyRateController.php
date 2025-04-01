@@ -52,9 +52,9 @@ class DailyRateController extends Controller
         if ($request->start) {
             $dailyRate->where('daily_rate.start', '>=', $request->start);
         }
-        
+
         if ($request->end) {
-            $dailyRate->where('daily_rate.end', '<=', $request->end);
+            $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
         
         return DataTables::of($dailyRate)

@@ -51,7 +51,7 @@ class ReportsController extends Controller
         if ($request->start) {
             $dailyRate->where('daily_rate.start', '>=', $request->start);
         }
-        
+
         if ($request->end) {
             $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
@@ -65,6 +65,8 @@ class ReportsController extends Controller
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
         $mpdf->Output();
+
+        exit();
 
     }
 
@@ -146,7 +148,7 @@ class ReportsController extends Controller
         if ($request->start) {
             $dailyRate->where('daily_rate.start', '>=', $request->start);
         }
-    
+
         if ($request->end) {
             $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
@@ -239,6 +241,8 @@ class ReportsController extends Controller
 
         // Envia o PDF para o navegador com opção de baixar
         $dompdf->stream('arquivo.pdf', ['Attachment' => false]);
+
+        exit();
     }
 
     public function financial(Request $request) {
@@ -290,5 +294,7 @@ class ReportsController extends Controller
         $mpdf = new Mpdf();
         $mpdf->WriteHTML($html);
         $mpdf->Output();
+
+        exit();
     }
 }
