@@ -48,7 +48,7 @@
         }
 
         tfoot th {
-            background-color: #696cff;
+            background-color: #A3A5FF;
             color: white;
         }
 
