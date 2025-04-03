@@ -59,11 +59,36 @@
                 Relatório Financeiro
             </button>
 
-            <button class="btn btn-primary" wire:click="adicionarCusto">
-                Adicionar Custos
+            <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
+                Cadastrar Custo
             </button>
+            
         </div>
     </div>
+
+    <div class="collapse mt-5" id="cadastrarCusto">
+        <x-card title="Cadastro de Custo">
+            <div class="row">
+                <div class="col mb-3">
+                    <label for="costDate" class="form-label">Data</label>
+                    <input type="date" wire:model="cost.date" class="form-control" id="costDate">
+                </div>
+                <div class="col mb-3">
+                    <label for="costValue" class="form-label">Valor</label>
+                    <input type="text" wire:model="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00" >
+                </div>
+                <div class="col mb-3">
+                    <label for="costDescription" class="form-label">Descrição</label>
+                    <input type="text" wire:model="cost.description" class="form-control" id="costDescription" placeholder="Descrição" >
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-3">
+                <button class="btn btn-primary me-1 collapsed" wire:click="saveCusto" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
+                    Salvar
+                </button>
+            </div>
+        </x-card>
+    </div>    
 
     <!-- Seções -->
     <h5 class="text-center mt-5">Setores</h5>

@@ -11,9 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create("custo_registers", function(Blueprint $table){
+        Schema::create("costs", function(Blueprint $table){
             $table->id();
-            $table->foreignId("custo_id")->constrained("custo");
+
+            $table->foreignId('cost_category_id')->nullable();
+            $table->foreign('cost_category_id')->references('id')->on('cost_categories');
 
             $table->date("date");
             $table->float("value");
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('custo_registers');
+        Schema::dropIfExists('costs');
     }
 };
