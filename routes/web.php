@@ -8,10 +8,12 @@ use App\Http\Controllers\CollaboratorsController;
 use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\ReportsController;
 use App\Livewire\CashFlow;
+use App\Livewire\FinantialResults;
 use App\Models\Collaborator;
 use App\Models\Company;
 use App\Models\CompanyHasSection;
 use Illuminate\Support\Facades\Route;
+use Livewire\Livewire;
 
 Route::get('/', function () {
     return view('dashboard');
@@ -76,7 +78,9 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
     //Route::delete('/company-sections/remove', [CompanyHasSectionController::class, 'remove']);
+    Route::get('/resultados-financeiros', FinantialResults::class)->name('finantial-results')
+    ->middleware('permission:Visualizar e inserir informações financeiras nas diárias');
 
-    Route::get('/cash-flow', CashFlow::class);
+    //Route::get('/cash-flow', CashFlow::class)->name('finantial-results2');
 });
 require __DIR__.'/auth.php';

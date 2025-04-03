@@ -75,7 +75,7 @@
             <li class="menu-item active">
               <a href="{{ route('dashboard') }}" class="menu-link">
                 <i class="menu-icon tf-icons bx bx-home-circle"></i>
-                <div data-i18n="Analytics">Dashboard</div>
+                <div data-i18n="Analytics">Menu Principal</div>
               </a>
             </li>
 
@@ -107,6 +107,12 @@
                 </a>
             </li>
             
+            <li class="menu-item">
+                <a href="{{ route('finantial-results') }}" class="menu-link">
+                    <i class="menu-icon tf-icons bx bx-collection"></i>
+                    <div data-i18n="Basic">Analitics Financeiro</div>
+                </a>
+            </li>
           </ul>
         </aside>
         <!-- / Menu -->
