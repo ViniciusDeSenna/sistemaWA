@@ -22,6 +22,7 @@ class FinantialResults extends Component
     public array $cities_array = [];
     public array $companies_array = [];
 
+    
     public function mount()
     {
         $this->generateTables();
@@ -196,6 +197,11 @@ class FinantialResults extends Component
                 $this->cities_array[$company->city]['totalProfit'] += $profit;
             }
         }
+    }
+    public function adicionarCusto(){
+        $this->emit('showAddCostModal');
+
+
     }
     public function render()
     {

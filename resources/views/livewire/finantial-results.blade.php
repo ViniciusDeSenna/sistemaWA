@@ -54,17 +54,15 @@
         </div>
 
         <!-- Botões de Ação -->
-        <div class="card-footer d-flex justify-content-end gap-3">
-            <button class="btn btn-secondary" wire:click="gerarRelatorioFinanceiro">
+        <div class="card-footer d-flex flex-column gap-3 w-100">
+            <livewire:add-cost />
+            <button class="btn btn-secondary w-100" wire:click="gerarRelatorioFinanceiro">
                 Relatório Financeiro
             </button>
-
-            <button class="btn btn-primary" wire:click="adicionarCusto">
-                Adicionar Custos
-            </button>
-        </div>
+        </div>    
     </div>
 
+    
     <!-- Seções -->
     <h5 class="text-center mt-5">Setores</h5>
     @foreach ($sections_array as $section)
