@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Cost;
 use Livewire\Component;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +23,6 @@ class FinantialResults extends Component
     public array $cities_array = [];
     public array $companies_array = [];
 
-    
     public function mount()
     {
         $this->generateTables();
@@ -35,6 +35,13 @@ class FinantialResults extends Component
         $this->sectionsTable();
         $this->citiesTable();
         $this->companiesTable();
+    }
+
+    
+
+    public function saveCusto() {
+        Cost::create($this->cost);
+        $this->cost = [];
     }
 
     public function sectionsTable()

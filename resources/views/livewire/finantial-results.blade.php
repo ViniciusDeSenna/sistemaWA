@@ -59,10 +59,13 @@
             <button class="btn btn-secondary w-100" wire:click="gerarRelatorioFinanceiro">
                 Relatório Financeiro
             </button>
-        </div>    
+
+            <button class="btn btn-primary" wire:click="adicionarCusto">
+                Adicionar Custos
+            </button>
+        </div>
     </div>
 
-    
     <!-- Seções -->
     <h5 class="text-center mt-5">Setores</h5>
     @foreach ($sections_array as $section)
