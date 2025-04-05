@@ -54,17 +54,52 @@
         </div>
 
         <!-- Botões de Ação -->
-        <div class="card-footer d-flex flex-column gap-3 w-100">
-            <livewire:add-cost />
-            <button class="btn btn-secondary w-100" wire:click="gerarRelatorioFinanceiro">
+        <div class="card-footer d-flex justify-content-end gap-3">
+
+            <button class="btn btn-secondary" wire:click="gerarRelatorioFinanceiro">
                 Relatório Financeiro
             </button>
 
-            <button class="btn btn-primary" wire:click="adicionarCusto">
-                Adicionar Custos
+            <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
+                Cadastrar Custo
             </button>
+
         </div>
     </div>
+
+    <!-- Cadastro de Custos -->
+    <div class="collapse mt-5" id="cadastrarCusto">
+        <x-card title="Cadastro de Custo">
+            <div class="row">
+                <div class="col mb-3" wire:ignore>
+                    <label for="costCategory" class="form-label">Categoria</label>
+                    <select id="costCategory" class="form-select" data-livewire="@this">
+                        <option>Categoria</option>
+                        <option value="1">One</option>
+                        <option value="2">Two</option>
+                        <option value="3">Three</option>
+                    </select>
+                </div>
+                <div class="col mb-3">
+                    <label for="costDate" class="form-label">Data</label>
+                    <input type="date" wire:model="cost.date" class="form-control" id="costDate">
+                </div>
+                <div class="col mb-3">
+                    <label for="costValue" class="form-label">Valor</label>
+                    <input type="text" wire:model="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00" >
+                </div>
+                <div class="col mb-3">
+                    <label for="costDescription" class="form-label">Descrição</label>
+                    <input type="text" wire:model="cost.description" class="form-control" id="costDescription" placeholder="Descrição" >
+                </div>
+            </div>
+            <div class="d-flex justify-content-end gap-3">
+                <button class="btn btn-primary me-1 collapsed" wire:click="saveCusto" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
+                    Salvar
+                </button>
+            </div>
+        </x-card>
+    </div>    
 
     <!-- Seções -->
     <h5 class="text-center mt-5">Setores</h5>
@@ -145,4 +180,16 @@
     @endforeach
 </div>
 
-</div>
+@script
+<script>
+    $(document).ready(function() {
+        $('#costCategory').select2({
+            theme: 'bootstrap-5',
+        })
+        $('#costCategory').on('change', function (e) {
+            let livewire = $(this).data('livewire')
+            eval(livewire).set('costCategory', $(this).val());
+        })
+    });
+</script>
+@endscript

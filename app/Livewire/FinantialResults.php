@@ -23,6 +23,9 @@ class FinantialResults extends Component
     public array $cities_array = [];
     public array $companies_array = [];
 
+    public array $cost = [];
+    public ?string $costCategory = null;
+
     public function mount()
     {
         $this->generateTables();
@@ -37,9 +40,8 @@ class FinantialResults extends Component
         $this->companiesTable();
     }
 
-    
-
     public function saveCusto() {
+        dd($this->costCategory);
         Cost::create($this->cost);
         $this->cost = [];
     }

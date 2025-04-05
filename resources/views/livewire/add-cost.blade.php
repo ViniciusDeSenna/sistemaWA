@@ -1,6 +1,5 @@
-<div class="container">
-    <!-- Botão Principal -->
-    <button wire:click="$set('showModal', true)" class="btn btn-primary w-100 py-3 fw-bold">
+<div>
+    <button wire:click="$set('showModal', true)" class="btn btn-primary">
         + Adicionar Custo
     </button>
 
