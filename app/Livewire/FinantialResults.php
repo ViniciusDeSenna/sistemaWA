@@ -6,6 +6,7 @@ use App\Models\Cost;
 use Livewire\Component;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Livewire\Attributes\Modelable;
 
 class FinantialResults extends Component
 {
@@ -24,7 +25,9 @@ class FinantialResults extends Component
     public array $companies_array = [];
 
     public array $cost = [];
+    #[Modelable]
     public ?string $costCategory = null;
+    public bool $costCollapseOpen = false;
 
     public function mount()
     {

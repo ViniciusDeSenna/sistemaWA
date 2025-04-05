@@ -60,7 +60,7 @@
                 Relatório Financeiro
             </button>
 
-            <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
+            <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}" aria-controls="cadastrarCusto">
                 Cadastrar Custo
             </button>
 
@@ -68,12 +68,12 @@
     </div>
 
     <!-- Cadastro de Custos -->
-    <div class="collapse mt-5" id="cadastrarCusto">
+    <div class="collapse mt-5 {{ $costCollapseOpen ? 'show' : '' }}" id="cadastrarCusto">
         <x-card title="Cadastro de Custo">
             <div class="row">
                 <div class="col mb-3" wire:ignore>
                     <label for="costCategory" class="form-label">Categoria</label>
-                    <select id="costCategory" class="form-select" data-livewire="@this">
+                    <select id="costCategory" class="form-select">
                         <option>Categoria</option>
                         <option value="1">One</option>
                         <option value="2">Two</option>
@@ -182,14 +182,16 @@
 
 @script
 <script>
-    $(document).ready(function() {
+     $(document).ready(function() {
         $('#costCategory').select2({
             theme: 'bootstrap-5',
-        })
-        $('#costCategory').on('change', function (e) {
-            let livewire = $(this).data('livewire')
-            eval(livewire).set('costCategory', $(this).val());
+            tags: true,
+        });
+        $('#costCategory').on('change', function(event){
+            @this.$set('costCategory', event.target.value);
+            @this.$set('costCollapseOpen', true);
         })
     });
 </script>
+   
 @endscript
