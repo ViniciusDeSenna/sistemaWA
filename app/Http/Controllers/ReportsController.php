@@ -147,7 +147,7 @@ class ReportsController extends Controller
             }
     
             $custosSoltos = DB::table('costs')
-                ->leftJoin('cost_categories', 'costs.cost_category_id', '=', 'cost_categories.id')
+                ->leftJoin('cost_categories', 'costs.category_id', '=', 'cost_categories.id')
                 ->select('costs.value', 'costs.description', 'cost_categories.name as categoria')
                 ->whereDate('costs.date', $dataStr)
                 ->get();

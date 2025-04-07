@@ -173,7 +173,7 @@ class FinantialResults extends Component
     
         // Custos diretos da tabela `costs`
         $directCosts = DB::table('costs')
-            ->join('cost_categories', 'costs.cost_category_id', '=', 'cost_categories.id')
+            ->join('cost_categories', 'costs.category_id', '=', 'cost_categories.id')
             ->whereBetween('costs.date', [$this->start, $this->end])
             ->select('cost_categories.name as name', DB::raw('SUM(costs.value) as total'))
             ->groupBy('cost_categories.name')
