@@ -53,18 +53,17 @@ class FinantialResults extends Component
     }
 
     public function saveCusto() {
-        // dd($this);
         $this->costCollapseOpen = true;
 
         $this->validate([
-            'cost.category_id' => 'required|string|max:255',
+            'cost.category_id' => 'required|filled|max:255',
             'cost.description' => 'required|string|max:255',
             'cost.value' => 'required|numeric|min:0',
             'cost.date' => 'required|date',
         ],
         [
             'cost.category_id.required' => 'O campo categoria é obrigatório.',
-            'cost.category_id.string' => 'O campo categoria deve ser uma string.',
+            'cost.category_id.filled' => 'O campo categoria é obrigatório.',
             'cost.category_id.max' => 'O campo categoria deve ter no máximo 255 caracteres.',
             'cost.description.required' => 'O campo descrição é obrigatório.',
             'cost.value.required' => 'O campo valor é obrigatório.',

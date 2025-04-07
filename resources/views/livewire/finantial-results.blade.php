@@ -90,9 +90,11 @@
         <x-card title="Cadastro de Custo">
             <div class="row">
                 
-                <div class="col mb-3" wire:ignore>
+                <div class="col mb-3">
                     <label for="cost.category_id" class="form-label">Categoria</label>
-                    <select id="costCategory" class="form-select"></select>
+                    <div wire:ignore>
+                        <select id="costCategory" class="form-select" ></select>
+                    </div>
                     @error('cost.category_id') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
 
