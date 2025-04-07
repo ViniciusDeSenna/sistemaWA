@@ -325,6 +325,14 @@ class FinantialResults extends Component
                 $this->cities_array[$company->city]['totalProfit'] += $profit;
             }
         }
+        
+        $registeredCosts = DB::table('costs')
+        ->whereBetween('date', [
+            Carbon::parse($this->start)->startOfDay()->toDateString(),
+            Carbon::parse($this->end)->endOfDay()->toDateString()
+        ])->sum('value');
+
+        $this->total_costs += $registeredCosts;
         //$this->costsTable();
     }
     public function adicionarCusto(){
