@@ -86,7 +86,7 @@ class FinantialResults extends Component
             Cost::create($this->cost);
 
             $this->cost = [
-                'category_id' => $CostCategory->id,
+                'category_id' => null,
                 'description' => null,
                 'value' => null,
                 'date' => null,
