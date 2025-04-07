@@ -106,7 +106,7 @@
 
                 <div class="col mb-3">
                     <label for="costValue" class="form-label">Valor</label>
-                    <input type="text" wire:model="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00" >
+                    <input x-mask:dynamic="$money($input, ',')" type="text" wire:model.defer="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00">
                     @error('cost.value') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
 

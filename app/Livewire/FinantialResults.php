@@ -65,7 +65,12 @@ class FinantialResults extends Component
     }
 
     public function saveCusto() {
+
         $this->costCollapseOpen = true;
+
+        if (is_string($this->cost['value'])) {
+            $this->cost['value'] = str_replace(',', '.', $this->cost['value']);
+        }
 
         $this->validate([
             'cost.category_id' => 'required|filled|max:255',
