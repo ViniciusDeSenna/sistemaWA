@@ -176,7 +176,6 @@ class FinantialResults extends Component
             $cost = (float) (
                 $rate->pay_amount 
                 + $rate->transportation 
-                + $rate->feeding 
                 + $rate->leader_comission 
                 + $rate->inss_paid 
                 + ($earned_total * $tax_percentage)
