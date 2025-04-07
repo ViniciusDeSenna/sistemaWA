@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\DailyRate;
 use App\Models\User;
 use Dompdf\Dompdf;
+
 use Mpdf\Mpdf;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -33,7 +35,7 @@ class ReportsController extends Controller
             'daily_rate.section_id as section_id',
             'collaborators.name as collaborators_name',
             'companies.name as company_name',
-            'sections.name as section_name', // Setor
+            'sections.name as section_name',
             'daily_rate.start as start',
             'daily_rate.end as end',
             'daily_rate.total_time as total_time',
@@ -69,6 +71,140 @@ class ReportsController extends Controller
         exit();
 
     }
+    public static function extratoFinanceiro($start, $end)
+    {
+        $start = Carbon::parse($start);
+        $end = Carbon::parse($end);
+    
+        $dias = [];
+        $totalGanhos = 0;
+        $totalCustos = 0;
+    
+        for ($data = $start->copy(); $data->lte($end); $data->addDay()) {
+    
+            $dataStr = $data->toDateString();
+    
+            $movimentacoes = [
+                'data' => $data->format('d/m/Y'),
+                'itens' => [],
+            ];
+    
+            $ganhosDia = 0;
+            $custosDia = 0;
+    
+            // DAILY RATE - ganhos
+            $diarias = DB::table('daily_rate')
+                ->whereDate('start', $dataStr)
+                ->get();
+    
+            foreach ($diarias as $d) {
+                $earned = floatval($d->earned ?? 0);
+                $addition = floatval($d->addition ?? 0);
+    
+                if ($earned > 0) {
+                    $movimentacoes['itens'][] = [
+                        'nome' => 'Recebido',
+                        'valor' => number_format($earned, 2, ',', '.'),
+                        'descricao' => '',
+                        'tipo' => 'ganho',
+                    ];
+                    $ganhosDia += $earned;
+                }
+    
+                if ($addition > 0) {
+                    $movimentacoes['itens'][] = [
+                        'nome' => 'Adicional',
+                        'valor' => number_format($addition, 2, ',', '.'),
+                        'descricao' => '',
+                        'tipo' => 'ganho',
+                    ];
+                    $ganhosDia += $addition;
+                }
+    
+                // DAILY RATE - custos
+                $earnedTotal = $earned + $addition;
+                $tax = $earnedTotal * (($d->tax_paid ?? 0) / 100);
+                $pay = ($d->pay_amount ?? 0) - ($d->feeding ?? 0);
+    
+                $custos = [
+                    'Alimentação' => floatval($d->feeding ?? 0),
+                    'Transporte' => floatval($d->transportation ?? 0),
+                    'Pagamento ao Colaborador' => floatval($pay),
+                    'Comissão do Líder' => floatval($d->leader_comission ?? 0),
+                    'INSS' => floatval($d->inss_paid ?? 0),
+                    'Impostos' => floatval($tax),
+                ];
+    
+                foreach ($custos as $nome => $valor) {
+                    if ($valor > 0) {
+                        $movimentacoes['itens'][] = [
+                            'nome' => $nome,
+                            'valor' => number_format($valor, 2, ',', '.'),
+                            'descricao' => '',
+                            'tipo' => 'custo',
+                        ];
+                        $custosDia += $valor;
+                    }
+                }
+            }
+    
+            // COSTS
+            $custosSoltos = DB::table('costs')
+                ->leftJoin('cost_categories', 'costs.cost_category_id', '=', 'cost_categories.id')
+                ->select('costs.value', 'costs.description', 'cost_categories.name as categoria')
+                ->whereDate('costs.date', $dataStr)
+                ->get();
+    
+            foreach ($custosSoltos as $c) {
+                $valor = floatval($c->value);
+                $movimentacoes['itens'][] = [
+                    'nome' => $c->categoria ?? 'Sem Categoria',
+                    'valor' => number_format($valor, 2, ',', '.'),
+                    'descricao' => $c->description,
+                    'tipo' => 'custo',
+                ];
+                $custosDia += $valor;
+            }
+    
+            $lucroDia = $ganhosDia - $custosDia;
+    
+            if (count($movimentacoes['itens']) > 0) {
+                $movimentacoes['total_lucro'] = number_format($lucroDia, 2, ',', '.');
+                $dias[] = $movimentacoes;
+            } else {
+                $dias[] = [
+                    'data' => $data->format('d/m/Y'),
+                    'itens' => [['nome' => 'Sem movimentações', 'valor' => '', 'descricao' => '', 'tipo' => '']],
+                    'total_lucro' => '0,00'
+                ];
+            }
+    
+            $totalGanhos += $ganhosDia;
+            $totalCustos += $custosDia;
+        }
+    
+        $totais = [
+            'ganhos' => number_format($totalGanhos, 2, ',', '.'),
+            'custos' => number_format($totalCustos, 2, ',', '.'),
+            'lucro' => number_format($totalGanhos - $totalCustos, 2, ',', '.'),
+        ];
+    
+        $periodo = $start->format('d/m/Y') . ' até ' . $end->format('d/m/Y');
+    
+        $html = View::make('reports.financial-layout', [
+            'dias' => $dias,
+            'periodo' => $periodo,
+            'totais' => $totais,
+        ])->render();
+    
+        $dompdf = new Dompdf();
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+        $dompdf->stream('extrato-financeiro.pdf', ['Attachment' => false]);
+    }
+        
+    
 
     public function dailyRates(Request $request) {
 

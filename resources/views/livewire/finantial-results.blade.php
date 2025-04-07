@@ -56,9 +56,9 @@
         <!-- Botões de Ação -->
         <div class="card-footer d-flex justify-content-end gap-3">
 
-            <button class="btn btn-secondary" wire:click="gerarRelatorioFinanceiro">
-                Relatório Financeiro
-            </button>
+        <button wire:click="gerarRelatorioFinanceiro" class="btn btn-primary me-1">
+            Extrato Financeiro
+        </button>
 
             <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}" aria-controls="cadastrarCusto">
                 Cadastrar Custo

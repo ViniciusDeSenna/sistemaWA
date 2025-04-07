@@ -73,6 +73,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/registers', [ReportsController::class, 'registers'])->name('report.registers');
     });
 
+    Route::get('/relatorios/financeiro/{start}/{end}', [ReportsController::class, 'extratoFinanceiro'])->name('relatorio.financeiro');
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');

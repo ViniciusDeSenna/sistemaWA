@@ -34,20 +34,21 @@ class DatabaseSeeder extends Seeder
         Section::firstOrCreate(['name'=> 'Padaria',]);
         Section::firstOrCreate(['name'=> 'Mercearia',]);
         Section::firstOrCreate(['name'=> 'Frente de Caixa',]);
+        
         Section::firstOrCreate(['name'=> 'Depósito',]);
-       
         
         Section::firstOrCreate(['name'=> 'Açougue Abastecimento',]);
         Section::firstOrCreate(['name'=> 'Açougue Cortes/Manipulação',]);
         Section::firstOrCreate(['name'=> 'FLV - Central - Bistek',]);
-        Section::firstOrCreate(['name'=> 'Diária Proporcional',]);
-        Section::firstOrCreate(['name'=> 'Conferência',]);
-
-        Section::firstOrCreate(['name'=> 'Floricultura',]);
         
-        Section::firstOrCreate(['name'=> 'Separação',]);
+        Section::firstOrCreate(['name'=> 'Diária Proporcional',]);
+        
         Section::firstOrCreate(['name'=> 'Conferência',]);
-
+        Section::firstOrCreate(['name'=> 'Floricultura',]);
+        Section::firstOrCreate(['name'=> 'Separação',]);
+        
+        Section::firstOrCreate(['name'=> 'Mercearia Central',]);
+        Section::firstOrCreate(['name'=> 'Flv (7:20 horas)',]);
          // Criando um novo registro na tabela config_table
         ConfigTable::firstOrCreate([
             'id' => 'inss_default', // Se o id for um UUID, senão pode ser um valor fixo

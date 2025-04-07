@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Http\Controllers\ReportsController;
 use App\Models\Cost;
 use Livewire\Component;
 use Carbon\Carbon;
@@ -44,7 +45,6 @@ class FinantialResults extends Component
     }
 
     public function saveCusto() {
-        dd($this->costCategory);
         Cost::create($this->cost);
         $this->cost = [];
     }
@@ -222,4 +222,11 @@ class FinantialResults extends Component
             'cities_array' => array_values($this->cities_array),
         ])->layout('layouts.app');
     }
+    public function gerarRelatorioFinanceiro()
+    {
+        return redirect()->route('relatorio.financeiro', [
+            'start' => $this->start,
+            'end' => $this->end,
+        ]);
+    }    
 }

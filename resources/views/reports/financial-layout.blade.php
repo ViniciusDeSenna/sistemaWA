@@ -2,145 +2,180 @@
 <html lang="pt">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Relatório Financeiro</title>
+    <title>Extrato Financeiro</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+            margin: 30px;
+            background-color: #fff;
             color: #333;
-            margin: 20px;
-            padding: 0;
-            background-color: #f4f4f4;
         }
 
         h1 {
             text-align: center;
             color: #4C73FF;
-            font-size: 28px;
-            font-weight: bold;
-            text-transform: uppercase;
-            margin-bottom: 20px;
         }
 
-        .info {
-            margin-bottom: 10px;
-            padding: 15px;
-            background: #e9ecef;
-            border-radius: 8px;
-            border: 2px solid #4C73FF;
-        }
-
-        .info p {
-            margin: 5px 0;
-            font-size: 12px;
-        }
-
-        .table-container {
-            overflow-x: auto;
-            margin-top: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            background-color: #ffffff;
-            border-radius: 8px;
-            border: 2px solid #4C73FF;
-        }
-
-        th, td {
-            padding: 12px;
+        .periodo {
             text-align: center;
-            font-size: 12px;
-            border: 1px solid #ddd;
+            margin-bottom: 40px;
+            font-size: 14px;
         }
 
-        th {
-            background-color: #4C73FF;
-            color: white;
-            text-transform: uppercase;
+        .dia {
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .dia-title {
+            font-size: 16px;
             font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .item {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 10px;
+            font-size: 13px;
+            margin-left: 20px;
         }
 
-        tr:hover {
-            background-color: #e1e1e1;
+        .ganho {
+            color: #DAA520;
         }
 
-        .footer {
-            margin-top: 20px;
-            text-align: right;
-            font-size: 12px;
-            color: #555;
+        .custo:nth-child(even) {
+            background-color: #f9f9f9;
         }
+
+        .custo:nth-child(odd) {
+            background-color: #efefef;
+        }
+
+        .custo {
+            color: #C0392B;
+        }
+
+        .lucro {
+            color: #27AE60;
+            font-weight: bold;
+            margin-top: 10px;
+            margin-left: 20px;
+        }
+
+        .descricao {
+            font-size: 11px;
+            color: #666;
+            margin-left: 20px;
+        }
+
+        .totais-dia {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 15px;
+            margin-left: 20px;
+            border-radius: 6px;
+            background-color: #f5f5f5;
+        }
+
+        .totais-dia .item {
+            margin-left: 0;
+        }
+
+        .total-geral {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #ccc;
+            font-size: 14px;
+        }
+
+        .total-linha {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            padding: 3px 0;
+        }
+
     </style>
 </head>
 <body>
-    <h1>Relatório Financeiro</h1>
 
-    @php($total = 0)
+<h1>Extrato Financeiro</h1>
+<p class="periodo">Período: {{ $periodo }}</p>
 
-    @foreach($dailyRate as $collaboratorId => $rates)
+@foreach ($dias as $dia)
+    <div class="dia">
+        <div class="dia-title">{{ $dia['data'] }}</div>
 
-        @php($collaboratorName = $rates[0]['collaborators_name'] ?? 'Não Informado')
-        @php($totalForCollaborator = 0)
-    
-        <div class="info">
-            <p><strong>Colaborador:</strong> {{ $collaboratorName }}</p>
-        </div>
+        @if (count($dia['itens']) === 1 && $dia['itens'][0]['nome'] === 'Sem movimentações')
+            <p style="font-style: italic; color: #888; margin-left: 20px;">Nenhuma movimentação registrada.</p>
+        @else
+            @php
+                $agrupados = [];
+                $totalGanhoDia = 0;
+                $totalCustoDia = 0;
 
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Estabelecimento</th>
-                        <th>Início</th>
-                        <th>Fim</th>
-                        <th>Tempo Total</th>
-                        <th>Valor da Diária</th>
-                        <th>Custo</th>
-                        <th>Acréscimo</th>
-                        <th>Participação do Colaborador</th>
-                        <th>Valor Total</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($rates as $rate)
+                foreach ($dia['itens'] as $item) {
+                    $nome = $item['nome'];
+                    $valor = floatval(str_replace(['.', ','], ['', '.'], str_replace('R$', '', $item['valor'])));
+                    $tipo = $item['tipo'] ?? '';
 
-                        @php($totalForCollaborator += $rate->total)
-                        @php($total += $rate->total)
+                    $agrupados[$tipo][$nome] = ($agrupados[$tipo][$nome] ?? 0) + $valor;
 
-                        <tr>
-                            <td>{{ mb_strimwidth($rate->companies_name ?? 'Não Informado', 0, 30, '...') }}</td>
-                            <td>{{ isset($rate->start) ? Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            <td>{{ isset($rate->end) ? Carbon\Carbon::parse($rate->end)->format('d/m/Y H:i:s') : '--/--/-- --:--:--' }}</td>
-                            <td>{{ $rate->total_time }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->hourly_rate * App\BlueUtils\Time::convertTimeToDecimal($rate->total_time) ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->costs ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->addition ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->collaborator_participation ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                            <td>{{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($rate->total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</td>
-                        </tr>
+                    if ($tipo === 'ganho') $totalGanhoDia += $valor;
+                    if ($tipo === 'custo') $totalCustoDia += $valor;
+                }
+
+                $lucroDia = $totalGanhoDia - $totalCustoDia;
+            @endphp
+
+            @foreach (['ganho', 'custo'] as $tipo)
+                @if (!empty($agrupados[$tipo]))
+                    @php $index = 0; @endphp
+                    @foreach ($agrupados[$tipo] as $nome => $valor)
+                        <div class="item {{ $tipo }}">
+                            <div>{{ $nome }}</div>
+                            <div>R$ {{ $tipo === 'ganho' ? '+' : '-' }}{{ number_format($valor, 2, ',', '.') }}</div>
+                        </div>
+                        @php $index++; @endphp
                     @endforeach
-                </tbody>
-            </table>
-        </div>
+                @endif
+            @endforeach
 
-        <div class="footer">
-            <p><strong>Total ({{ $collaboratorName }}):</strong> {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($totalForCollaborator ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</p>
-        </div>
-
-    @endforeach
-    
-    <div class="footer">
-        <p><strong>Total Geral:</strong> {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</p>
+            <div class="totais-dia">
+                <div class="item ganho">
+                    <strong>Total de Ganhos:</strong>
+                    <div>R$ +{{ number_format($totalGanhoDia, 2, ',', '.') }}</div>
+                </div>
+                <div class="item custo">
+                    <strong>Total de Custos:</strong>
+                    <div>R$ -{{ number_format($totalCustoDia, 2, ',', '.') }}</div>
+                </div>
+                <div class="item lucro">
+                    <strong>Lucro do dia:</strong>
+                    <div>R$ {{ number_format($lucroDia, 2, ',', '.') }}</div>
+                </div>
+            </div>
+        @endif
     </div>
+@endforeach
 
-    <div class="footer">
-        <p>Gerado em: {{ date('d/m/Y') }}</p>
+<div class="total-geral">
+    <div class="total-linha ganho">
+        <div>Total de Ganhos:</div>
+        <div>R$ +{{ $totais['ganhos'] }}</div>
     </div>
+    <div class="total-linha custo">
+        <div>Total de Custos:</div>
+        <div>R$ -{{ $totais['custos'] }}</div>
+    </div>
+    <div class="total-linha lucro">
+        <div>Lucro Total:</div>
+        <div>R$ {{ $totais['lucro'] }}</div>
+    </div>
+</div>
+
 </body>
 </html>
