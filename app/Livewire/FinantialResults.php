@@ -4,6 +4,7 @@ namespace App\Livewire;
 
 use App\Http\Controllers\ReportsController;
 use App\Models\Cost;
+use App\Models\CostCategory;
 use Livewire\Component;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -25,13 +26,20 @@ class FinantialResults extends Component
     public array $cities_array = [];
     public array $companies_array = [];
 
-    public array $cost = [];
-    #[Modelable]
-    public ?string $costCategory = null;
+    public $costCategories;
+
+    public array $cost = [
+        'category_id' => null,
+        'description' => null,
+        'value' => null,
+        'date' => null,
+    ];
+    
     public bool $costCollapseOpen = false;
 
     public function mount()
     {
+        $this->costCategories = CostCategory::all();
         $this->generateTables();
         $this->pivotDay = Carbon::today()->toDateString();
         $this->setFilter('week');
@@ -45,8 +53,59 @@ class FinantialResults extends Component
     }
 
     public function saveCusto() {
-        Cost::create($this->cost);
-        $this->cost = [];
+        // dd($this);
+        $this->costCollapseOpen = true;
+
+        $this->validate([
+            'cost.category_id' => 'required|string|max:255',
+            'cost.description' => 'required|string|max:255',
+            'cost.value' => 'required|numeric|min:0',
+            'cost.date' => 'required|date',
+        ],
+        [
+            'cost.category_id.required' => 'O campo categoria é obrigatório.',
+            'cost.category_id.string' => 'O campo categoria deve ser uma string.',
+            'cost.category_id.max' => 'O campo categoria deve ter no máximo 255 caracteres.',
+            'cost.description.required' => 'O campo descrição é obrigatório.',
+            'cost.value.required' => 'O campo valor é obrigatório.',
+            'cost.value.numeric' => 'O campo valor deve ser um número.',
+            'cost.value.min' => 'O campo valor deve ser maior ou igual a 0.',
+            'cost.date.required' => 'O campo data é obrigatório.',
+            'cost.date.date' => 'O campo data deve ser uma data válida.',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $CostCategory = CostCategory::firstOrCreate(
+                ['id' => $this->cost['category_id']],
+                ['name' => $this->cost['category_id']]
+            );
+
+            $this->cost['category_id'] = $CostCategory->id;
+
+            Cost::create($this->cost);
+
+            $this->cost = [
+                'category_id' => $CostCategory->id,
+                'description' => null,
+                'value' => null,
+                'date' => null,
+            ];
+            
+            $this->costCategories = CostCategory::all();
+            $this->dispatch('costCadegorySelect2', costCategories: $this->costCategories);
+
+
+            $this->costCollapseOpen = false;
+
+            DB::commit();
+
+            session()->flash('success', 'Custo salvo com sucesso!');
+        } catch (\Exception $e) {
+            DB::rollBack();
+            session()->flash('error', 'Erro ao salvar o custo: ' . $e->getMessage());
+        }
     }
 
     public function sectionsTable()

@@ -67,31 +67,53 @@
         </div>
     </div>
 
+    <!-- Exibe mensagens de sucesso -->
+    @if (session()->has('success'))
+        <div class="mt-3">
+            <x-alert type="success" fade dismissible>
+                {{ session('success') }}
+            </x-alert>
+        </div>
+    @endif
+
+    <!-- Exibe mensagens de erro -->
+    @if (session()->has('error'))
+        <div class="mt-3">
+            <x-alert type="danger" fade dismissible>
+                {{ session('error') }}
+            </x-alert>
+        </div>
+    @endif
+
     <!-- Cadastro de Custos -->
     <div class="collapse mt-5 {{ $costCollapseOpen ? 'show' : '' }}" id="cadastrarCusto">
         <x-card title="Cadastro de Custo">
             <div class="row">
+                
                 <div class="col mb-3" wire:ignore>
-                    <label for="costCategory" class="form-label">Categoria</label>
-                    <select id="costCategory" class="form-select">
-                        <option>Categoria</option>
-                        <option value="1">One</option>
-                        <option value="2">Two</option>
-                        <option value="3">Three</option>
-                    </select>
+                    <label for="cost.category_id" class="form-label">Categoria</label>
+                    <select id="costCategory" class="form-select"></select>
+                    @error('cost.category_id') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
+
                 <div class="col mb-3">
                     <label for="costDate" class="form-label">Data</label>
                     <input type="date" wire:model="cost.date" class="form-control" id="costDate">
+                    @error('cost.date') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
+
                 <div class="col mb-3">
                     <label for="costValue" class="form-label">Valor</label>
                     <input type="text" wire:model="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00" >
+                    @error('cost.value') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
+
                 <div class="col mb-3">
                     <label for="costDescription" class="form-label">Descrição</label>
                     <input type="text" wire:model="cost.description" class="form-control" id="costDescription" placeholder="Descrição" >
+                    @error('cost.description') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
+
             </div>
             <div class="d-flex justify-content-end gap-3">
                 <button class="btn btn-primary me-1 collapsed" wire:click="saveCusto" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
@@ -183,15 +205,35 @@
 @script
 <script>
      $(document).ready(function() {
-        $('#costCategory').select2({
-            theme: 'bootstrap-5',
-            tags: true,
-        });
+        costCadegorySelect2({{ Js::from($costCategories) }});
         $('#costCategory').on('change', function(event){
-            @this.$set('costCategory', event.target.value);
+            @this.$set('cost.category_id', event.target.value);
             @this.$set('costCollapseOpen', true);
         })
+
+        Livewire.on('costCadegorySelect2', ({ costCategories }) => {
+            let itens = [...costCategories];
+            costCadegorySelect2(itens);
+        });
     });
+
+    function costCadegorySelect2(itens) {
+        
+        itens.unshift({ id: '', name: 'Selecione uma categoria', selected: true });
+
+        let newData = itens.map(element => ({
+            id: element.id,
+            text: element.name,
+            selected: element.selected || false
+        }));
+
+        let select = $('#costCategory');
+ 
+        select.empty().select2({
+            theme: 'bootstrap-5',
+            tags: true,
+            data: newData,
+        });
+    }
 </script>
-   
 @endscript

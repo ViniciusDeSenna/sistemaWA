@@ -8,7 +8,7 @@ class Cost extends Model
 {
     protected $table = "cost";
     protected $fillable = [
-        'cost_category_id',
+        'category_id',
         'date',
         'value',
         'description',
