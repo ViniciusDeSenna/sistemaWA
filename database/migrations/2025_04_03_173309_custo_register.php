@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create("costs", function(Blueprint $table){
             $table->id();
 
-            $table->foreignId('cost_category_id')->nullable();
-            $table->foreign('cost_category_id')->references('id')->on('cost_categories');
+            $table->foreignId('category_id')->nullable();
+            $table->foreign('category_id')->references('id')->on('cost_categories');
 
             $table->date("date");
             $table->float("value");
