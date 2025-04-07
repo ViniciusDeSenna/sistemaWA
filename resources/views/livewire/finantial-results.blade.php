@@ -101,6 +101,18 @@
         </x-card>
     </div>    
 
+    <!-- Custos Detalhados -->
+    <h5 class="text-center mt-5">Custos</h5>
+    <x-card class="mb-4">
+        @foreach ($costs_array as $name => $value)
+            <div class="d-flex justify-content-between py-1 border-bottom">
+                <span class="text-muted">{{ $name }}</span>
+                <span class="text-danger">R$ {{ number_format($value, 2, ',', '.') }}</span>
+            </div>
+        @endforeach
+    </x-card>
+
+
     <!-- Seções -->
     <h5 class="text-center mt-5">Setores</h5>
     @foreach ($sections_array as $section)

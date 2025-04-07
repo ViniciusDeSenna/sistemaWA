@@ -92,7 +92,6 @@ class ReportsController extends Controller
             $ganhosDia = 0;
             $custosDia = 0;
     
-            // DAILY RATE - ganhos
             $diarias = DB::table('daily_rate')
                 ->whereDate('start', $dataStr)
                 ->get();
@@ -121,7 +120,6 @@ class ReportsController extends Controller
                     $ganhosDia += $addition;
                 }
     
-                // DAILY RATE - custos
                 $earnedTotal = $earned + $addition;
                 $tax = $earnedTotal * (($d->tax_paid ?? 0) / 100);
                 $pay = ($d->pay_amount ?? 0) - ($d->feeding ?? 0);
@@ -148,7 +146,6 @@ class ReportsController extends Controller
                 }
             }
     
-            // COSTS
             $custosSoltos = DB::table('costs')
                 ->leftJoin('cost_categories', 'costs.cost_category_id', '=', 'cost_categories.id')
                 ->select('costs.value', 'costs.description', 'cost_categories.name as categoria')

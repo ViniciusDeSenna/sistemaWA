@@ -24,6 +24,7 @@ class FinantialResults extends Component
     public array $sections_array = [];
     public array $cities_array = [];
     public array $companies_array = [];
+    public array $costs_array = [];
 
     public array $cost = [];
     #[Modelable]
@@ -32,16 +33,27 @@ class FinantialResults extends Component
 
     public function mount()
     {
-        $this->generateTables();
         $this->pivotDay = Carbon::today()->toDateString();
         $this->setFilter('week');
+        //$this->generateTables();
     }
+
+    public function setInitialPeriod()
+    {
+        // Exemplo: para filtro mensal
+        $this->start = now()->startOfMonth()->toDateString();
+        $this->end = now()->endOfMonth()->toDateString();
+}
+
+
+
 
     public function generateTables()
     {
         $this->sectionsTable();
         $this->citiesTable();
         $this->companiesTable();
+        $this->costsTable();
     }
 
     public function saveCusto() {
@@ -96,6 +108,52 @@ class FinantialResults extends Component
             ];
         }
     }
+
+    public function costsTable()
+    {
+        $this->costs_array = [];
+    
+        // Custos diretos da tabela `costs`
+        $directCosts = DB::table('costs')
+            ->join('cost_categories', 'costs.cost_category_id', '=', 'cost_categories.id')
+            ->whereBetween('costs.date', [$this->start, $this->end])
+            ->select('cost_categories.name as name', DB::raw('SUM(costs.value) as total'))
+            ->groupBy('cost_categories.name')
+            ->get();
+    
+        foreach ($directCosts as $cost) {
+            $this->costs_array[$cost->name] = ($this->costs_array[$cost->name] ?? 0) + $cost->total;
+        }
+    
+        // Custos embutidos na daily_rate
+        $dailyRates = DB::table('daily_rate')
+            ->whereBetween('start', [$this->start, $this->end])
+            ->get();
+    
+        foreach ($dailyRates as $rate) {
+            // Comissões de líder
+            $this->costs_array['Comissões de líder'] = ($this->costs_array['Comissões de líder'] ?? 0) + $rate->leader_comission;
+    
+            // Alimentação
+            $this->costs_array['Alimentação'] = ($this->costs_array['Alimentação'] ?? 0) + $rate->feeding;
+    
+            // Pagamento (pay_amount - feeding)
+            $pagamento = $rate->pay_amount - $rate->feeding;
+            $this->costs_array['Pagamento'] = ($this->costs_array['Pagamento'] ?? 0) + $pagamento;
+    
+            // Transporte
+            $this->costs_array['Transporte'] = ($this->costs_array['Transporte'] ?? 0) + $rate->transportation;
+    
+            // INSS
+            $this->costs_array['INSS'] = ($this->costs_array['INSS'] ?? 0) + $rate->inss_paid;
+    
+            // Imposto (% sobre earned + addition)
+            $base = $rate->earned + $rate->addition;
+            $imposto = $base * ($rate->tax_paid / 100);
+            $this->costs_array['Imposto'] = ($this->costs_array['Imposto'] ?? 0) + $imposto;
+        }
+    }
+    
 
     public function setFilter($period)
     {
@@ -155,6 +213,7 @@ class FinantialResults extends Component
         $sections_array = [];
         $companies_array = [];
         $cities_array = [];
+        $costs_array = [];
         $this->generateTables();
         $this->total_earned = 0;
         $this->total_costs = 0;
@@ -208,6 +267,7 @@ class FinantialResults extends Component
                 $this->cities_array[$company->city]['totalProfit'] += $profit;
             }
         }
+        //$this->costsTable();
     }
     public function adicionarCusto(){
         $this->emit('showAddCostModal');
