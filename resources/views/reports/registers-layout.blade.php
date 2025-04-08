@@ -119,14 +119,13 @@
 </head>
 <body>
     <h1>Relatório de Diária</h1>
-
     @php($totalGeralDiarias = 0)
-    @php($totalGeralHoras = 0)
+    @php($totalGeralMinutos = 0)
 
     @foreach($dailyRate as $collaboratorId => $rates)
-        
+
         @php($companyName = $rates[0]['company_name'] ?? 'Não informado')
-        
+
         <div class="info">
             {{ $companyName }}
         </div>
@@ -134,7 +133,7 @@
         @php($groupedBySector = $rates->groupBy('section_name'))
 
         @php($totalDiariasEmpresa = 0)
-        @php($totalHorasEmpresa = 0)
+        @php($totalMinutosEmpresa = 0)
 
         @foreach($groupedBySector as $sectorName => $sectorRates)
             @php($isHourly = $sectorRates->whereNotNull('end')->isNotEmpty())
@@ -154,17 +153,17 @@
                     </thead>
                     <tbody>
                         @php($totalForSectorDiarias = 0)
-                        @php($totalForSectorHoras = 0)
+                        @php($totalForSectorMinutos = 0)
 
                         @foreach($sectorRates as $rate)
                             @if($isHourly)
-                                @php($totalHoras = \Carbon\Carbon::parse($rate->start)->diffInHours(\Carbon\Carbon::parse($rate->end)))
-                                @php($totalForSectorHoras += $totalHoras)
+                                @php($minutos = \Carbon\Carbon::parse($rate->start)->diffInMinutes(\Carbon\Carbon::parse($rate->end)))
+                                @php($totalForSectorMinutos += $minutos)
                                 <tr>
                                     <td>{{ $rate->collaborators_name }}</td>
                                     <td>{{ \Carbon\Carbon::parse($rate->start)->format('d/m/Y H:i:s') }}</td>
                                     <td>{{ \Carbon\Carbon::parse($rate->end)->format('d/m/Y H:i:s') }}</td>
-                                    <td>{{ floor($totalHoras) }}:{{ sprintf('%02d', (-floor($totalHoras) + $totalHoras) * 60) }}</td>
+                                    <td>{{ floor($minutos / 60) }}:{{ sprintf('%02d', $minutos % 60) }}</td>
                                 </tr>
                             @else
                                 @php($totalForSectorDiarias += 1)
@@ -178,19 +177,23 @@
                 </table>
                 <div class="sector-summary">
                     @if($isHourly)
-                        Total de Horas no Setor {{ $sectorName }}: {{ floor($totalForSectorHoras) }}:{{ sprintf('%02d', (-floor($totalForSectorHoras) + $totalForSectorHoras) * 60)}}
+                        Total de Horas no Setor {{ $sectorName }}:
+                        {{ floor($totalForSectorMinutos / 60) }}:{{ sprintf('%02d', $totalForSectorMinutos % 60) }}
                     @else
                         Total de Diárias no Setor {{ $sectorName }}: {{ $totalForSectorDiarias }}
                     @endif
                 </div>
+
                 @php($totalDiariasEmpresa += $totalForSectorDiarias)
-                @php($totalHorasEmpresa += $totalForSectorHoras)
+                @php($totalMinutosEmpresa += $totalForSectorMinutos)
             </div>
         @endforeach
 
         <div class="company-summary">
-            @if($totalHorasEmpresa > 0)
-                <p>Total de Horas na Empresa {{ $companyName }}: {{ floor($totalHorasEmpresa) }}:{{ sprintf('%02d', (-floor($totalHorasEmpresa) + $totalHorasEmpresa) * 60)}}</p>
+            @if($totalMinutosEmpresa > 0)
+                <p>Total de Horas na Empresa {{ $companyName }}:
+                    {{ floor($totalMinutosEmpresa / 60) }}:{{ sprintf('%02d', $totalMinutosEmpresa % 60) }}
+                </p>
             @endif
             @if($totalDiariasEmpresa > 0)
                 <p>Total de Diárias na Empresa {{ $companyName }}: {{ $totalDiariasEmpresa }}</p>
@@ -198,7 +201,7 @@
         </div>
 
         @php($totalGeralDiarias += $totalDiariasEmpresa)
-        @php($totalGeralHoras += $totalHorasEmpresa)
+        @php($totalGeralMinutos += $totalMinutosEmpresa)
 
         @if(!$loop->last)
             <div class="company-break"></div>
@@ -206,8 +209,10 @@
     @endforeach
 
     <div class="footer">
-        @if($totalGeralHoras > 0)
-            <p><strong>Total Geral de Horas: </strong>{{ floor($totalGeralHoras) }}:{{ sprintf('%02d', (-floor($totalGeralHoras) + $totalGeralHoras) * 60) }} </p>
+        @if($totalGeralMinutos > 0)
+            <p><strong>Total Geral de Horas: </strong>
+                {{ floor($totalGeralMinutos / 60) }}:{{ sprintf('%02d', $totalGeralMinutos % 60) }}
+            </p>
         @endif
         @if($totalGeralDiarias > 0)
             <p><strong>Total Geral de Diárias: </strong> {{ $totalGeralDiarias }}</p>
