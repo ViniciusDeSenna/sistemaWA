@@ -14,6 +14,8 @@ class DailyRate extends Model
         'section_id',
         'company_id',
         
+        'hourly_rate',
+        
         'start',
         'end',
         'total_time',
@@ -56,4 +58,11 @@ class DailyRate extends Model
     {
         return $this->belongsTo(Section::class, 'section_id', 'id');
     }
+
+    public function companySection()
+    {
+        return $this->belongsTo(CompanyHasSection::class, 'section_id', 'section_id')
+            ->whereColumn('company_has_section.company_id', 'company_id');
+    }
+
 }

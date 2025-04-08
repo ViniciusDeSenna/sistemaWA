@@ -120,21 +120,22 @@ class DailyRateController extends Controller
                     'message' => 'Selecione um horário de saída.',
                 ], 422);
             }
+
             $validator = Validator::make($request->all(), [
-            'collaborator_id' => ['required',],
-            'company_id' => ['required',],
-            'sectionSelect_id' => ['required',],
-            'start' => ['required',],
-            'end' => [ 'nullable', 'after:start'],
-            ], [
-            'collaborator_id.required' => 'O colaborador é obrigatório.',
-            'company_id.required' => 'A empresa é obrigatória.',
-            'sectionSelect_id.required' => 'O setor é obrigatório.',
-            'start.required' => 'O horário de início é obrigatório.',
-            'end.after' => 'O horário de saída deve ser maior que o horário de início.',
-            'end.exists' => 'Insira uma saída.',
-            
-        ]);
+                'collaborator_id' => ['required',],
+                'company_id' => ['required',],
+                'sectionSelect_id' => ['required',],
+                'start' => ['required',],
+                'end' => [ 'nullable', 'after:start'],
+                ], [
+                'collaborator_id.required' => 'O colaborador é obrigatório.',
+                'company_id.required' => 'A empresa é obrigatória.',
+                'sectionSelect_id.required' => 'O setor é obrigatório.',
+                'start.required' => 'O horário de início é obrigatório.',
+                'end.after' => 'O horário de saída deve ser maior que o horário de início.',
+                'end.exists' => 'Insira uma saída.',
+                
+            ]);
                         
             if ($validator->fails()) {
                 return response()->json([
@@ -149,6 +150,15 @@ class DailyRateController extends Controller
                 $company = Company::find($request->company_id);
             }
 
+            if ($request->collaborator_id) {
+                $collaborator = Collaborator::find($request->collaborator_id);
+            }
+
+            if ($request->sectionSelect_id) {
+                $section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
+            }
+
+
             $inss = $request->inss_id;
             $tax = $request->imposto_id;
             if (!$company->not_flashing) {
@@ -158,11 +168,24 @@ class DailyRateController extends Controller
                 $inss = 0;
             }
 
+            $hourlyRate = 0.00;
+            if ($collaborator && $section) {
+                if ($collaborator->is_leader) {
+                    $hourlyRate = $section->leaderPay;
+                } elseif ($collaborator->is_extra) {
+                    $hourlyRate = $section->extra;
+                } else {
+                    $hourlyRate = $section->employeePay;
+                }
+            }
+
             DailyRate::create([
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
                 'user_id' => $request->user_id,
+
+                'hourly_rate' => $hourlyRate,
                 
                 'start' => $request->start,
                 'end' => $request->end,
@@ -247,12 +270,44 @@ class DailyRateController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $requested_section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
+            
+        if ($requested_section->perHour === 1 && is_null($request->end)) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Selecione um horário de saída.',
+            ], 422);
+        }
+
+        $validator = Validator::make($request->all(), [
+            'collaborator_id' => ['required',],
+            'company_id' => ['required',],
+            'sectionSelect_id' => ['required',],
+            'start' => ['required',],
+            'end' => [ 'nullable', 'after:start'],
+            ], [
+            'collaborator_id.required' => 'O colaborador é obrigatório.',
+            'company_id.required' => 'A empresa é obrigatória.',
+            'sectionSelect_id.required' => 'O setor é obrigatório.',
+            'start.required' => 'O horário de início é obrigatório.',
+            'end.after' => 'O horário de saída deve ser maior que o horário de início.',
+            'end.exists' => 'Insira uma saída.',
+            
+        ]);
+
         try {
             DB::beginTransaction();
-            
 
             if ($request->company_id) {
                 $company = Company::find($request->company_id);
+            }
+
+            if ($request->collaborator_id) {
+                $collaborator = Collaborator::find($request->collaborator_id);
+            }
+
+            if ($request->sectionSelect_id) {
+                $section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
             }
 
             $inss = $request->inss_id;
@@ -264,16 +319,30 @@ class DailyRateController extends Controller
                 $inss = 0;
             }
 
+            $hourlyRate = 0.00;
+            if ($collaborator && $section) {
+                if ($collaborator->is_leader) {
+                    $hourlyRate = $section->leaderPay;
+                } elseif ($collaborator->is_extra) {
+                    $hourlyRate = $section->extra;
+                } else {
+                    $hourlyRate = $section->employeePay;
+                }
+            }
             
             DailyRate::findOrFail($id)->update([    
                 'collaborator_id' => $request->collaborator_id,
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
                 'user_id' => $request->user_id,
+
+                'hourly_rate' => $hourlyRate,
                 
                 'start' => $request->start,
                 'end' => $request->end,
                 'total_time' => $request->total_time,
+
+                'hourly_rate' => $request->hourly_rate,
 
                 'leader_comission' => !empty($request->leaderComission_id) ? Money::unformat($request->leaderComission_id) : 0,
                 'transportation' => !empty($request->transport_id) ? Money::unformat($request->transport_id) : 0,
