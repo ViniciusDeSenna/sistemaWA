@@ -427,9 +427,19 @@ class ReportsController extends Controller
         $groupedDailyRates = $dailyRate->groupBy('collaborator_id');
 
         $html = View::make('reports.financial-layout', ['dailyRate' => $groupedDailyRates, 'user' => $user])->render();
-        $mpdf = new Mpdf();
-        $mpdf->WriteHTML($html);
-        $mpdf->Output();
+        
+        $dompdf = new Dompdf();
+
+        $dompdf->loadHtml($html);
+
+        // Define o tamanho e orientação da página
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Renderiza o HTML para PDF
+        $dompdf->render();
+
+        // Envia o PDF para o navegador com opção de baixar
+        $dompdf->stream('arquivo.pdf', ['Attachment' => false]);
 
         exit();
     }
