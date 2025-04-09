@@ -57,7 +57,7 @@
     let establishment = @json($company ?? null);
     let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
-
+    
     function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour){
         return `
                 <div class="accordion-item card-body mb-1 w-100">
@@ -92,8 +92,8 @@
                             </label>
                         </div>
                         <div class="d-flex justify-content-center d-flex bd-highlight">
-                            @if ($establishment?->id ?? false)
-                                <button type="button" class="btn btn-danger mt-2 p-2 flex-fill bd-highlight" onclick="removeSection('${setorId}', '${setorNome}', {{ $establishment?->id }})">Remover</button>
+                            @if ($company?->id ?? false)
+                                <button type="button" class="btn btn-danger mt-2 p-2 flex-fill bd-highlight" onclick="removeSection('${setorId}', '${setorNome}', {{ $company?->id }})">Remover</button>
                             @else
                                 <button type="button" class="btn btn-danger mt-2 p-2 flex-fill bd-highlight" onclick="removeSection('${setorId}', '${setorNome}', {{ 0 }})">Remover</button>
                             @endif
@@ -140,7 +140,6 @@
     }
     
     function addLabelForSection() {
-        
         let setorSelect = document.getElementById("sectionSelect");
         let setorId = setorSelect.value;
         let setorNome = setorSelect.options[setorSelect.selectedIndex].dataset.nome;
@@ -223,6 +222,9 @@
 
         setorSelect.appendChild(option);
 
+        console.log("section: ", sectionId);
+        console.log("section name: ", sectionName);
+        console.log("establishmentID: ", establishmentID);
         if (establishmentID) {
             $.ajax({
                 url: `{{ route('companyHasSection.remove') }}`, 
@@ -243,7 +245,7 @@
                     let sectionDiv = document.getElementById(`setor-${sectionId}`);
                     if (sectionDiv) {
                         sectionDiv.remove();
-                    }       
+                    }      
                     window.location.reload();
                 })
                 },

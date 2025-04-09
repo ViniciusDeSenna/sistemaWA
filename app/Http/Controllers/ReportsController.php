@@ -204,7 +204,6 @@ class ReportsController extends Controller
     
 
     public function dailyRates(Request $request) {
-
         $user = Auth::user();
     
         // $dailyRate = DailyRate::query()
@@ -260,6 +259,7 @@ class ReportsController extends Controller
                 'companies.name as company_name',
                 'sections.name as section_name',
                 'daily_rate.start as start',
+                'daily_rate.end as end',
                 'daily_rate.pay_amount as pay_amount',
                 'collaborators.pix_key as pix_key',  // Chave PIX do colaborador que trabalhou
                 'users.collaborator_id as user_collaborator_id',  // Colaborador do usuário que registrou
@@ -285,7 +285,6 @@ class ReportsController extends Controller
         if ($request->end) {
             $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
-        
         $leaderCommissions = (clone $dailyRate)
             ->where('collaborators.is_leader', '=', false) //  não recebe caso o colaborador que trabalhe na diária seja o próprio ou outro líder
             ->select([
@@ -304,7 +303,6 @@ class ReportsController extends Controller
             $companyId = $rate->company_id;
             $collaboratorId = $rate->collaborator_id;
             $sectionId = $rate->section_id;
-        
             // Agrupando por empresa
             if (!isset($groupedData[$companyId])) {
                 $groupedData[$companyId] = [
@@ -333,10 +331,11 @@ class ReportsController extends Controller
                     'daily_rates' => [],
                 ];
             }
-        
+                    
             // Adicionando a diária ao setor
             $groupedData[$companyId]['collaborators'][$collaboratorId]['sections'][$sectionId]['daily_rates'][] = [
                 'start' => $rate->start,
+                'end' => $rate->end,
                 'pay_amount' => $rate->pay_amount,
                 'leader_comission' => $rate->leader_comission,
                 'user' => [
@@ -345,7 +344,11 @@ class ReportsController extends Controller
                     'user_pix_key' => $rate->user_pix_key,
                     'leader_pix_key' => $rate->leader_pix_key,
                 ],
+                'total_time' => ($rate->end)
+                    ? Carbon::parse($rate->start)->diff(Carbon::parse($rate->end))->format('%Hh %Im')
+                    : '0h 0m',
             ];
+
         
             // Somando o total de pagamentos do colaborador
             $groupedData[$companyId]['collaborators'][$collaboratorId]['total_pay'] += $rate->pay_amount;

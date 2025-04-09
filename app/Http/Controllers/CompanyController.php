@@ -153,7 +153,6 @@ class CompanyController extends Controller
     {
         $company = Company::find($id); 
         $sections = Section::all();
-    
         return view('app.companies.edit', compact('company', 'sections'));
     }
 

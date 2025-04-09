@@ -142,7 +142,7 @@ class FinantialResults extends Component
 
     public function citiesTable()
     {
-        $cities = DB::table('companies')->select('city')->distinct()->get();
+        $cities = DB::table('companies')->select('city')->where('active', true)->distinct()->get();
         
         foreach ($cities as $city) {
             $this->cities_array[$city->city] = [
@@ -158,7 +158,7 @@ class FinantialResults extends Component
 
     public function companiesTable()
     {
-        $companies = DB::table('companies')->get();
+        $companies = DB::table('companies')->where('active', true)->get();
         
         foreach ($companies as $company) {
             $this->companies_array[$company->id] = [
@@ -176,10 +176,14 @@ class FinantialResults extends Component
     {
         $this->costs_array = [];
     
+        // Garantindo que start e end cubram o dia completo
+        $start = Carbon::parse($this->start)->startOfDay();
+        $end = Carbon::parse($this->end)->endOfDay();
+    
         // Custos diretos da tabela `costs`
         $directCosts = DB::table('costs')
             ->join('cost_categories', 'costs.category_id', '=', 'cost_categories.id')
-            ->whereBetween('costs.date', [$this->start, $this->end])
+            ->whereBetween('costs.date', [$start, $end])
             ->select('cost_categories.name as name', DB::raw('SUM(costs.value) as total'))
             ->groupBy('cost_categories.name')
             ->get();
@@ -190,33 +194,24 @@ class FinantialResults extends Component
     
         // Custos embutidos na daily_rate
         $dailyRates = DB::table('daily_rate')
-            ->whereBetween('start', [$this->start, $this->end])
+            ->whereBetween('start', [$start, $end])
+            ->where('active', true)
             ->get();
     
         foreach ($dailyRates as $rate) {
-            // Comissões de líder
             $this->costs_array['Comissões de líder'] = ($this->costs_array['Comissões de líder'] ?? 0) + $rate->leader_comission;
-    
-            // Alimentação
             $this->costs_array['Alimentação'] = ($this->costs_array['Alimentação'] ?? 0) + $rate->feeding;
-    
-            // Pagamento (pay_amount - feeding)
             $pagamento = $rate->pay_amount - $rate->feeding;
             $this->costs_array['Pagamento'] = ($this->costs_array['Pagamento'] ?? 0) + $pagamento;
-    
-            // Transporte
             $this->costs_array['Transporte'] = ($this->costs_array['Transporte'] ?? 0) + $rate->transportation;
-    
-            // INSS
             $this->costs_array['INSS'] = ($this->costs_array['INSS'] ?? 0) + $rate->inss_paid;
     
-            // Imposto (% sobre earned + addition)
             $base = $rate->earned + $rate->addition;
             $imposto = $base * ($rate->tax_paid / 100);
             $this->costs_array['Imposto'] = ($this->costs_array['Imposto'] ?? 0) + $imposto;
         }
     }
-    
+        
 
     public function setFilter($period)
     {
@@ -330,7 +325,7 @@ class FinantialResults extends Component
                 $this->cities_array[$company->city]['totalProfit'] += $profit;
             }
         }
-        
+
         $registeredCosts = DB::table('costs')
         ->whereBetween('date', [
             Carbon::parse($this->start)->startOfDay()->toDateString(),

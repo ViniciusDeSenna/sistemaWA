@@ -8,34 +8,39 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CompanyHasSectionController extends Controller
-{    public function remove(Request $request)
+{    
+    public function remove(Request $request)
     {
-        try{
+        DB::beginTransaction();
+        try {
             $request->validate([
                 'establishment_id' => 'required|exists:companies,id',
                 'section_id' => 'required|exists:sections,id',
             ]);
-            
+    
             DB::table('company_has_section')
-            ->where('company_id', $request->establishment_id)
-            ->where('section_id', $request->section_id)
-            ->update(['active' => false]);
+                ->where('company_id', $request->establishment_id)
+                ->where('section_id', $request->section_id)
+                ->update(['active' => false]);
+    
+            DB::commit();
     
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Setor removido da empresa com sucesso!',
                 'type' => 'success'
             ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
     
-        }catch(\Exception $e){
             return response()->json([
-                'title' => 'Sucesso!',
-                'message' => 'Setor removido da empresa com sucesso!',
-                'type' => 'success'
-            ]);
+                'title' => 'Erro!',
+                'message' => 'Não foi possível remover o setor.',
+                'type' => 'error'
+            ], 500);
+        }
     }
-}
-    /**
+        /**
      * Display a listing of the resource.
      */
     public function index()
@@ -56,6 +61,8 @@ class CompanyHasSectionController extends Controller
      */
     public function storeArray(Request $request)
     {
+
+        dd($request->all());
         try {
             
             DB::beginTransaction();
