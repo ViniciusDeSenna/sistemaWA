@@ -112,6 +112,11 @@
 
 
         for (let setSection of companySections) {
+            
+            if (!setSection.active) {
+                continue;
+            };
+
             let div = document.createElement("div");
             div.style.backgroundColor = "#E6F7FF";
             div.className = "mb-1 pt-1 form-label rounded-3 d-flex flex-column align-items-center";
@@ -222,9 +227,6 @@
 
         setorSelect.appendChild(option);
 
-        console.log("section: ", sectionId);
-        console.log("section name: ", sectionName);
-        console.log("establishmentID: ", establishmentID);
         if (establishmentID) {
             $.ajax({
                 url: `{{ route('companyHasSection.remove') }}`, 
