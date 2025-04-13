@@ -94,10 +94,7 @@
             serverSide: false,
             pagingType: 'simple',
             responsive: true,
-            rowReorder: {
-                selector: 'td:nth-child(2)',
-                update: true
-            },
+             
             ajax: {
                 url: '{{ route('daily-rate.table') }}',
                 data: function(d) {

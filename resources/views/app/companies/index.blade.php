@@ -29,10 +29,7 @@
             serverSide: false,
             pagingType: 'simple',
             responsive: true,
-            rowReorder: {
-                selector: 'td:nth-child(2)',
-                update: true
-            },
+             
             ajax: '{{ route('companies.table') }}',
             columns: [
                 { data: 'name', name: 'name' },
