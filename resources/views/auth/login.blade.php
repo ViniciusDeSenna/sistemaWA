@@ -133,5 +133,14 @@
     <!-- Place this tag in your head or just before your close body tag. -->
     <script async defer src="https://buttons.github.io/buttons.js"></script>
 
+    <script>
+      window.addEventListener("pageshow", function (event) {
+        if (event.persisted) {
+            // A página veio do cache (como em history.back())
+            window.location.reload();
+        }
+      });
+
+    </script>
   </body>
 </html>
