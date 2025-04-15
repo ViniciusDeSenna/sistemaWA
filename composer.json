@@ -17,6 +17,7 @@
         "league/flysystem-local": "^3.29",
         "livewire/livewire": "^3.6",
         "mpdf/mpdf": "^8.0",
+        "rappasoft/laravel-livewire-tables": "^3.7",
         "spatie/laravel-permission": "^6.15",
         "yajra/laravel-datatables-oracle": "^11.1"
     },

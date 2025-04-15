@@ -56,9 +56,13 @@
         <!-- Botões de Ação -->
         <div class="card-footer d-flex justify-content-end gap-3">
 
-        <button wire:click="gerarRelatorioFinanceiro" class="btn btn-primary me-1">
-            Extrato Financeiro
-        </button>
+            <button wire:click="gerarRelatorioFinanceiro" class="btn btn-primary me-1">
+                Extrato Financeiro
+            </button>
+
+            <x-fast-modal name="costsModal" cardTitle="Custos" buttonTitle="Conferir Custos">
+                @livewire('costs-table', ['theme' => 'bootstrap-5'])
+            </x-fast-modal>
 
             <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}" aria-controls="cadastrarCusto">
                 Cadastrar Custo
