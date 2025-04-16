@@ -15,6 +15,7 @@ class FinantialResults extends Component
     public float $total_earned = 0;
     public float $total_costs = 0;
     public float $profit = 0;
+    public float $daily_total_count = 0;
 
 
     public string $start;
@@ -224,8 +225,8 @@ class FinantialResults extends Component
                 $this->end = $today->toDateString();
                 break;
             case 'week':
-                $this->start = $today->startOfWeek(Carbon::SUNDAY)->toDateString();
-                $this->end = $today->endOfWeek(Carbon::SATURDAY)->toDateString();
+                $this->start = $today->startOfWeek(Carbon::MONDAY)->toDateString();
+                $this->end = $today->endOfWeek(Carbon::SATURDAY)->copy()->addDays(1)->toDateString();
                 break;
             case 'month':
                 $this->start = $today->startOfMonth()->toDateString();
@@ -250,9 +251,11 @@ class FinantialResults extends Component
                 $this->end = $this->start;
                 break;
             case 'week':
-                $this->start = Carbon::parse($this->start)->addWeeks($step)->startOfWeek(Carbon::SUNDAY)->toDateString();
-                $this->end = Carbon::parse($this->end)->addWeeks($step)->endOfWeek(Carbon::SATURDAY)->toDateString();
+                $start = Carbon::parse($this->start)->addWeeks($step)->startOfWeek(Carbon::MONDAY);
+                $this->start = $start->toDateString();
+                $this->end = $start->copy()->addDays(6)->toDateString(); 
                 break;
+                
             case 'month':
                 $this->start = Carbon::parse($this->start)->addMonths($step)->startOfMonth()->toDateString();
                 $this->end = Carbon::parse($this->end)->addMonths($step)->endOfMonth()->toDateString();
@@ -283,7 +286,8 @@ class FinantialResults extends Component
                 Carbon::parse($this->end)->endOfDay()->toDateTimeString()
             ])
             ->get();
-    
+        $this->daily_total_count = $dailyRates->count(); 
+        
         foreach ($dailyRates as $rate) {
             $earned = (float) ($rate->earned);
             

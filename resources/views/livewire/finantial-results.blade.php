@@ -35,6 +35,13 @@
                     </h6>
                     <p class="small mb-0">Lucro</p>
                 </div>
+
+                <div class="card shadow-sm text-center flex-fill m-0 p-2">
+                    <h6 class="mb-1 fs-5">
+                        {{ $daily_total_count }}
+                    </h6>
+                    <p class="small mb-0">Total De Diárias</p>
+                </div>
             </div>
         </div>
         
