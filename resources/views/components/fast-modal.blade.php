@@ -3,11 +3,13 @@
     'cardTitle' => null,
     'buttonTitle' => null,
     'buttonType' => 'primary',
+    'buttonClick' => null,
 ])
 
 <div> 
     <!-- Button trigger modal -->
-    <button type="button" class="btn btn-{{ $buttonType }}" data-bs-toggle="modal" data-bs-target="#{{ $name }}">
+    <button id="{{ $name . 'Button' }}" type="button" class="btn btn-{{ $buttonType }}" data-bs-toggle="modal" data-bs-target="#{{ $name }}">
+        {{ $buttonIcon ?? '' }}
         {{ $buttonTitle }}
     </button>
     

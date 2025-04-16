@@ -17,6 +17,7 @@ class CostsTable extends DataTableComponent
     public ?string $start = null;
     public ?string $end = null;
 
+    protected $listeners = ['refreshCostsTable' => '$refresh'];
 
     public function configure(): void
     {
@@ -86,6 +87,13 @@ class CostsTable extends DataTableComponent
 
     public function excluir($id)
     {
-        dd("Editar registro com ID: " . $id);
+        $cost = Cost::find($id);
+        if ($cost) {
+            $cost->delete();
+            session()->flash('success', 'Custo excluído com sucesso!');
+            $this->resetPage();
+        } else {
+            session()->flash('error', 'Custo não encontrado!');
+        }
     }
 }

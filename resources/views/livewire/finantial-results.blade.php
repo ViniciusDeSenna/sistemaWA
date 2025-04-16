@@ -222,6 +222,12 @@
 
 @script
 <script>
+        document.getElementById('costsModalButton').addEventListener('click', function () {
+            console.log('Modal shown');
+            Livewire.dispatch('refreshCostsTable');
+        }); 
+    
+
      $(document).ready(function() {
         costCadegorySelect2({{ Js::from($costCategories) }});
         $('#costCategory').on('change', function(event){
@@ -253,5 +259,7 @@
             data: newData,
         });
     }
+
+
 </script>
 @endscript

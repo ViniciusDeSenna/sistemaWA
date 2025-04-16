@@ -232,6 +232,8 @@
     </div>
     <!-- / Layout wrapper -->
 
+    @livewireScripts
+
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{{asset('thema/assets/vendor/libs/jquery/jquery.js')}}"></script>
