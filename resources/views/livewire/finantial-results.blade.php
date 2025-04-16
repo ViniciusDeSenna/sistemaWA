@@ -61,7 +61,7 @@
             </button>
 
             <x-fast-modal name="costsModal" cardTitle="Custos" buttonTitle="Conferir Custos">
-                @livewire('costs-table', ['theme' => 'bootstrap-5'])
+                @livewire('costs-table', ['theme' => 'bootstrap-5', 'start' => $start, 'end' => $end], key($start.$end))
             </x-fast-modal>
 
             <button class="btn btn-primary me-1 collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}" aria-controls="cadastrarCusto">

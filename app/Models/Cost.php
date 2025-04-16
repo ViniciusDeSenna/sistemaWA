@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\CostCategory;
 
 class Cost extends Model
 {
@@ -12,4 +13,9 @@ class Cost extends Model
         'value',
         'description',
     ];
+
+    function category()
+    {
+        return $this->belongsTo(CostCategory::class);
+    }
 }
