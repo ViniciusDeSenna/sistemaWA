@@ -168,10 +168,13 @@
             @endforeach
         @endforeach
     </table>
-
-    <p class="total">Valor total: {{ $user->can('Visualizar e inserir informações financeiras nas diárias') ? App\BlueUtils\Money::format($total ?? '0', 'R$ ', 2, ',', '.') : 'R$ --,--' }}</p>
-
-    <h2 class="total">Comissão dos Líderes</h2>
+    <p class="total" style="color:black; font-size: 16px; text-align: right; margin-top: 20px;">
+    Valor total pago das diárias: 
+    {{ $user->can('Visualizar e inserir informações financeiras nas diárias') 
+        ? App\BlueUtils\Money::format($total ?? '0', 'R$ ', 2, ',', '.') 
+        : 'R$ --,--' }}
+</p>
+    <h2 class="total" style="color:black;"> Comissão dos Líderes</h2>
 
     <div class="table-container">
         <table class="commission-table">
@@ -193,5 +196,6 @@
             </tbody>
         </table>
     </div>
+    
 </body>
 </html>
