@@ -16,34 +16,34 @@
 
         <!-- Cards de Resumo Financeiro -->
         <div class="card-body bg-light">
-            <div class="d-flex justify-content-between gap-3">
-                <div class="card shadow-sm text-center flex-fill m-0 p-2">
+            <div class="d-flex flex-wrap justify-content-between gap-3">
+                <div class="card shadow-sm text-center p-2" style="flex: 0 0 48%;">
                     <h6 class="text-warning mb-1 fs-5">
                         R$ {{ number_format($total_earned, 2, ',', '.') }}
                     </h6>
                     <p class="small mb-0">Faturamento</p>
                 </div>
-                <div class="card shadow-sm text-center flex-fill m-0 p-2">
+                <div class="card shadow-sm text-center p-2" style="flex: 0 0 48%;">
                     <h6 class="text-danger mb-1 fs-5">
                         R$ {{ number_format($total_costs, 2, ',', '.') }}
                     </h6>
                     <p class="small mb-0">Custo</p>
                 </div>
-                <div class="card shadow-sm text-center flex-fill m-0 p-2">
+                <div class="card shadow-sm text-center p-2" style="flex: 0 0 48%;">
                     <h6 class="text-success mb-1 fs-5">
                         R$ {{ number_format($total_earned - $total_costs, 2, ',', '.') }}
                     </h6>
                     <p class="small mb-0">Lucro</p>
                 </div>
-
-                <div class="card shadow-sm text-center flex-fill m-0 p-2">
+                <div class="card shadow-sm text-center p-2" style="flex: 0 0 48%;">
                     <h6 class="mb-1 fs-5">
                         {{ $daily_total_count }}
                     </h6>
-                    <p class="small mb-0">Total De Diárias</p>
+                    <p class="small mb-0">Total de Diárias</p>
                 </div>
             </div>
         </div>
+
         
 
         <!-- Navegação de filtros -->
@@ -120,7 +120,8 @@
                     <input x-mask:dynamic="$money($input, ',')" type="text" wire:model.defer="cost.value" class="form-control" id="costValue" placeholder="R$ 00,00">
                     @error('cost.value') <span class="text-danger">{{ $message }}</span> @enderror
                 </div>
-
+            </div>
+            <div class="row">
                 <div class="col mb-3">
                     <label for="costDescription" class="form-label">Descrição</label>
                     <input type="text" wire:model="cost.description" class="form-control" id="costDescription" placeholder="Descrição" >
