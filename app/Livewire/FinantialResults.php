@@ -284,7 +284,7 @@ class FinantialResults extends Component
             ->whereBetween('start', [
                 Carbon::parse($this->start)->startOfDay()->toDateTimeString(),
                 Carbon::parse($this->end)->endOfDay()->toDateTimeString()
-            ])
+            ])->where('active', true)
             ->get();
         $this->daily_total_count = $dailyRates->count(); 
         
