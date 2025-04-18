@@ -4,20 +4,12 @@
     'buttonTitle' => null,
     'buttonType' => 'primary',
     'buttonClick' => null,
-    'buttonIcon' => null,
 ])
 
-<div class="w-100"> 
-    <!-- Botão Trigger modal -->
-    <button
-        id="{{ $name . 'Button' }}"
-        type="button"
-        class="btn btn-{{ $buttonType }} w-100"
-        data-bs-toggle="modal"
-        data-bs-target="#{{ $name }}"
-        @if ($buttonClick) wire:click="{{ $buttonClick }}" @endif
-    >
-        {!! $buttonIcon !!}
+<div> 
+    <!-- Button trigger modal -->
+    <button id="{{ $name . 'Button' }}" type="button" class="btn btn-{{ $buttonType }}" data-bs-toggle="modal" data-bs-target="#{{ $name }}">
+        {{ $buttonIcon ?? '' }}
         {{ $buttonTitle }}
     </button>
     
@@ -28,7 +20,7 @@
 
                 <div class="modal-header">
                     <h1 class="modal-title fs-5" id="{{ $name }}Label">{{ $cardTitle }}</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
 
                 <div class="modal-body">
