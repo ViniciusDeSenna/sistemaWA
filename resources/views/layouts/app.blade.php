@@ -232,6 +232,7 @@
     </div>
     <!-- / Layout wrapper -->
 
+    @livewireStyles
     @livewireScripts
 
     <!-- Core JS -->
