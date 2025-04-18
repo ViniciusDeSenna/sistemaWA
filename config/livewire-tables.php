@@ -18,7 +18,7 @@ return [
     /**
      * Enable or Disable automatic injection of core assets
      */
-    'inject_core_assets_enabled' => true,
+    'inject_core_assets_enabled' => false,
 
     /**
      * Enable or Disable automatic injection of third-party assets
