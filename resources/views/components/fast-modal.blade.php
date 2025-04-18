@@ -6,9 +6,9 @@
     'buttonClick' => null,
 ])
 
-<div> 
+<div class="col-12 col-md-2"> 
     <!-- Button trigger modal -->
-    <button id="{{ $name . 'Button' }}" type="button" class="btn btn-{{ $buttonType }}" data-bs-toggle="modal" data-bs-target="#{{ $name }}">
+    <button id="{{ $name . 'Button' }}" type="button" class="btn btn-{{ $buttonType }} w-100" data-bs-toggle="modal" data-bs-target="#{{ $name }}">
         {{ $buttonIcon ?? '' }}
         {{ $buttonTitle }}
     </button>

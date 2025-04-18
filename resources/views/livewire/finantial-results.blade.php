@@ -14,54 +14,44 @@
                 <button class="btn btn-primary" wire:click="setFilter('year')">Ano</button>
             </div>
         </div>
-        @push('styles')
-        <style>
-            .summary-cards {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 1rem;
-                margin-bottom: 100px;              
-            }
-            .summary-cards .summary-card {
-                flex: 0 0 calc(50% - 1rem);
-            }
-            @media (max-width: 32px) {
-                .summary-cards .summary-card {
-                    flex: 0 0 100%;
-                }
-            }
-        </style>
-        @endpush
 
         <!-- Cards de Resumo Financeiro -->
         <div class="card-body bg-light">
-            <div class="summary-cards">
-                <div class="card summary-card shadow-sm text-center p-2">
-                    <h6 class="text-warning mb-1 fs-5">
-                        R$ {{ number_format($total_earned, 2, ',', '.') }}
-                    </h6>
-                    <p class="small mb-0">Faturamento</p>
+            <div class="row g-2">
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card summary-card shadow-sm text-center p-2">
+                        <h6 class="text-warning mb-1 fs-5">
+                            R$ {{ number_format($total_earned, 2, ',', '.') }}
+                        </h6>
+                        <p class="small mb-0">Faturamento</p>
+                    </div>
                 </div>
-                <div class="card summary-card shadow-sm text-center p-2">
-                    <h6 class="text-danger mb-1 fs-5">
-                        R$ {{ number_format($total_costs, 2, ',', '.') }}
-                    </h6>
-                    <p class="small mb-0">Custo</p>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card summary-card shadow-sm text-center p-2">
+                        <h6 class="text-danger mb-1 fs-5">
+                            R$ {{ number_format($total_costs, 2, ',', '.') }}
+                        </h6>
+                        <p class="small mb-0">Custo</p>
+                    </div>
                 </div>
-                <div class="card summary-card shadow-sm text-center p-2">
-                    <h6 class="text-success mb-1 fs-5">
-                        R$ {{ number_format($total_earned - $total_costs, 2, ',', '.') }}
-                    </h6>
-                    <p class="small mb-0">Lucro</p>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card summary-card shadow-sm text-center p-2">
+                        <h6 class="text-success mb-1 fs-5">
+                            R$ {{ number_format($total_earned - $total_costs, 2, ',', '.') }}
+                        </h6>
+                        <p class="small mb-0">Lucro</p>
+                    </div>
                 </div>
-                <div class="card summary-card shadow-sm text-center p-2">
-                    <h6 class="mb-1 fs-5">
-                        {{ $daily_total_count }}
-                    </h6>
-                    <p class="small mb-0">Total de Diárias</p>
+                <div class="col-12 col-sm-6 col-lg-3">
+                    <div class="card summary-card shadow-sm text-center p-2">
+                        <h6 class="mb-1 fs-5">
+                            {{ $daily_total_count }}
+                        </h6>
+                        <p class="small mb-0">Total de Diárias</p>
+                    </div>
                 </div>
             </div>
-        </div>
+        </div>        
         
 
         <!-- Navegação de filtros -->
@@ -78,26 +68,31 @@
             </div>
         </div>
 
-        <div class="card-footer d-flex flex-wrap justify-content-end gap-3">
-            <div class="card-footer d-flex flex-wrap w-100">
+        <div class="card-footer">
+            <div class="row g-2 d-flex justify-content-end">
+                <div class="col-12 col-md-2">
+                    <button wire:click="gerarRelatorioFinanceiro" class="btn btn-primary w-100">
+                        Extrato Financeiro
+                    </button>
+                </div>
 
-                <button wire:click="gerarRelatorioFinanceiro" class="btn btn-primary w-100 mb-1">
-                    Extrato Financeiro
-                </button>
-                
-                <x-fast-modal class="w-100" name="costsModal" cardTitle="Custos" buttonTitle="Conferir Custos">
+                <x-fast-modal name="costsModal" cardTitle="Custos" buttonTitle="Conferir Custos">
                     @livewire('costs-table', ['theme' => 'bootstrap-5', 'start' => $start, 'end' => $end], key($start.$end))
                 </x-fast-modal>
-                <button class="btn btn-primary w-100 mb-1 mt-1" 
-                        type="button" 
-                        data-bs-toggle="collapse" 
-                        data-bs-target="#cadastrarCusto" 
-                        aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}" 
-                        aria-controls="cadastrarCusto">
-                    Cadastrar Custo
-                </button>
+
+                <div class="col-12 col-md-2">
+                    <button class="btn btn-primary w-100"
+                            type="button"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#cadastrarCusto"
+                            aria-expanded="{{ $costCollapseOpen ? 'true' : 'false' }}"
+                            aria-controls="cadastrarCusto">
+                        Cadastrar Custo
+                    </button>
+                </div>
             </div>
         </div>
+        
     </div>
 
     <!-- Exibe mensagens de sucesso -->
