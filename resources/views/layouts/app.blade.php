@@ -39,6 +39,12 @@
     <!-- Select2 -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+    <!-- Adds the Core Table Styles -->
+    @rappasoftTableStyles
+
+    <!-- Adds any relevant Third-Party Styles (Used for DateRangeFilter (Flatpickr) and NumberRangeFilter) -->
+    @rappasoftTableThirdPartyStyles
     
     <script src="{{asset('thema/assets/js/config.js')}}"></script> 
   </head>
@@ -275,6 +281,12 @@
 
     <!-- Input Mask -->
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+
+    <!-- Adds the Core Table Scripts -->
+    @rappasoftTableScripts
+
+    <!-- Adds any relevant Third-Party Scripts (e.g. Flatpickr) -->
+    @rappasoftTableThirdPartyScripts
   </body>
 
 </html>
