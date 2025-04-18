@@ -40,7 +40,6 @@ class CostsTable extends DataTableComponent
                     'ariaDateFormat' => 'j/F/Y',
                     'dateFormat' => 'd/m/Y',
                     'placeholder' => 'Insira um periodo',
-                    'locale' => 'ptbr',
                 ])
                 ->setFilterPillValues([0 => 'minDate', 1 => 'maxDate']) // The values that will be displayed for the Min/Max Date Values
                 ->filter(function (Builder $builder, array $dateRange) { // Expects an array.
@@ -67,8 +66,9 @@ class CostsTable extends DataTableComponent
                 ->collapseOnMobile(),
             Column::make("Description", "description")
                 ->sortable(),
-            Column::make("Value", "value")
+            Column::make("Valor", "value")
                 ->sortable()
+                ->format(fn($value) => 'R$ ' . number_format($value, 2, ',', '.'))
                 ->collapseOnMobile(),
             Column::make("Data", "date")
                 ->sortable()
