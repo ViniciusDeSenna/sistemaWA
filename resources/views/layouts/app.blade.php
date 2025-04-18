@@ -42,9 +42,6 @@
 
     @livewireStyles
 
-    <!-- Adds the Core Table Styles -->
-    @rappasoftTableStyles
-
     <!-- Adds any relevant Third-Party Styles (Used for DateRangeFilter (Flatpickr) and NumberRangeFilter) -->
     @rappasoftTableThirdPartyStyles
 
@@ -287,9 +284,6 @@
 
     <!-- Input Mask -->
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
-
-    <!-- Adds the Core Table Scripts -->
-    @rappasoftTableScripts
 
     <!-- Adds any relevant Third-Party Scripts (e.g. Flatpickr) -->
     @rappasoftTableThirdPartyScripts
