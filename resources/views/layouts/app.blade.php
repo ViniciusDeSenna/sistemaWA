@@ -40,6 +40,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
 
+    <link rel="stylesheet" href="{{asset('vendor\rappasoft\livewire-tables\css\laravel-livewire-tables-thirdparty.min.css')}}" />
+    <link rel="stylesheet" href="{{asset('vendor\rappasoft\livewire-tables\css\laravel-livewire-tables.min.css')}}" />
     @livewireStyles
 
     <script src="{{asset('thema/assets/js/config.js')}}"></script> 
@@ -234,9 +236,6 @@
     </div>
     <!-- / Layout wrapper -->
 
-    @livewireScripts
-
-
     <!-- Core JS -->
     <!-- build:js assets/vendor/js/core.js -->
     <script src="{{asset('thema/assets/vendor/libs/jquery/jquery.js')}}"></script>
@@ -278,6 +277,10 @@
 
     <!-- Input Mask -->
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.6/dist/inputmask.min.js"></script>
+
+    <script src="{{ asset('vendor\rappasoft\livewire-tables\js\laravel-livewire-tables.min.js') }}"></script>
+    <script src="{{ asset('vendor\rappasoft\livewire-tables\js\laravel-livewire-tables-thirdparty.min.js') }}"></script>
+	  @livewireScripts
 
   </body>
 
