@@ -88,12 +88,13 @@
                             <input type="text" class="form-control money" id="transport_id" name="transport_id" value="{{ $dailyRate?->transportation ?? '' }}">
                         </div>
                         
-
-
                         <div class="mb-3">
                             <label class="form-label" for="addition">Acréscimos</label>
                             <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
                         </div>
+
+                        <x-fast-input name="quebra_caixa" label="Quebra de Caixa" class="money" value="{{ $dailyRate?->quebra_caixa ?? '' }}" placeholder="R$" />
+
                         <div class="d-flex ml-0">
                             <div class="mb-3 me-3">
                                 <label class="form-label" for="total">Valor Total Bruto</label>
@@ -149,6 +150,9 @@
         calcular();
 
         $('#addition').on('input change', function(){
+            calcular();
+        });
+        $('#quebra_caixa').on('input change', function(){
             calcular();
         });
         $('#inss_id').on('input change', function(){
@@ -409,6 +413,7 @@
         let addition = Number(((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
         let leaderComission = selectedSection.leaderComission;
         let earned = selectedSection.earned;
+        let quebra_caixa = Number(((parseFloat(document.getElementById('quebra_caixa').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
         
         let pay_amount = selectedSection.employeePay;
         if (selectedCollaborator.is_leader === 1) {
@@ -432,8 +437,8 @@
         console.log("imposto: ", tax);
         
         let total = ((earned) + addition).toFixed(2);
-        let total_liq = (total * (1-tax) - (pay_amount + feeding) - transport - inss_discount - leaderComission).toFixed(2);
-        
+        let total_liq = (total * (1-tax) - (pay_amount + feeding - quebra_caixa) - transport - inss_discount - leaderComission).toFixed(2);
+
         $("#leaderComission_id").val(leaderComission.toFixed(2));
         $('#total').val(parseFloat(total).toFixed(2));
         $('#imposto_paid_id').val((total * tax).toFixed(2));

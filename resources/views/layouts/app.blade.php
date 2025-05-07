@@ -42,9 +42,11 @@
 
     <link rel="stylesheet" href="{{asset('vendor\rappasoft\livewire-tables\css\laravel-livewire-tables-thirdparty.min.css')}}" />
     <link rel="stylesheet" href="{{asset('vendor\rappasoft\livewire-tables\css\laravel-livewire-tables.min.css')}}" />
+    
+
     @livewireStyles
 
-    <script src="{{asset('thema/assets/js/config.js')}}"></script> 
+    <script src="{{asset('thema/assets/js/config.js')}}"></script>    
   </head>
 
   <body>

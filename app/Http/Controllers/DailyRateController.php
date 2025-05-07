@@ -202,6 +202,9 @@ class DailyRateController extends Controller
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
+
+                'quebra_caixa' => Money::unformat($request->quebra_caixa),
+
                 'observation' => $request->observation,
             ]);
 
@@ -329,6 +332,7 @@ class DailyRateController extends Controller
                     $hourlyRate = $section->employeePay;
                 }
             }
+
             
             DailyRate::findOrFail($id)->update([    
                 'collaborator_id' => $request->collaborator_id,
@@ -352,6 +356,8 @@ class DailyRateController extends Controller
                 
                 'inss_paid' => !empty($inss) ? Money::unformat($inss) : 0,
                 'tax_paid' => !empty($tax) ? Money::unformat($tax) : 0,
+
+                'quebra_caixa' => Money::unformat($request->quebra_caixa),
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
