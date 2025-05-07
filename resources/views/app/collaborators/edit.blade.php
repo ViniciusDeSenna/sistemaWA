@@ -28,6 +28,12 @@
                         </div>
 
                         <div class="form-check mb-3  me-2">
+                            <input class="form-check-input" type="checkbox" id="is_supervisor" name="is_supervisor" 
+                                {{ isset($collaborator) && $collaborator?->is_supervisor == 1 ? 'checked' : '' }}>
+                            <label class="form-check-label" for="is_supervisor">Supervisor</label>
+                        </div>
+
+                        <div class="form-check mb-3  me-2">
                             <input class="form-check-input" type="checkbox" id="is_extra" name="is_extra" 
                                 {{ isset($collaborator) && $collaborator?->is_extra == 1 ? 'checked' : '' }}>
                             <label class="form-check-label" for="is_extra">Recebe Valor Extra</label>

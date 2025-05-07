@@ -17,6 +17,7 @@ class Collaborator extends Model
         'pix_key',
         'observation',
         'is_leader',
+        'is_supervisor',
         'is_extra',
         'city',
         'intermittent_contract'

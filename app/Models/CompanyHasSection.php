@@ -17,6 +17,7 @@ class CompanyHasSection extends Model
         "employeePay",
         "leaderPay",
         "leaderComission",
+        "supervisorPay",
         "extra",
         "earned",
         

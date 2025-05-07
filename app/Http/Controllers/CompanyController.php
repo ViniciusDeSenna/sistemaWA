@@ -115,6 +115,7 @@ class CompanyController extends Controller
                         'extra' => (int) $request->extra[$section_id],
                         'leaderComission' => $request->comissao[$section_id],
                         'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
+                        'supervisorPay' => $request->supervisor[$section_id],
                         'active' => true,
                     ]);
                 }
@@ -210,6 +211,7 @@ class CompanyController extends Controller
                     'extra' => (int) $request->extra[$section_id],
                     'leaderComission' => $request->comissao[$section_id],
                     'perHour' => isset($request->perHour[$section_id]) && $request->perHour[$section_id] === 'on',
+                    'supervisorPay' => $request->supervisor[$section_id],
                     'active' => true,
                 ]);
             }

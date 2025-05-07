@@ -89,6 +89,7 @@ class CollaboratorsController extends Controller
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
                 'is_leader' => $request->is_leader == 'on'? 1 :  0,
+                'is_supervisor' => $request->is_supervisor == 'on'? 1 :  0,
                 'is_extra' => $request->is_extra == 'on'? 1 :  0,
                 'intermittent_contract' => $request->intermittent_contract == 'on'? 1 : 0,
                 'city' => $request->city,
@@ -157,12 +158,6 @@ class CollaboratorsController extends Controller
                 ], 422);
             }
 
-
-
-
-
-
-            
             $collaborator = Collaborator::findOrFail($id);
             $collaborator->update([
                 'name' => $request->name,
@@ -170,6 +165,7 @@ class CollaboratorsController extends Controller
                 'pix_key' => $request->pix_key,
                 'observation' => $request->observation,
                 'is_leader' => $request->is_leader == 'on'? 1 :  0,
+                'is_supervisor' => $request->is_supervisor == 'on'? 1 :  0,
                 'is_extra' => $request->is_extra == 'on'? 1 :  0,
                 'intermittent_contract' => $request->intermittent_contract == 'on'? 1 : 0,
                 'city' => $request->city,

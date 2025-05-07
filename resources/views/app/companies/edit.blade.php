@@ -58,7 +58,7 @@
     let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
     
-    function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour){
+    function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour, supervisor){
         return `
                 <div class="accordion-item card-body mb-1 w-100">
                     <h2 class="accordion-header" id="heading${setorId}">
@@ -89,6 +89,9 @@
                             </label>
                             <label class="form-label mb-3">Comissão: 
                                 <input type="number" class="form-control number" id="setores[${setorId}][comissao]" name="comissao[${setorId}]" value="${comission ?? 8}">
+                            </label>
+                            <label class="form-label mb-1">Supervisor: 
+                                <input type="number" class="form-control number" id="setores[${setorId}][supervisor]" name="supervisor[${setorId}]" value="${supervisor ?? 0}">
                             </label>
                         </div>
                         <div class="d-flex justify-content-center d-flex bd-highlight">
@@ -124,7 +127,7 @@
 
             let collapseId = "collapse" + setSection?.id;
             let sectioName = sections.find(section => section.id === setSection.section_id);
-            let sectionContent = createSectionCard(collapseId, setSection.section_id, sectioName.name, setSection.earned, setSection.employeePay, setSection.extra, setSection.leaderPay, setSection.leaderComission, setSection.perHour);
+            let sectionContent = createSectionCard(collapseId, setSection.section_id, sectioName.name, setSection.earned, setSection.employeePay, setSection.extra, setSection.leaderPay, setSection.leaderComission, setSection.perHour, setSection.supervisorPay);
             
             console.log(setSection.section_id);
             //setorSelect.options[setSection.section_id].remove();

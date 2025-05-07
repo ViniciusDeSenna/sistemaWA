@@ -421,12 +421,14 @@
             pay_amount = selectedSection.leaderPay;
         }else if (selectedCollaborator.is_extra === 1) {
             pay_amount = selectedSection.extra;
+        } else if (selectedCollaborator.is_supervisor === 1) {
+            pay_amount = selectedSection.supervisorPay;
         }
         if (selectedSection.perHour === 1)  {
             pay_amount = calculate_pay_perHour(pay_amount);
             earned = calculate_pay_perHour(selectedSection.earned);
         }
-        $('#employee_pay_id').val((pay_amount + feeding).toFixed(2));
+        $('#employee_pay_id').val((pay_amount + feeding - quebra_caixa).toFixed(2));
         
         let inss_discount = $('#inss_id').val();
         if (selectedCompany.not_flashing) {
