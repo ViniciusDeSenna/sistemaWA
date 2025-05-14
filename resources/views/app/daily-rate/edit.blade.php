@@ -58,7 +58,7 @@
                     
                     <input type="text" class="form-control" id="imposto_paid_id" name="imposto_paid_id" hidden readonly value="0">
 <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
-                    <div name="" {{ Auth::user()->hasPermissionTo('Visualizar e inserir informações financeiras nas diárias') ? '' : 'hidden' }}>
+                    <div {{ Auth::user()->hasPermissionTo('Visualizar e inserir informações financeiras nas diárias') ? '' : 'hidden' }}>
                         
                         
                         <div class="d-flex">
@@ -77,10 +77,7 @@
                                 <label class="form-label" for="inss_id">INSS Pago</label>
                                 <input type="text" class="form-control" id="inss_id" name="inss_id" value="{{ $inss_pago ?? '' }}">
                             </div>
-                    <!--        <div class="mb-3" style="flex: 0.5;">
-                                <label class="form-label" for="inss_percentage">%INSS</label>
-                                <input type="text" class="form-control" id="inss_percentage_id" name="inss_percentage_id" value="7">
-                            </div> -->
+
                         </div>
                         
                         <div class="mb-3">
@@ -93,7 +90,16 @@
                             <input type="text" class="form-control money" id="addition" name="addition" value="{{ $dailyRate?->addition ?? '' }}">
                         </div>
 
-                        <x-fast-input name="quebra_caixa" label="Quebra de Caixa" class="money" value="{{ $dailyRate?->quebra_caixa ?? '' }}" placeholder="R$" />
+                        <div class="d-flex w-100">
+                            <div class="flex-grow-1 me-2">
+                                <x-fast-input name="employee_discount" label="Desconto de Funcionário" class="money" value="{{ $dailyRate?->employee_discount ?? '' }}" placeholder="R$" />
+                            </div>
+
+                            <div class="flex-grow-1">
+                                <label class="form-label" for="discount_description">Descrição do Desconto</label>
+                                <textarea class="form-control" id="discount_description" name="discount_description" rows="1">{!! $dailyRate?->discount_description ?? '' !!}</textarea>
+                            </div>
+                        </div>
 
                         <div class="d-flex ml-0">
                             <div class="mb-3 me-3">
@@ -112,7 +118,7 @@
 
                         </div>
                         
-                 </div>
+                    </div>
 <!-- --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- -->
 
                     <div class="mb-3">
@@ -152,7 +158,7 @@
         $('#addition').on('input change', function(){
             calcular();
         });
-        $('#quebra_caixa').on('input change', function(){
+        $('#employee_discount').on('input change', function(){
             calcular();
         });
         $('#inss_id').on('input change', function(){
@@ -413,7 +419,7 @@
         let addition = Number(((parseFloat(document.getElementById('addition').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
         let leaderComission = selectedSection.leaderComission;
         let earned = selectedSection.earned;
-        let quebra_caixa = Number(((parseFloat(document.getElementById('quebra_caixa').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
+        let employee_discount = Number(((parseFloat(document.getElementById('employee_discount').inputmask.unmaskedvalue()) || 0) / 100).toFixed(2));
         
         let pay_amount = selectedSection.employeePay;
         if (selectedCollaborator.is_leader === 1) {
@@ -428,7 +434,7 @@
             pay_amount = calculate_pay_perHour(pay_amount);
             earned = calculate_pay_perHour(selectedSection.earned);
         }
-        $('#employee_pay_id').val((pay_amount + feeding - quebra_caixa).toFixed(2));
+        $('#employee_pay_id').val((pay_amount + feeding - employee_discount).toFixed(2));
         
         let inss_discount = $('#inss_id').val();
         if (selectedCompany.not_flashing) {
@@ -439,7 +445,7 @@
         console.log("imposto: ", tax);
         
         let total = ((earned) + addition).toFixed(2);
-        let total_liq = (total * (1-tax) - (pay_amount + feeding - quebra_caixa) - transport - inss_discount - leaderComission).toFixed(2);
+        let total_liq = (total * (1-tax) - (pay_amount + feeding - employee_discount) - transport - inss_discount - leaderComission).toFixed(2);
 
         $("#leaderComission_id").val(leaderComission.toFixed(2));
         $('#total').val(parseFloat(total).toFixed(2));

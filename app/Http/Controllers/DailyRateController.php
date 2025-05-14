@@ -34,28 +34,32 @@ class DailyRateController extends Controller
             'companies' => Company::getActive()
         ]);
     }
-
+    
     public function table(Request $request) {
         $user = Auth::user();
-        $dailyRate = DailyRate::query()
-            ->where('daily_rate.active', '=', true)
-            ->orderBy('daily_rate.created_at');
+        //Em ordem decrescente == Mais Recente
+        $query = DailyRate::where('active', true)
+            ->orderBy('created_at', 'desc');
 
         if ($request->collaborator_id) {
-            $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
+            $query->whereIn('collaborator_id', $request->collaborator_id);
         }
-        
+
         if ($request->company_id) {
-            $dailyRate->whereIn('daily_rate.company_id', $request->company_id);
+            $query->whereIn('company_id', $request->company_id);
         }
-        
+
         if ($request->start) {
-            $dailyRate->where('daily_rate.start', '>=', $request->start);
+            $query->where('start', '>=', $request->start);
         }
 
         if ($request->end) {
-            $dailyRate->where('daily_rate.start', '<=', $request->end);
+            $query->where('start', '<=', $request->end);
         }
+
+        // Aplica limite, solução temporária para o delay
+        $dailyRate = $query->limit(150)->get();
+
         
         return DataTables::of($dailyRate)
             ->addColumn('company', function ($daily) {
@@ -203,11 +207,11 @@ class DailyRateController extends Controller
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
 
-                'quebra_caixa' => Money::unformat($request->quebra_caixa),
+                'employee_discount' => Money::unformat($request->employee_discount),
+                'discount_description' => $request->discount_description,
 
                 'observation' => $request->observation,
             ]);
-
 
 //            $dailyRate = new DailyRate();
 //            //chaves estrangeiras
@@ -357,7 +361,8 @@ class DailyRateController extends Controller
                 'inss_paid' => !empty($inss) ? Money::unformat($inss) : 0,
                 'tax_paid' => !empty($tax) ? Money::unformat($tax) : 0,
 
-                'quebra_caixa' => Money::unformat($request->quebra_caixa),
+                'employee_discount' => Money::unformat($request->employee_discount),
+                'discount_description' => $request->discount_description,
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),

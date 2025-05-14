@@ -12,7 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table("daily_rate", function (Blueprint $table) {
-            $table->decimal("quebra_caixa", 10, 2)->default(0.00)->after("profit");
+            $table->decimal("employee_discount", 10, 2)->default(0.00)->after("profit");
+            $table->string("discount_description", 10, 2)->default(0.00)->after("profit");
         });
     }
 
@@ -22,7 +23,8 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table("daily_rate", function (Blueprint $table) {
-            $table->dropColumn("quebra_caixa");
+            $table->dropColumn("employee_discount");
+            $table->dropColumn("discount_description");
         });
     }
 };
