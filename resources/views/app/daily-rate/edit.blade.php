@@ -434,8 +434,8 @@
             pay_amount = calculate_pay_perHour(pay_amount);
             earned = calculate_pay_perHour(selectedSection.earned);
         }
+
         $('#employee_pay_id').val((pay_amount + feeding - employee_discount).toFixed(2));
-        
         let inss_discount = $('#inss_id').val();
         if (selectedCompany.not_flashing) {
             inss_discount = 0;

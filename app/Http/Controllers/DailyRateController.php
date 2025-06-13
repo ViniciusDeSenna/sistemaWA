@@ -118,6 +118,17 @@ class DailyRateController extends Controller
         try {
             $requested_section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
             
+            $duplicate = DailyRate::where('collaborator_id', $request->collaborator_id)
+                ->where('company_id', $request->company_id)
+                ->where('start', $request->start)->first();
+                
+            if($duplicate){
+                return response()->json([
+                    'type' => 'error',
+                    'message' => 'Já existe outro registro com o mesmo colaborador, empresa e horário.',
+                ], 422);
+            }
+
             if ($requested_section->perHour === 1 && is_null($request->end)) {
                 return response()->json([
                     'type' => 'error',
@@ -146,7 +157,6 @@ class DailyRateController extends Controller
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
-
 
             DB::beginTransaction();
 
@@ -207,8 +217,8 @@ class DailyRateController extends Controller
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
 
-                'employee_discount' => Money::unformat($request->employee_discount),
-                'discount_description' => $request->discount_description,
+                'employee_discount' => !empty($request->employee_discount) ? Money::unformat($request->employee_discount) : 0,
+                'discount_description' => $request->discount_description ?? '',
 
                 'observation' => $request->observation,
             ]);
@@ -278,7 +288,21 @@ class DailyRateController extends Controller
     public function update(Request $request, string $id)
     {
         $requested_section = CompanyHasSection::where('company_id', $request->company_id)->where('section_id', $request->sectionSelect_id)->firstOrFail();
-            
+                
+        $duplicate = DailyRate::where('collaborator_id', $request->collaborator_id)
+            ->where('company_id', $request->company_id)
+            ->where('start', $request->start)
+            ->where('id', '!=', $id)
+            ->first();
+
+        if ($duplicate) {
+            return response()->json([
+                'type' => 'error',
+                'message' => 'Já existe outro registro com o mesmo colaborador, empresa e horário.',
+            ], 422);
+        }
+
+
         if ($requested_section->perHour === 1 && is_null($request->end)) {
             return response()->json([
                 'type' => 'error',
@@ -343,8 +367,6 @@ class DailyRateController extends Controller
                 'section_id' => $request->sectionSelect_id,
                 'company_id' => $request->company_id,
                 'user_id' => $request->user_id,
-
-                'hourly_rate' => $hourlyRate,
                 
                 'start' => $request->start,
                 'end' => $request->end,
@@ -360,9 +382,10 @@ class DailyRateController extends Controller
                 
                 'inss_paid' => !empty($inss) ? Money::unformat($inss) : 0,
                 'tax_paid' => !empty($tax) ? Money::unformat($tax) : 0,
-
-                'employee_discount' => Money::unformat($request->employee_discount),
-                'discount_description' => $request->discount_description,
+                
+                'employee_discount' => !empty($request->employee_discount) ? Money::unformat($request->employee_discount) : 0,
+                
+                'discount_description' => $request->discount_description ?? '',
                 
                 'earned' => Money::unformat($request->total),
                 'profit' => Money::unformat($request->total_liq),
@@ -411,6 +434,7 @@ class DailyRateController extends Controller
             ], 500);
         }
     }
+
     public function getCompanySections($companyId)
     {
         $sections = CompanyHasSection::where('company_id', $companyId)->get();
