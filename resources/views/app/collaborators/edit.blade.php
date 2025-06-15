@@ -39,6 +39,7 @@
                             <label class="form-check-label" for="is_extra">Recebe Valor Extra</label>
                         </div>
 
+
                         
                     </div>
                     
@@ -49,6 +50,18 @@
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-fullname">Cidade</label>
                         <input type="text" class="form-control" id="city" name="city" placeholder="A cidade em que o colaborador se encontra" value="{{ $collaborator?->city ?? ''}}" />
+                    </div>
+                    <div>
+                        <label class="form-label" for="cities_can_work">Cidades</label>
+                        <select multiple name="cities_can_work[]" id="cities_can_work" class="form-control">
+                            @foreach($cities as $city)
+                                <option value="{{ $city->id }}"
+                                    {{ in_array($city->id, $selectedCities ?? []) ? 'selected' : '' }}>
+                                    {{ $city->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
                     </div>
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-message">Observação</label>
@@ -72,6 +85,13 @@
 </x-app-layout>
 
 <script>
+    $(document).ready(function() {
+    $('#cities_can_work').select2({
+            placeholder: "Selecione a(s) cidade(s) em que Trabalha",
+            allowClear: true
+        });
+    });
+
     function post() {
 
         $.ajax({

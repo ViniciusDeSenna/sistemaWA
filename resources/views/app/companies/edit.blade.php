@@ -11,7 +11,14 @@
 
                     <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document ?? null " placeholder="Documento do Estabelecimento" class="cnpj" />
                     
-                    <x-input id="city" name="city" type="text" label="Cidade" :value="$company?->city ?? null" placeholder="Cidade" />
+
+                    <div>
+                        <select id="city_select" name="city_select" class="form-control">
+                            @foreach($cities as $city)
+                                <option value="{{ $city->name }}">{{ $city->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
 
                     <x-input id="uniforms_laid" name="uniforms_laid" type="number" label="Qtd. Uniformes em Loja" :value="$company?->uniforms_laid ?? null" placeholder="Quantidade de uniformes em loja" />
 
@@ -57,7 +64,25 @@
     let establishment = @json($company ?? null);
     let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
-    
+        $(document).ready(function() {
+        $('#city').select2({
+            tags: true,
+            placeholder: "Selecione ou adicione uma cidade",
+            width: '100%',
+            createTag: function (params) {
+                var term = $.trim(params.term);
+                if (term === '') {
+                    return null;
+                }
+                return {
+                    id: term,
+                    text: term,
+                    newTag: true // sinaliza que é novo
+                };
+            }
+        });
+    });
+
     function createSectionCard(collapseId, setorId, setorNome, earned, employee_pay, extra, leader_pay, comission, perHour, supervisor){
         return `
                 <div class="accordion-item card-body mb-1 w-100">

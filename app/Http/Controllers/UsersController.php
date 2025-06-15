@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Collaborator;
 use App\Models\User;
 use App\Http\Controllers\Controller;
+use App\Models\Company;
+use App\Models\UserHasCompany;
 use Exception;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Http\Request;
@@ -49,14 +51,34 @@ class UsersController extends Controller
 
     public function create(){
 
-        return View('app.users.edit', ['permissions' => Permission::all(), 'collaborators' => Collaborator::getActiveLeaders()]);
+        return View('app.users.edit', ['permissions' => Permission::all(), 'collaborators' => Collaborator::getActiveLeaders(), 'companies' => Company::getActive()]);
     }
 
-    
+    public function store_user_has_company($allowedCompanies, User $user)
+    {
+        if (!is_array($allowedCompanies)) {
+            $allowedCompanies = [];
+        }
+        //Remove anteriores
+        DB::table('user_has_company')->where('user_id', $user->id)->delete();
+        //Adiciona os novos
+        foreach ($allowedCompanies as $companyId) {
+            DB::table('user_has_company')->insert([
+                'user_id' => $user->id,
+                'company_id' => $companyId,
+                'is_active' => true,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+    }
+        
     public function store(Request $request)
     {
         try {
+            
             DB::beginTransaction();
+            //dd($request->allowed_companies);
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
@@ -100,8 +122,14 @@ class UsersController extends Controller
 
             event(new Registered($user));
         
+            
+            //Retorna erro ao nao ter permissões
+            //$user->givePermissionTo(array_keys($request->permissions));
+            
             // Seta as pemissoes no usuário
-            $user->givePermissionTo(array_keys($request->permissions));
+            $user->givePermissionTo(array_keys($request->input('permissions', [])));
+
+            $this->store_user_has_company($request->allowed_companies, $user);
 
             DB::commit();
 
@@ -124,10 +152,24 @@ class UsersController extends Controller
     }
     
 
-    public function edit($id){
-        return View('app.users.edit', ['user' => User::find($id), 'permissions' => Permission::all(), 'collaborators' => Collaborator::getActiveLeaders()]);
-    }
 
+public function edit($id)
+{
+    $user = User::findOrFail($id);
+
+    $selectedCompanies = UserHasCompany::where('user_id', $user->id)
+        ->where('is_active', true)
+        ->pluck('company_id')
+        ->toArray();
+
+    return view('app.users.edit', [
+        'user' => $user,
+        'permissions' => Permission::all(),
+        'collaborators' => Collaborator::getActiveLeaders(),
+        'companies' => Company::getActive(),
+        'selectedCompanies' => $selectedCompanies,
+    ]);
+}
     public function update(Request $request, $id){
         try {
             DB::beginTransaction();
@@ -177,6 +219,7 @@ class UsersController extends Controller
         
             // Seta as pemissoes no usuário
             $user->syncPermissions(array_keys($request->permissions));
+            $this->store_user_has_company($request->allowed_companies, $user);
 
             DB::commit();
 

@@ -23,8 +23,22 @@
                                     {{ $colaborator->name }}
                                 </option>                            
                             @endforeach
+
                         </select>
                     </div>
+                    <div>
+                        <label class="form-label" for="allowed_companies">Estabelecimentos</label>
+                        <select multiple name="allowed_companies[]" id="allowed_companies" class="form-control">
+                            @foreach($companies as $company)
+                                <option value="{{ $company->id }}"
+                                    {{ in_array($company->id, $selectedCompanies ?? []) ? 'selected' : '' }}>
+                                    {{ $company->name }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                    </div>
+
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-company">Senha</label>
                         <input type="password" class="form-control" id="basic-default-company" name="password" />
@@ -63,6 +77,12 @@
 </x-app-layout>
 
 <script>
+    $(document).ready(function() {
+    $('#allowed_companies').select2({
+            placeholder: "Selecione os estabelecimentos",
+            allowClear: true
+        });
+    });
     function post() {
         $.ajax({
             url: '{{ route('users.store') }}',

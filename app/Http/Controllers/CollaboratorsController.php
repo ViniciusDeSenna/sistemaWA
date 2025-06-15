@@ -4,12 +4,16 @@ namespace App\Http\Controllers;
 
 use App\BlueUtils\Number;
 use App\Http\Controllers\Controller;
+use App\Models\City;
+use App\Models\CityHasCollaborator;
 use App\Models\Collaborator;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+
+use function Laravel\Prompts\select;
 
 class CollaboratorsController extends Controller
 {
@@ -26,7 +30,8 @@ class CollaboratorsController extends Controller
      */
     public function create()
     {
-        return View('app.collaborators.edit');
+        $cities = City::all();
+        return View('app.collaborators.edit', ['cities' => $cities]);
     }
 
     public function table(Request $request){
@@ -128,9 +133,32 @@ class CollaboratorsController extends Controller
      */
     public function edit(string $id)
     {
-        return View('app.collaborators.edit', ['collaborator' => Collaborator::find($id)]);
+        $collaborator = Collaborator::findOrFail($id);
+        $selectedCities = CityHasCollaborator::where('collaborator_id', $id)
+            ->pluck('city_id')
+            ->toArray();        
+        $cities = City::all();
+
+
+        return view('app.collaborators.edit', [
+            'collaborator' => $collaborator,
+            'cities' => $cities,
+            'selectedCities' => $selectedCities
+        ]);
     }
 
+    public function city_has_collaborator($collaborator, $cities)
+    {
+        CityHasCollaborator::where('collaborator_id', $collaborator->id)->delete();
+
+        foreach ($cities as $city) {
+            CityHasCollaborator::create([
+                'collaborator_id' => $collaborator->id,
+                'city_id' => $city,
+                'is_active' => true,
+            ]);
+        }
+    }
     /**
      * Update the specified resource in storage.
      */
@@ -171,6 +199,7 @@ class CollaboratorsController extends Controller
                 'city' => $request->city,
             ]);
 
+            $this->city_has_collaborator($collaborator, $request->input('cities_can_work', []));
             DB::commit();
 
             return response()->json([

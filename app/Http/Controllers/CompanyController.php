@@ -8,6 +8,7 @@ use App\Models\Company;
 use App\Models\CompanyHasSection;
 use App\Models\Section;
 use App\Http\Controllers\Controller;
+use App\Models\City;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Validator;
@@ -58,7 +59,13 @@ class CompanyController extends Controller
     public function create()
     {
         $sections = Section::all();
-        return View('app.companies.edit', compact('sections'));
+
+        return View('app.companies.edit', [
+                                    'sections' => $sections,
+                                    'cities' => City::all(),
+                                
+                                
+                                ]);
     }
 
     /**
@@ -88,16 +95,30 @@ class CompanyController extends Controller
                 ], 422);
             }
 
+            // Cria um registro de cidade caso não exista, a partir do nome
+            $city = City::firstOrCreate(
+                ['name' => ucfirst(strtolower($request->city))]
+            );
 
+            // Cria registro de estabeleccimento
             $company = Company::create([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
                 'chain_of_stores' => $request->category,
-                'city' => $request->city,
-                'uniforms_laid'=> $request->uniforms_laid ?? 0,
-                'not_flashing'=> filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
+                'city' => $city->name, // Por enquanto, salva o nome da cidade
+                'uniforms_laid' => $request->uniforms_laid ?? 0,
+                'not_flashing' => filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
                 'observation' => $request->observation,
             ]);
+
+            // Cria relação de pertencimento, 1:1
+            DB::table('company_has_city')->insert([
+                'company_id' => $company->id,
+                'city_id' => $city->id,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+
             if($request->section_id) {
                 foreach($request->section_id as $section_id){
 
@@ -154,7 +175,12 @@ class CompanyController extends Controller
     {
         $company = Company::find($id); 
         $sections = Section::all();
-        return view('app.companies.edit', compact('company', 'sections'));
+        
+        return view('app.companies.edit',[
+                                        'company' => $company,
+                                        'sections' => $sections,
+                                        'cities' => City::all(),
+                                        ]);
     }
 
     /**
@@ -186,15 +212,33 @@ class CompanyController extends Controller
             }
 
             $company = Company::findOrFail($id);
+
+            // Cria ou busca a cidade com base no nome
+            $city = City::firstOrCreate([
+                'name' => ucfirst(strtolower($request->city)),
+            ]);
+
             $company->update([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
-                'city' => $request->city,
-                'uniforms_laid'=> ($request->uniforms_laid),
                 'chain_of_stores' => $request->category,
-                'not_flashing'=> filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
+                'city' => $city->name, // armazena o nome da cidade
+                'uniforms_laid' => $request->uniforms_laid ?? 0,
+                'not_flashing' => filter_var($request->not_flashing, FILTER_VALIDATE_BOOLEAN),
                 'observation' => $request->observation,
             ]);
+
+            // Garante que a relação company-city seja 1:1
+            DB::table('company_has_city')->updateOrInsert(
+                [
+                    'company_id' => $company->id,
+                    'city_id' => $city->id,
+                ],
+                [
+                    'updated_at' => now(),
+                    'created_at' => now(), 
+                ]
+            );
             
             foreach($request->section_id as $section_id){
                 CompanyHasSection::updateOrCreate(

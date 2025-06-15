@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\BlueUtils\Money;
 use App\BlueUtils\Time;
 use App\Http\Controllers\Controller;
+use App\Models\CityHasCollaborator;
 use App\Models\Collaborator;
 use App\Models\Company;
+use App\Models\CompanyHasCity;
 use App\Models\CompanyHasSection;
 use App\Models\ConfigTable;
 use App\Models\DailyRate;
 use App\Models\Section;
+use App\Models\UserHasCompany;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
@@ -99,16 +102,36 @@ class DailyRateController extends Controller
      */
     public function create()
     {
+        $allowedCompanyIds = UserHasCompany::where('user_id', Auth::id())
+            ->where('is_active', true)
+            ->pluck('company_id');
+        $companies = Company::whereIn('id', $allowedCompanyIds)
+            ->where('active', true)
+            ->get();
+
+        $companyCityIds = CompanyHasCity::whereIn('company_id', $allowedCompanyIds)
+            ->pluck('city_id');
+
+        $collaboratorIds = CityHasCollaborator::whereIn('city_id', $companyCityIds)
+            ->pluck('collaborator_id')
+            ->unique(); // evita duplicidade se colaborador trabalhar em várias cidades
+
+            
+
+        $collaborators = Collaborator::whereIn('id', $collaboratorIds)
+            ->where('active', true)
+            ->get();
+
         return View('app.daily-rate.edit', [
-            'collaborators' => Collaborator::getActive(),
-            'companies' => Company::getActive(), 
+            'collaborators' => $collaborators,
+            'companies' => $companies,
             'sections' => Section::all(),
             'dailyRate' => null,
             'inss_pago' => ConfigTable::getValue('inss_default'),
             'imposto_pago' => ConfigTable::getValue('tax_default'),
         ]);
     }
-
+ 
     /**
      * Store a newly created resource in storage.
      */
@@ -223,31 +246,7 @@ class DailyRateController extends Controller
                 'observation' => $request->observation,
             ]);
 
-//            $dailyRate = new DailyRate();
-//            //chaves estrangeiras
-//            $dailyRate->collaborator_id = $request->collaborator_id;
-//            $dailyRate->company_id = $request->company_id;
-//            //data e hora
-//            $dailyRate->start = $request->start;
-//            $dailyRate->end = $request->end;
-//            $dailyRate->total_time = $request->total_time;
-//            //custos 
-//            
-//            $dailyRate->transportation = Money::unformat($request->transportation);
-//            $dailyRate->feeding = Money::unformat($request->feeding);
-//
-//            $dailyRate->addition = Money::unformat($request->addition);
-//
-//            $dailyRate->pay_amount = Money::unformat($request->employee_pay_id);
-//
-//            $dailyRate->earned = Money::unformat($request->total);
-//            $dailyRate->profit = Money::unformat($request->total_liq);
-//            
-//            $dailyRate->observation = $request->observation;
-//            $dailyRate->user_id = $request->user_id;
-//
-//            $dailyRate->save();
-//
+
             DB::commit();
 
             return response()->json(['type' => 'success', 'message' => 'Cadastro realizado com sucesso!'], 201);
