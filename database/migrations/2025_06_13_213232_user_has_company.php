@@ -22,7 +22,7 @@ return new class extends Migration
                   ->constrained('companies')
                   ->onDelete('cascade');
             
-            $table->boolean('is_active')->default(true);
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

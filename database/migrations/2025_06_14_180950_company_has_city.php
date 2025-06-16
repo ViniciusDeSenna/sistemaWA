@@ -19,6 +19,7 @@ return new class extends Migration
 
             $table->foreignId('company_id')
                   ->constrained('companies');
+            $table->boolean('active')->default(true);
 
             $table->timestamps();
 

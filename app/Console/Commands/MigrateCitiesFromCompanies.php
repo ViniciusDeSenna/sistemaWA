@@ -47,7 +47,7 @@ class MigrateCitiesFromCompanies extends Command
             }
 
             $city = City::firstOrCreate(['name'=> $cityName,
-                                        'is_active'=>true,]);
+                                        'active'=>true,]);
 
             if ($city->wasRecentlyCreated){
                 $this->info("Cidade '{$cityName}' adicionada!");

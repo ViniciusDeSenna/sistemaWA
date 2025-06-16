@@ -21,7 +21,7 @@ return new class extends Migration
                   ->constrained('collaborators')
                   ->onDelete('cascade');
 
-            $table->boolean('is_active');
+            $table->boolean('active')->default(true);
             $table->timestamps();
         });
     }

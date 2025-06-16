@@ -87,7 +87,7 @@ class DailyRateController extends Controller
                         <a type="button" class="btn btn-icon btn-primary" href="'. route('daily-rate.edit', [$daily->id]) . '">
                             <span class="tf-icons bx bx-pencil"></span>
                         </a>
-                        <a type="button" class="btn btn-icon btn-danger" href="javascript(0);" onclick="remove(' . $daily->id . ')">
+                        <a type="button" class="btn btn-icon btn-danger" href="#" onclick="remove(' . $daily->id . ')">
                             <span class="tf-icons bx bx-trash"></span>
                         </a>
                     </div>
@@ -114,8 +114,7 @@ class DailyRateController extends Controller
 
         $collaboratorIds = CityHasCollaborator::whereIn('city_id', $companyCityIds)
             ->pluck('collaborator_id')
-            ->unique(); // evita duplicidade se colaborador trabalhar em várias cidades
-
+            ->unique(); 
             
 
         $collaborators = Collaborator::whereIn('id', $collaboratorIds)
