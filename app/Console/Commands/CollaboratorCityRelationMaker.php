@@ -31,42 +31,59 @@ class CollaboratorCityRelationMaker extends Command
         $this->info("Iniciando a migração relacionando colaboradores e cidades...");
 
         $collaborators = \App\Models\Collaborator::all();
-        $cities = \App\Models\City::all()->pluck('id', 'name'); // [name => id]
+        $cities = \App\Models\City::all();
 
-        $naoEncontrados = [];
         $relacoesCriadas = 0;
+        $naoEncontrados = [];
+
+        // Mapeamento manual para correções conhecidas, com nomes já normalizados
+        $correcoes = [
+            'camboriu' => 'balneario camboriu',
+            'balnearios camboriu' => 'balneario camboriu',
+            'balneario camburiu' => 'balneario camboriu',
+            'cidade itajai' => 'itajai',
+            'cidade brusque' => 'brusque',
+            'gabiruba' => 'guabiruba',
+            'busque' => 'brusque',
+        ];
 
         foreach ($collaborators as $collaborator) {
-            $colabCityName = ucfirst(strtolower(trim($collaborator->city)));
+            $colabCityOriginal = $collaborator->city ?? '';
 
-            if (empty($colabCityName)) {
-                continue;
+
+            $normalized = $this->normalizeCityName($colabCityOriginal);
+
+            // Aplica correção manual se existir
+            if (isset($correcoes[$normalized])) {
+                $normalized = $correcoes[$normalized];
             }
 
-            $cityId = $cities[$colabCityName] ?? null;
+            // Busca a cidade normalizada na lista
+            $city = $cities->first(function ($c) use ($normalized) {
+                return $this->normalizeCityName($c->name) === $normalized;
+            });
 
-            if ($cityId) {
+            if ($city) {
                 // Verifica se a relação já existe
                 $existe = DB::table('city_has_collaborator')
                     ->where('collaborator_id', $collaborator->id)
-                    ->where('city_id', $cityId)
+                    ->where('city_id', $city->id)
                     ->exists();
 
                 if (!$existe) {
                     DB::table('city_has_collaborator')->insert([
                         'collaborator_id' => $collaborator->id,
-                        'city_id' => $cityId,
+                        'city_id' => $city->id,
                         'active' => true,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
-
                     $relacoesCriadas++;
                 }
             } else {
                 $naoEncontrados[] = [
                     'colaborador' => $collaborator->name,
-                    'cidade_nao_encontrada' => $collaborator->city
+                    'cidade_nao_encontrada' => $colabCityOriginal
                 ];
             }
         }
@@ -84,4 +101,25 @@ class CollaboratorCityRelationMaker extends Command
             $this->info("Todas as cidades foram reconhecidas.");
         }
     }
+
+    /**
+     * Função auxiliar para normalizar nomes de cidade.
+     */
+    private function normalizeCityName(string $name): string
+    {
+        $name = mb_strtolower($name, 'UTF-8');
+
+        $search  = ['á','à','ã','â','ä','é','è','ê','ë','í','ì','î','ï','ó','ò','õ','ô','ö','ú','ù','û','ü','ç'];
+        $replace = ['a','a','a','a','a','e','e','e','e','i','i','i','i','o','o','o','o','o','u','u','u','u','c'];
+        $name = str_replace($search, $replace, $name);
+
+        // Remove tudo que não for letra minúscula ou espaço
+        $name = preg_replace('/[^a-z\s]/u', '', $name);
+
+        // Remove espaços extras no início/fim e espaços duplos dentro da string
+        $name = trim(preg_replace('/\s+/', ' ', $name));
+
+        return $name;
+    }
+
 }
