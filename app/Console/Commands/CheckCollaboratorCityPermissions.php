@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use App\Models\City;
 use App\Models\Company;
+use App\Models\CompanyHasCity;
 use App\Models\DailyRate;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
@@ -37,16 +38,20 @@ class CheckCollaboratorCityPermissions extends Command
 
         foreach ($all_daily_rates as $daily_rate) {
             $collaboratorId = $daily_rate->collaborator_id;
-            $company = Company::find($daily_rate->company_id);
 
-            if (!$company || !$company->city_id) {
-                $this->warn("Empresa não encontrada ou sem cidade: ID {$daily_rate->company_id}");
+            // Busca a relação entre empresa e cidade
+            $companyCity = CompanyHasCity::where('company_id', $daily_rate->company_id)->first();
+
+            if (!$companyCity || !$companyCity->city_id) {
+                $this->warn("Relação empresa-cidade não encontrada: company_id {$daily_rate->company_id}");
+                $relations_skipped++;
                 continue;
             }
 
-            $cityId = $company->city_id;
+            $cityId = $companyCity->city_id;
 
-            $created = DB::table('city_has_collaborator')->updateOrInsert(
+            // Cria ou atualiza a relação colaborador-cidade
+            DB::table('city_has_collaborator')->updateOrInsert(
                 [
                     'collaborator_id' => $collaboratorId,
                     'city_id' => $cityId,
@@ -58,11 +63,12 @@ class CheckCollaboratorCityPermissions extends Command
                 ]
             );
 
-            // `updateOrInsert` não retorna boolean. A gente pode ignorar e só contar mesmo
             $relations_created++;
         }
 
         $this->info("\nSincronização concluída.");
         $this->info("Relações criadas ou atualizadas: {$relations_created}");
+        $this->info("Registros ignorados (sem cidade): {$relations_skipped}");
     }
+
 }
