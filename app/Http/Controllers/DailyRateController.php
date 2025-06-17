@@ -103,7 +103,7 @@ class DailyRateController extends Controller
     public function create()
     {
         $allowedCompanyIds = UserHasCompany::where('user_id', Auth::id())
-            ->where('is_active', true)
+            ->where('active', true)
             ->pluck('company_id');
         $companies = Company::whereIn('id', $allowedCompanyIds)
             ->where('active', true)

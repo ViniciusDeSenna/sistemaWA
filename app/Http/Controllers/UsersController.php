@@ -66,7 +66,7 @@ class UsersController extends Controller
             DB::table('user_has_company')->insert([
                 'user_id' => $user->id,
                 'company_id' => $companyId,
-                'is_active' => true,
+                'active' => true,
                 'created_at' => now(),
                 'updated_at' => now(),
             ]);
@@ -158,7 +158,7 @@ public function edit($id)
     $user = User::findOrFail($id);
 
     $selectedCompanies = UserHasCompany::where('user_id', $user->id)
-        ->where('is_active', true)
+        ->where('active', true)
         ->pluck('company_id')
         ->toArray();
 

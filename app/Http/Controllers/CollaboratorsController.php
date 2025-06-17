@@ -155,7 +155,7 @@ class CollaboratorsController extends Controller
             CityHasCollaborator::create([
                 'collaborator_id' => $collaborator->id,
                 'city_id' => $city,
-                'is_active' => true,
+                'active' => true,
             ]);
         }
     }
