@@ -38,7 +38,7 @@ class CollaboratorsController extends Controller
         $collaborators = Collaborator::query()
             ->where('active', '=', true)
             ->orderBy('name');
-        
+
         return DataTables::of($collaborators)
             ->addColumn('name', function ($collaborator) {
                 return $collaborator->name;
@@ -80,15 +80,14 @@ class CollaboratorsController extends Controller
                 'document.regex' => 'O CPF deve estar no formato correto (000.000.000-00).',
                 'pix_key.required' => 'O campo Chave Pix é obrigatório.',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
 
-
-            Collaborator::create([
+            $collaborator = Collaborator::create([
                 'name' => $request->name,
                 'document' => Number::onlyNumber($request->document),
                 'pix_key' => $request->pix_key,
@@ -100,6 +99,7 @@ class CollaboratorsController extends Controller
                 'city' => $request->city,
             ]);
 
+            $this->city_has_collaborator($collaborator, $request->input('cities_can_work', []));
             DB::commit();
 
             return response()->json([
@@ -136,7 +136,7 @@ class CollaboratorsController extends Controller
         $collaborator = Collaborator::findOrFail($id);
         $selectedCities = CityHasCollaborator::where('collaborator_id', $id)
             ->pluck('city_id')
-            ->toArray();        
+            ->toArray();
         $cities = City::all();
 
 
@@ -179,7 +179,7 @@ class CollaboratorsController extends Controller
                 'document.regex' => 'O CPF deve estar no formato correto (000.000.000-00).',
                 'pix_key.required' => 'O campo Chave Pix é obrigatório.',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
