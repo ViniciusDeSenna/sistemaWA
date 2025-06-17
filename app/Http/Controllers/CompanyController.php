@@ -63,7 +63,7 @@ class CompanyController extends Controller
         return View('app.companies.edit', [
                                     'sections' => $sections,
                                     'cities' => City::all(),
-
+                                    'company' => null,
 
                                 ]);
     }

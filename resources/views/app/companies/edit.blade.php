@@ -13,9 +13,11 @@
 
 
                     <div>
-                        <select id="city_select" name="city_select" class="form-control">
+                        <select name="city_select" class="form-select" class="form-control">
+                            <option value="">Selecione uma cidade</option>
                             @foreach($cities as $city)
-                                <option value="{{ $city->name }}" {{ old('city', $company?->city) === $city->name ? 'selected' : '' }}>
+                                <option value="{{ $city->name }}"
+                                    {{ old('city', optional($company)->city) === $city->name ? 'selected' : '' }}>
                                     {{ $city->name }}
                                 </option>
                             @endforeach
