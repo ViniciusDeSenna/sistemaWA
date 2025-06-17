@@ -3,19 +3,21 @@
         <div class="card mb-4">
             <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="mb-0">Cadastrando Estabelecimento</h5>
-            </div> 
+            </div>
             <div class="card-body">
                 <form id="form-edit-establishment">
 
                     <x-input id="name" name="name" type="text" label="Nome" :value="$company?->name ?? null" placeholder="Nome do Estabelecimento" />
 
                     <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document ?? null " placeholder="Documento do Estabelecimento" class="cnpj" />
-                    
+
 
                     <div>
                         <select id="city_select" name="city_select" class="form-control">
                             @foreach($cities as $city)
-                                <option value="{{ $city->name }}">{{ $city->name }}</option>
+                                <option value="{{ $city->name }}" {{ old('city', $company?->city) === $city->name ? 'selected' : '' }}>
+                                    {{ $city->name }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -25,7 +27,7 @@
                     <div class="mb-3">
                         <label class="form-label" for="basic-default-text">Setores</label><br>
                         <div class="d-flex align-items-center gap-2">
-                            <select class="form-select" id="sectionSelect"> 
+                            <select class="form-select" id="sectionSelect">
                                 <option value="empty">Selecione um setor</option>
                                 @foreach ($sections as $setor)
                                     <option value="{{ $setor->id }}" data-nome="{{ $setor->name }}">{{ $setor->name }}</option>
@@ -43,7 +45,7 @@
                     <x-textarea id="observation" name="observation" label="Observação" placeholder="Alguma observação?">{!! $company?->observation ?? null !!}</x-textarea>
                 </form>
             </div>
-    
+
             <div class="card-footer">
                 @if ($company?->id ?? false)
                     <div class="d-flex justify-content-end">
@@ -60,7 +62,7 @@
 </x-app-layout>
 
 <script>
-    
+
     let establishment = @json($company ?? null);
     let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
@@ -100,22 +102,22 @@
                                 <input type="checkbox" class="form-check-input" id="setores[${ setorId }][perHour]" name="perHour[${ setorId }]" ${perHour == 1 ? 'checked' : '' }>
                                 <label class="form-check-label" for="setores[${ setorId }][perHour]">Contrato por Hora</label>
                             </div>
-                            <label class="form-label mb-3">Recebido: 
+                            <label class="form-label mb-3">Recebido:
                                 <input type="number" class="form-control number" id="setores[${setorId}][earned]" name="earned[${setorId}]" value="${earned ?? 1000}">
                             </label>
-                            <label class="form-label mb-1">Diária: 
+                            <label class="form-label mb-1">Diária:
                                 <input type="number" class="form-control number" id="setores[${setorId}][diaria]" name="diaria[${setorId}]" value="${employee_pay ?? 100}">
                             </label>
-                            <label class="form-label mb-1">Colaborador Extra: 
+                            <label class="form-label mb-1">Colaborador Extra:
                                 <input type="number" class="form-control number" id="setores[${setorId}][extra]" name="extra[${setorId}]" value="${extra ?? 110}">
                             </label>
-                            <label class="form-label mb-1">Líder: 
+                            <label class="form-label mb-1">Líder:
                                 <input type="number" class="form-control number" id="setores[${setorId}][lider]" name="lider[${setorId}]" value="${leader_pay ?? 122}">
                             </label>
-                            <label class="form-label mb-3">Comissão: 
+                            <label class="form-label mb-3">Comissão:
                                 <input type="number" class="form-control number" id="setores[${setorId}][comissao]" name="comissao[${setorId}]" value="${comission ?? 8}">
                             </label>
-                            <label class="form-label mb-1">Supervisor: 
+                            <label class="form-label mb-1">Supervisor:
                                 <input type="number" class="form-control number" id="setores[${setorId}][supervisor]" name="supervisor[${setorId}]" value="${supervisor ?? 0}">
                             </label>
                         </div>
@@ -134,13 +136,13 @@
     function loadExistingRegisteredSections(companySections, sections){
         let setorSelect = document.getElementById("sectionSelect");
         //let setorId = setorSelect.value;
-        let setorNome = setorSelect.options[setorSelect.selectedIndex].dataset.nome;       
-        
+        let setorNome = setorSelect.options[setorSelect.selectedIndex].dataset.nome;
+
 
 
 
         for (let setSection of companySections) {
-            
+
             if (!setSection.active) {
                 continue;
             };
@@ -153,13 +155,13 @@
             let collapseId = "collapse" + setSection?.id;
             let sectioName = sections.find(section => section.id === setSection.section_id);
             let sectionContent = createSectionCard(collapseId, setSection.section_id, sectioName.name, setSection.earned, setSection.employeePay, setSection.extra, setSection.leaderPay, setSection.leaderComission, setSection.perHour, setSection.supervisorPay);
-            
+
             console.log(setSection.section_id);
             //setorSelect.options[setSection.section_id].remove();
             for (let i = 0; i < setorSelect.options.length; i++) {
                 if (setorSelect.options[i].value == setSection.section_id) {
-                    setorSelect.remove(i); 
-                    break;  
+                    setorSelect.remove(i);
+                    break;
                 }
             }
             if (sectionContent) {
@@ -168,10 +170,10 @@
             } else {
                 console.warn("loadExistingRegisteredSections returned empty content");
             }
-        }    
-    
+        }
+
     }
-    
+
     function addLabelForSection() {
         let setorSelect = document.getElementById("sectionSelect");
         let setorId = setorSelect.value;
@@ -192,7 +194,7 @@
         //div.style.border = "2px solid #CCE0FF";
         div.id = `setor-${setorId}`;
 
-        let collapseId = 'collapse' + setorId; 
+        let collapseId = 'collapse' + setorId;
 
         div.innerHTML = createSectionCard(collapseId, setorId, setorNome);
 
@@ -257,7 +259,7 @@
 
         if (establishmentID) {
             $.ajax({
-                url: `{{ route('companyHasSection.remove') }}`, 
+                url: `{{ route('companyHasSection.remove') }}`,
                 type: "DELETE",
                 headers: {
                     "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
@@ -275,7 +277,7 @@
                     let sectionDiv = document.getElementById(`setor-${sectionId}`);
                     if (sectionDiv) {
                         sectionDiv.remove();
-                    }      
+                    }
                     window.location.reload();
                 })
                 },
@@ -292,7 +294,7 @@
 
 
     function post() {
-        
+
         console.log($('#form-edit-establishment').serialize());
         $.ajax({
             url: '{{ route('companies.store') }}',
@@ -355,9 +357,9 @@
     }
 
     $(document).ready(function () {
-        let cnpjMask = new Inputmask('99.999.999/9999-99', { 
-            placeholder: ' ', 
-            clearIncomplete: true 
+        let cnpjMask = new Inputmask('99.999.999/9999-99', {
+            placeholder: ' ',
+            clearIncomplete: true
         });
         cnpjMask.mask('.cnpj');
 
@@ -373,7 +375,7 @@
         });
         moneyMask.mask('.money');
     });
-    
+
     window.onload = function() {
         if (companySections.length > 0) {
             loadExistingRegisteredSections(companySections,sections);

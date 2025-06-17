@@ -28,7 +28,7 @@ class UsersController extends Controller
         $users = User::query()
             ->where('active', '=', true)
             ->orderBy('name');
-        
+
         return DataTables::of($users)
             ->addColumn('name', function ($user) {
                 return $user->name;
@@ -72,22 +72,22 @@ class UsersController extends Controller
             ]);
         }
     }
-        
+
     public function store(Request $request)
     {
         try {
-            
+
             DB::beginTransaction();
             //dd($request->allowed_companies);
 
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => [
-                    'required', 
-                    'string', 
-                    'lowercase', 
-                    'email', 
-                    'max:255', 
+                    'required',
+                    'string',
+                    'lowercase',
+                    'email',
+                    'max:255',
                     Rule::unique(User::class)->where('active', true),
                 ],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -95,24 +95,24 @@ class UsersController extends Controller
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
                 'name.max' => 'O nome não pode ter mais de 255 caracteres.',
-                
+
                 'email.required' => 'O campo e-mail é obrigatório.',
                 'email.string' => 'O e-mail deve ser um texto válido.',
                 'email.lowercase' => 'O e-mail deve estar em letras minúsculas.',
                 'email.email' => 'O e-mail informado não é válido.',
                 'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
                 'email.unique' => 'Este e-mail já está em uso.',
-                
+
                 'password.required' => 'O campo senha é obrigatório.',
                 'password.confirmed' => 'A confirmação da senha não confere.',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
-            
+
             $user = User::create([
                 'name' => $request->name,
                 'email' => $request->email,
@@ -121,11 +121,11 @@ class UsersController extends Controller
             ]);
 
             event(new Registered($user));
-        
-            
+
+
             //Retorna erro ao nao ter permissões
             //$user->givePermissionTo(array_keys($request->permissions));
-            
+
             // Seta as pemissoes no usuário
             $user->givePermissionTo(array_keys($request->input('permissions', [])));
 
@@ -150,7 +150,7 @@ class UsersController extends Controller
             ], 500);
         }
     }
-    
+
 
 
 public function edit($id)
@@ -177,11 +177,11 @@ public function edit($id)
             $validator = Validator::make($request->all(), [
                 'name' => ['required', 'string', 'max:255'],
                 'email' => [
-                    'required', 
-                    'string', 
-                    'lowercase', 
-                    'email', 
-                    'max:255', 
+                    'required',
+                    'string',
+                    'lowercase',
+                    'email',
+                    'max:255',
                     Rule::unique(User::class)
                         ->where('active', true)
                         ->whereNot('id', $id),
@@ -191,34 +191,33 @@ public function edit($id)
                 'name.required' => 'O campo nome é obrigatório.',
                 'name.string' => 'O nome deve ser um texto válido.',
                 'name.max' => 'O nome não pode ter mais de 255 caracteres.',
-                
+
                 'email.required' => 'O campo e-mail é obrigatório.',
                 'email.string' => 'O e-mail deve ser um texto válido.',
                 'email.lowercase' => 'O e-mail deve estar em letras minúsculas.',
                 'email.email' => 'O e-mail informado não é válido.',
                 'email.max' => 'O e-mail não pode ter mais de 255 caracteres.',
                 'email.unique' => 'Este e-mail já está em uso por outro usuário.',
-            
+
                 'password.confirmed' => 'A confirmação da senha não confere.',
-            ]);          
-        
+            ]);
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
                 ], 422);
             }
-        
+
             $user = User::findOrFail($id);
             $user->update([
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password ? Hash::make($request->password) : $user->password,
                 'collaborator_id' => $request->collaborator_id,
-            
             ]);
-        
+
             // Seta as pemissoes no usuário
-            $user->syncPermissions(array_keys($request->permissions));
+            $user->givePermissionTo(array_keys($request->input('permissions', [])));
             $this->store_user_has_company($request->allowed_companies, $user);
 
             DB::commit();
@@ -238,7 +237,7 @@ public function edit($id)
                 'message' => $exception->getMessage(),
                 'type' => 'error'
             ], 500);
-        }  
+        }
     }
 
     public function destroy($id){
@@ -268,5 +267,5 @@ public function edit($id)
             ], 500);
         }
     }
-    
+
 }

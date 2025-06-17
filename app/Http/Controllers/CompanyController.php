@@ -29,7 +29,7 @@ class CompanyController extends Controller
         $companies = Company::query()
             ->where('active', '=', true)
             ->orderBy('name');
-        
+
         return DataTables::of($companies)
             ->addColumn('name', function ($company) {
                 return $company->name;
@@ -63,15 +63,15 @@ class CompanyController extends Controller
         return View('app.companies.edit', [
                                     'sections' => $sections,
                                     'cities' => City::all(),
-                                
-                                
+
+
                                 ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    
+
     public function store(Request $request)
     {
         //dd($request->all());
@@ -88,7 +88,7 @@ class CompanyController extends Controller
                 'document.required' => 'O CNPJ é obrigatório.',
                 'document.regex' => 'O CNPJ deve estar no formato correto (00.000.000/0000-00).',
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
@@ -97,7 +97,7 @@ class CompanyController extends Controller
 
             // Cria um registro de cidade caso não exista, a partir do nome
             $city = City::firstOrCreate(
-                ['name' => ucfirst(strtolower($request->city))]
+                ['name' => ucfirst(strtolower($request->city_select))]
             );
 
             // Cria registro de estabeleccimento
@@ -141,9 +141,9 @@ class CompanyController extends Controller
                     ]);
                 }
             }
-            
+
             DB::commit();
-            
+
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Estabelecimento cadastrado com sucesso!',
@@ -173,9 +173,9 @@ class CompanyController extends Controller
      */
     public function edit(string $id)
     {
-        $company = Company::find($id); 
+        $company = Company::find($id);
         $sections = Section::all();
-        
+
         return view('app.companies.edit',[
                                         'company' => $company,
                                         'sections' => $sections,
@@ -204,7 +204,7 @@ class CompanyController extends Controller
                 'document.regex' => 'O CNPJ deve estar no formato correto (00.000.000/0000-00).',
 
             ]);
-            
+
             if ($validator->fails()) {
                 return response()->json([
                     'message' => implode("\n", $validator->errors()->all()),
@@ -215,7 +215,7 @@ class CompanyController extends Controller
 
             // Cria ou busca a cidade com base no nome
             $city = City::firstOrCreate([
-                'name' => ucfirst(strtolower($request->city)),
+                'name' => ucfirst(strtolower($request->city_select)),
             ]);
 
             $company->update([
@@ -236,10 +236,10 @@ class CompanyController extends Controller
                 ],
                 [
                     'updated_at' => now(),
-                    'created_at' => now(), 
+                    'created_at' => now(),
                 ]
             );
-            
+
             foreach($request->section_id as $section_id){
                 CompanyHasSection::updateOrCreate(
                     [
@@ -261,7 +261,7 @@ class CompanyController extends Controller
             }
 
             DB::commit();
-            
+
             return response()->json([
                 'title' => 'Sucesso!',
                 'message' => 'Colaborador cadastrado com sucesso!',
@@ -312,7 +312,7 @@ class CompanyController extends Controller
         }
     }
 
-    public function getHourlyRate($id) 
+    public function getHourlyRate($id)
     {
         try {
             $company = Company::query()->where('id', '=', $id)->first();
