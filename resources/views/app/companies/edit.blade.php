@@ -11,9 +11,8 @@
 
                     <x-input id="document" name="document" type="text" label="CNPJ" :value="$company?->document ?? null " placeholder="Documento do Estabelecimento" class="cnpj" />
 
-
                     <div>
-                        <select name="city_select" class="form-select" class="form-control">
+                        <select id='city_select' name='city_select' class="form-control" >
                             <option value="">Selecione uma cidade</option>
                             @foreach($cities as $city)
                                 <option value="{{ $city->name }}"
@@ -63,13 +62,15 @@
     </div>
 </x-app-layout>
 
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
 <script>
 
     let establishment = @json($company ?? null);
     let companySections = @json($company?->companySections ?? []);
     let sections = @json($sections ?? null);
-        $(document).ready(function() {
-        $('#city').select2({
+    $(document).ready(function() {
+        $('#city_select').select2({
             tags: true,
             placeholder: "Selecione ou adicione uma cidade",
             width: '100%',

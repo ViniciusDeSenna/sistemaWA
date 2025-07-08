@@ -142,6 +142,7 @@ class DailyRateController extends Controller
             
             $duplicate = DailyRate::where('collaborator_id', $request->collaborator_id)
                 ->where('company_id', $request->company_id)
+                ->where('active', true)
                 ->where('start', $request->start)->first();
                 
             if($duplicate){
@@ -289,6 +290,7 @@ class DailyRateController extends Controller
                 
         $duplicate = DailyRate::where('collaborator_id', $request->collaborator_id)
             ->where('company_id', $request->company_id)
+            ->where('active', true)
             ->where('start', $request->start)
             ->where('id', '!=', $id)
             ->first();
