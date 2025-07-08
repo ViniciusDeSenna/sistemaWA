@@ -257,8 +257,9 @@ class FinantialResults extends Component
                 break;
                 
             case 'month':
-                $this->start = Carbon::parse($this->start)->addMonths($step)->startOfMonth()->toDateString();
-                $this->end = Carbon::parse($this->end)->addMonths($step)->endOfMonth()->toDateString();
+                $start = Carbon::parse($this->start)->addMonths($step)->startOfMonth();
+                $this->start = $start->toDateString();
+                $this->end = $start->copy()->endOfMonth()->toDateString();
                 break;
             case 'year':
                 $this->start = Carbon::parse($this->start)->addYears($step)->startOfYear()->toDateString();
