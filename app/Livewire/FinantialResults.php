@@ -262,9 +262,9 @@ class FinantialResults extends Component
                 $this->end = $start->copy()->endOfMonth()->toDateString();
                 break;
             case 'year':
-                $this->start = Carbon::parse($this->start)->addYears($step)->startOfYear()->toDateString();
-                $this->end = Carbon::parse($this->end)->addYears($step)->endOfYear()->toDateString();
-                break;
+                $start = Carbon::parse($this->start)->addYears($step)->startOfYear();
+                $this->start = $start->toDateString();
+                $this->end = $start->copy()->endOfYear()->toDateString();
         }
     
         $this->fetchFinancialData();
