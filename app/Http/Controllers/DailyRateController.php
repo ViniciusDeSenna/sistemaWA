@@ -437,7 +437,7 @@ class DailyRateController extends Controller
 
     public function getCompanySections($companyId)
     {
-        $sections = CompanyHasSection::where('company_id', $companyId)->get();
+        $sections = CompanyHasSection::where('company_id', $companyId)->where('active', true)->get();
         
         if ($sections->isEmpty()) {
             return response()->json(['message' => 'Nenhum setor encontrado.'], 404);
