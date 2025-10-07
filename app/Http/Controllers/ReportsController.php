@@ -18,7 +18,8 @@ use Illuminate\Support\Facades\DB;
 class ReportsController extends Controller
 {
     
-    public function registers(Request $request){
+    public function registers(Request $request)
+    {
         $user = Auth::user();
         
         $dailyRate = DailyRate::query()
@@ -80,6 +81,7 @@ class ReportsController extends Controller
         exit();
 
     }
+
     public static function extratoFinanceiro($start, $end)
     {
         $start = Carbon::parse($start);
@@ -278,6 +280,7 @@ class ReportsController extends Controller
                 'sections.name as section_name',
                 'daily_rate.start as start',
                 'daily_rate.end as end',
+                'daily_rate.addition as addition', //VAlor de acréscimo
                 'daily_rate.pay_amount as pay_amount',
                 'collaborators.pix_key as pix_key',  // Chave PIX do colaborador que trabalhou
                 'users.collaborator_id as user_collaborator_id',  // Colaborador do usuário que registrou
@@ -354,7 +357,7 @@ class ReportsController extends Controller
             $groupedData[$companyId]['collaborators'][$collaboratorId]['sections'][$sectionId]['daily_rates'][] = [
                 'start' => $rate->start,
                 'end' => $rate->end,
-                'pay_amount' => $rate->pay_amount,
+                'pay_amount' => $rate->pay_amount + $rate->addition,
                 'leader_comission' => $rate->leader_comission,
                 'user' => [
                     'user_id' => $rate->user_id,
