@@ -12,8 +12,14 @@ class Cost extends Model
         'date',
         'value',
         'description',
+        'collaborator_recieve_cost_id',
     ];
 
+    public function collaborator()
+    {
+        return $this->belongsTo(Collaborator::class, 'collaborator_recieve_cost_id');
+    }
+    
     function category()
     {
         return $this->belongsTo(CostCategory::class);

@@ -1,5 +1,8 @@
 <div class="container mt-3">
-    
+
+    <link href="https://cdn.jsdelivr.net/npm/tom-select/dist/css/tom-select.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/tom-select/dist/js/tom-select.complete.min.js"></script>
+
     <div class="card shadow-lg border-0">
         <h5 class="card-header text-white bg-primary text-center py-3">
             Resultados Financeiros
@@ -150,6 +153,22 @@
                 <button class="btn btn-primary me-1 collapsed" wire:click="saveCusto" type="button" data-bs-toggle="collapse" data-bs-target="#cadastrarCusto" aria-expanded="false" aria-controls="cadastrarCusto">
                     Salvar
                 </button>
+            </div>
+
+            <div class="col mb-3">
+                <label for="cost.user_id" class="form-label">Quem recebe</label>
+                <select 
+                    id="costUser" 
+                    class="form-select"
+                    wire:model="cost.user_id"
+                    x-data 
+                    x-init="new TomSelect($el, {searchField: 'text'});">
+                    <option value="">Selecione um colaborador</option>
+                    @foreach($collaborators as $collaborator)
+                        <option value="{{ $collaborator->id }}">{{ $collaborator->name }}</option>
+                    @endforeach
+                </select>
+                @error('cost.user_id') <span class="text-danger">{{ $message }}</span> @enderror
             </div>
         </x-card>
     </div>    

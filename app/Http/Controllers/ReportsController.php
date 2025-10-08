@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Collaborator;
+use App\Models\Cost;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Models\DailyRate;
@@ -225,43 +226,53 @@ class ReportsController extends Controller
 
     public function dailyRates(Request $request) {
         $user = Auth::user();
-    
-        // $dailyRate = DailyRate::query()
-        // ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')
-        // ->leftJoin('companies', 'companies.id', '=', 'daily_rate.company_id')
-        // ->leftJoin('sections', 'sections.id', '=', 'daily_rate.section_id')
-        // ->where('daily_rate.active', true)
-        // ->orderBy('daily_rate.company_id')  // Estabelecimento
-        // ->orderBy('daily_rate.section_id')  // Setor
-        // ->orderBy('daily_rate.collaborator_id')  // Colaborador
-        // ->select([
-        //     'daily_rate.collaborator_id as collaborator_id',
-        //     'daily_rate.company_id as company_id',
-        //     'daily_rate.section_id as section_id',
-        //     'daily_rate.leader_comission as leader_comission',
-        //     'collaborators.name as collaborators_name',
-        //     'companies.name as company_name',
-        //     'sections.name as section_name', // Setor
-        //     'daily_rate.start as start',
-        //     'daily_rate.pay_amount as pay_amount',
-        //     'collaborators.pix_key as pix_key'
-        // ]);
 
-            // if ($request->collaborator_id) {
-            //     $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
-            // }
+        $costsQuery = Cost::with('collaborator')
+            ->leftJoin('collaborators', 'collaborators.id', '=', 'costs.collaborator_recieve_cost_id')
+            ->whereNotNull('collaborator_recieve_cost_id');
+
+        if ($request->collaborator_id) {
+            $costsQuery->whereIn('collaborator_recieve_cost_id', $request->collaborator_id);
+        }
+
+        if ($request->start) {
+            $costsQuery->where('date', '>=', $request->start);
+        }
+
+        if ($request->end) {
+            $costsQuery->where('date', '<=', $request->end);
+        }
+
+        $costs = $costsQuery
+            ->orderBy('date', 'asc')
+            ->get()
+            ->groupBy('collaborator_recieve_cost_id'); 
+
+
+        $groupedCosts = [];
+
+        foreach ($costs as $collaboratorId => $costItems) {
+            $firstCost = $costItems->first();
             
-            // if ($request->company_id) {
-            //     $dailyRate->whereIn('daily_rate.company_id', $request->company_id);
-            // }
-            
-            // if ($request->start) {
-            //     $dailyRate->where('daily_rate.start', '>=', $request->start);
-            // }
-            
-            // if ($request->end) {
-            //     $dailyRate->where('daily_rate.end', '<=', $request->end);
-            // }
+            $groupedCosts[$collaboratorId] = [
+                'collaborator_id' => $collaboratorId,
+                'collaborator_name' => $firstCost->collaborator->name ?? 'Não Informado',
+                'pix_key' => $firstCost->collaborator->pix_key ?? '-',
+                'costs' => [],
+                'total_value' => 0,
+            ];
+
+            foreach ($costItems as $cost) {
+                $groupedCosts[$collaboratorId]['costs'][] = [
+                    'date' => $cost->date,
+                    'value' => $cost->value,
+                    'description' => $cost->description,
+                    'company_name' => $cost->company->name ?? '-',
+                ];
+
+                $groupedCosts[$collaboratorId]['total_value'] += $cost->value;
+            }
+        }
 
         $dailyRate = DailyRate::query()
             ->leftJoin('collaborators', 'collaborators.id', '=', 'daily_rate.collaborator_id')  // Colaborador que trabalhou na diária
@@ -289,7 +300,6 @@ class ReportsController extends Controller
                 'users.name as user_name',  // Nome do usuário que fez o registro
                 'user_collaborator.pix_key as leader_pix_key' // Chave PIX do líder (usuário que registrou a diária)
             ]);
-            
     
         if ($request->collaborator_id) {
             $dailyRate->whereIn('daily_rate.collaborator_id', $request->collaborator_id);
@@ -306,6 +316,7 @@ class ReportsController extends Controller
         if ($request->end) {
             $dailyRate->where('daily_rate.start', '<=', $request->end);
         }
+
         $leaderCommissions = (clone $dailyRate)
             ->where('collaborators.is_leader', '=', false) //  não recebe caso o colaborador que trabalhe na diária seja o próprio ou outro líder
             ->select([
@@ -319,7 +330,7 @@ class ReportsController extends Controller
 
         $dailyRate = $dailyRate->get();
         $groupedData = [];
-
+        
         foreach ($dailyRate as $rate) {
             $companyId = $rate->company_id;
             $collaboratorId = $rate->collaborator_id;
@@ -384,7 +395,12 @@ class ReportsController extends Controller
             }
         }
     
-        $html = View::make('reports.daily-rate-layout', ['finalData' => $finalData, 'user' => $user, 'leaderCommissions' => $leaderCommissions])->render();
+        $html = View::make('reports.daily-rate-layout', 
+                                ['finalData' => $finalData,
+                                 'user' => $user,
+                                'leaderCommissions' => $leaderCommissions, 
+                                'costs' => $groupedCosts
+                                ])->render();
 
         $dompdf = new Dompdf();
 

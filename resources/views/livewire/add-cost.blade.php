@@ -34,7 +34,9 @@
                     <button wire:click="save" class="btn btn-success w-100">Salvar</button>
                     <button wire:click="$set('showModal', false)" class="btn btn-secondary w-100">Fechar</button>
                 </div>
+
             </div>
         </div>
+        
     @endif
 </div>

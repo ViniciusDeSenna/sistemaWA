@@ -3,8 +3,10 @@
 namespace App\Livewire;
 
 use App\Http\Controllers\ReportsController;
+use App\Models\Collaborator;
 use App\Models\Cost;
 use App\Models\CostCategory;
+use App\Models\User;
 use Livewire\Component;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -39,8 +41,12 @@ class FinantialResults extends Component
     
     public bool $costCollapseOpen = false;
 
+    public $collaborators = [];
+
     public function mount()
     {
+        $this->collaborators = Collaborator::all();
+        
         $this->costCategories = CostCategory::all();
         $this->pivotDay = Carbon::today()->toDateString();
         $this->setFilter('week');
@@ -78,6 +84,7 @@ class FinantialResults extends Component
             'cost.description' => 'required|string|max:255',
             'cost.value' => 'required|numeric|min:0',
             'cost.date' => 'required|date',
+            'cost.user_id' => 'required|exists:collaborators,id',
         ],
         [
             'cost.category_id.required' => 'O campo categoria é obrigatório.',
@@ -98,9 +105,12 @@ class FinantialResults extends Component
                 ['id' => $this->cost['category_id']],
                 ['name' => $this->cost['category_id']]
             );
-
+        
+            
             $this->cost['category_id'] = $CostCategory->id;
-
+            
+            $this->cost['collaborator_recieve_cost_id'] = $this->cost['user_id'] ?? null;
+        
             Cost::create($this->cost);
 
             $this->cost = [
@@ -108,6 +118,7 @@ class FinantialResults extends Component
                 'description' => null,
                 'value' => null,
                 'date' => null,
+                'collaborator_recieve_cost_id' => null
             ];
             
             $this->costCategories = CostCategory::all();

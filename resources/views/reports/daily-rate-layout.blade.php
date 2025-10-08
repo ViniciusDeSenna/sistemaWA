@@ -105,6 +105,10 @@
     </style>
 </head>
 <body>
+
+    
+
+
     <h1>Relatório de Diária</h1>
 
     @php($total = 0)
@@ -197,5 +201,44 @@
         </table>
     </div>
     
+
+
+    
+    
+@if(count($costs) === 0)
+@else
+    <h2>Custos</h2>
+    <table border="1" cellpadding="5" cellspacing="0" style="border-collapse: collapse; width: 100%; text-align: left;">
+        <thead style="background-color: #d0d0d0;">
+            <tr>
+                <th>Data</th>
+                <th>Descrição</th>
+                <th style="text-align: right;">Valor (R$)</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($costs as $collaborator)
+                <tr style="background-color: #f0f0f0; font-weight: bold;">
+                    <td colspan="3">{{ $collaborator['collaborator_name'] }}</td>
+                </tr>
+                @foreach ($collaborator['costs'] as $cost)
+                    <tr>
+                        <td>{{ \Carbon\Carbon::parse($cost['date'])->format('d/m/Y') }}</td>
+                        <td>{{ $cost['description'] }}</td>
+                        <td style="text-align: right;">{{ number_format($cost['value'], 2, ',', '.') }}</td>
+                    </tr>
+                @endforeach
+                <tr style="font-weight: bold; background-color: #e0e0e0;">
+                    <td>Total</td>
+                    <td></td>
+                    <td style="text-align: right;">
+                        {{ number_format($collaborator['total_value'], 2, ',', '.') }} 
+                        (PIX: {{ $collaborator['pix_key'] ?? '-' }})
+                    </td>
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+@endif
 </body>
 </html>
